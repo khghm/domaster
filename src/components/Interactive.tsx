@@ -213,6 +213,61 @@ export function VisualDiagram({ type }: { type: string }) {
       </div>
     );
   }
+
+  if (type === 'web-flow') {
+    return (
+      <div className="my-6 p-6 bg-slate-900/50 rounded-xl border border-slate-700/50">
+        <div className="flex flex-wrap items-center justify-center gap-4">
+          {['کاربر', 'DNS', 'سرور', 'HTML', 'CSS', 'JS', 'Render'].map((step, i) => (
+            <div key={i} className="flex items-center gap-3">
+              <div className="px-4 py-3 bg-gradient-to-br from-indigo-500/20 to-cyan-500/20 border border-indigo-500/30 rounded-lg text-sm text-slate-200 font-medium">
+                {step}
+              </div>
+              {i < 6 && (
+                <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" className="text-indigo-400 rotate-180">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+              )}
+            </div>
+          ))}
+        </div>
+        <p className="text-center text-sm text-slate-400 mt-4">مراحل بارگذاری یک صفحه وب</p>
+      </div>
+    );
+  }
+
+  if (type === 'semantic-layout') {
+    return (
+      <div className="my-6 p-6 bg-slate-900/50 rounded-xl border border-slate-700/50">
+        <div className="space-y-2 max-w-lg mx-auto">
+          <div className="bg-gradient-to-r from-orange-500/20 to-red-500/20 border border-orange-500/30 rounded-lg p-3 text-center text-sm text-orange-300 font-medium">
+            &lt;header&gt;
+          </div>
+          <div className="bg-gradient-to-r from-blue-500/20 to-cyan-500/20 border border-blue-500/30 rounded-lg p-3 text-center text-sm text-blue-300 font-medium">
+            &lt;nav&gt;
+          </div>
+          <div className="grid grid-cols-[1fr_3fr_1fr] gap-2">
+            <div className="bg-gradient-to-b from-purple-500/20 to-pink-500/20 border border-purple-500/30 rounded-lg p-3 text-center text-xs text-purple-300 font-medium">
+              &lt;aside&gt;
+            </div>
+            <div className="bg-gradient-to-b from-emerald-500/20 to-teal-500/20 border border-emerald-500/30 rounded-lg p-6 text-center text-sm text-emerald-300 font-medium">
+              &lt;main&gt;
+              <div className="mt-2 bg-gradient-to-r from-amber-500/20 to-yellow-500/20 border border-amber-500/30 rounded p-2 text-xs text-amber-300">
+                &lt;article&gt;
+              </div>
+            </div>
+            <div className="bg-gradient-to-b from-purple-500/20 to-pink-500/20 border border-purple-500/30 rounded-lg p-3 text-center text-xs text-purple-300 font-medium">
+              &lt;aside&gt;
+            </div>
+          </div>
+          <div className="bg-gradient-to-r from-orange-500/20 to-red-500/20 border border-orange-500/30 rounded-lg p-3 text-center text-sm text-orange-300 font-medium">
+            &lt;footer&gt;
+          </div>
+        </div>
+        <p className="text-center text-sm text-slate-400 mt-4">ساختار معنایی یک صفحه وب</p>
+      </div>
+    );
+  }
   
   return null;
 }

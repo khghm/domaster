@@ -61,6 +61,8 @@ export const courses: Course[] = [
             subtitle: "درک زیرساخت وب از DNS تا مرورگر",
             estimatedTime: 35,
             difficulty: "مبتدی",
+            interactiveType: 'diagram',
+            interactiveData: { diagramType: 'web-flow' },
             content: `## اینترنت و World Wide Web
 
 بسیاری از افراد اینترنت و وب را یکسان می‌پندارند، اما این دو مفاهیم کاملاً متفاوتی هستند و درک تفاوت آن‌ها برای هر توسعه‌دهنده وب ضروری است.
@@ -168,6 +170,8 @@ DNS مانند دفترچه تلفن اینترنت عمل می‌کند و نا
             subtitle: "DOCTYPE, html, head, body",
             estimatedTime: 40,
             difficulty: "مبتدی",
+            interactiveType: 'diagram',
+            interactiveData: { diagramType: 'dom-tree' },
             content: `## ساختار پایه یک سند HTML
 
 هر سند HTML از یک ساختار مشخص و استاندارد پیروی می‌کند. درک این ساختار برای نوشتن کد معتبر و قابل فهم ضروری است.
@@ -402,6 +406,8 @@ DNS مانند دفترچه تلفن اینترنت عمل می‌کند و نا
             subtitle: "header, nav, main, footer",
             estimatedTime: 45,
             difficulty: "مبتدی",
+            interactiveType: 'diagram',
+            interactiveData: { diagramType: 'semantic-layout' },
             content: `## عناصر معنایی ساختاری
 
 عناصر معنایی تگ‌هایی هستند که معنای محتوای خود را به طور واضح بیان می‌کنند. استفاده از این عناصر به جای \`<div>\` مزایای زیادی دارد.
@@ -564,6 +570,8 @@ DNS مانند دفترچه تلفن اینترنت عمل می‌کند و نا
             subtitle: "CSS چیست؟",
             estimatedTime: 40,
             difficulty: "مبتدی",
+            interactiveType: 'diagram',
+            interactiveData: { diagramType: 'box-model' },
             content: `## CSS چیست؟
 
 CSS (Cascading Style Sheets) زبان استایل‌دهی برای اسناد HTML است. CSS ظاهر و چیدمان صفحات وب را کنترل می‌کند.
@@ -733,6 +741,8 @@ p::first-letter {
             subtitle: "Container و Items",
             estimatedTime: 50,
             difficulty: "متوسط",
+            interactiveType: 'diagram',
+            interactiveData: { diagramType: 'flexbox' },
             content: `## Flexbox چیست؟
 
 Flexbox یک مدل چیدمان یک‌بعدی برای طراحی رابط‌های کاربری انعطاف‌پذیر است. Flexbox کار توزیع فضا و تراز آیتم‌ها در یک کانتینر را بسیار ساده می‌کند.
@@ -1032,6 +1042,8 @@ main {
             subtitle: "Layout‌های پیچیده",
             estimatedTime: 55,
             difficulty: "متوسط",
+            interactiveType: 'diagram',
+            interactiveData: { diagramType: 'grid' },
             content: `## CSS Grid چیست؟
 
 CSS Grid Layout قدرتمندترین سیستم چیدمان در CSS است. برخلاف Flexbox که یک‌بعدی است، Grid دوبعدی کار می‌کند - یعنی هم ردیف و هم ستون را همزمان مدیریت می‌کند.
@@ -1522,7 +1534,18 @@ img {
             estimatedTime: 35,
             difficulty: "مبتدی",
             interactiveType: 'playground',
-            interactiveData: { expectedOutput: "string\nnumber\nboolean\nobject" },
+            interactiveData: { 
+              expectedOutput: "string\nnumber\nboolean\nobject",
+              initialCode: `// انواع داده در JavaScript
+console.log(typeof "Hello");
+console.log(typeof 42);
+console.log(typeof true);
+console.log(typeof { name: "Ali" });
+
+// آرایه
+const fruits = ["apple", "banana"];
+console.log(Array.isArray(fruits));`
+            },
             content: `## متغیرها در JavaScript
 
 JavaScript سه کلمه کلیدی برای تعریف متغیر دارد:
@@ -1868,7 +1891,23 @@ console.log(triple(5));  // 15`,
             estimatedTime: 45,
             difficulty: "متوسط",
             interactiveType: 'playground',
-            interactiveData: { expectedOutput: "[2, 4, 6, 8, 10]" },
+            interactiveData: { 
+              expectedOutput: "[2, 4, 6, 8, 10]",
+              initialCode: `// متدهای آرایه
+const numbers = [1, 2, 3, 4, 5];
+
+// map: تبدیل هر عنصر
+const doubled = numbers.map(n => n * 2);
+console.log(JSON.stringify(doubled));
+
+// filter: فیلتر کردن
+const evens = numbers.filter(n => n % 2 === 0);
+console.log(JSON.stringify(evens));
+
+// reduce: کاهش به یک مقدار
+const sum = numbers.reduce((acc, n) => acc + n, 0);
+console.log("Sum:", sum);`
+            },
             content: `## آرایه‌ها در JavaScript
 
 آرایه‌ها لیست‌های مرتب از مقادیر هستند.
@@ -2154,6 +2193,17 @@ async function fetchAllData() {
             subtitle: "آشنایی با مفاهیم پایه",
             estimatedTime: 30,
             difficulty: "متوسط",
+            interactiveType: 'comparison',
+            interactiveData: {
+              headers: ["ویژگی", "React", "Vue", "Angular"],
+              rows: [
+                ["یادگیری", "متوسط", "آسان", "سخت"],
+                ["اندازه", "کوچک", "کوچک", "بزرگ"],
+                ["زبان", "JavaScript", "JavaScript", "TypeScript"],
+                ["Rendering", "Virtual DOM", "Virtual DOM", "Real DOM"],
+                ["مناسب برای", "همه پروژه‌ها", "پروژه‌های کوچک-متوسط", "پروژه‌های بزرگ"]
+              ]
+            },
             content: `## React چیست؟
 
 React یک کتابخانه JavaScript برای ساخت UI است که توسط Meta توسعه داده شده.
@@ -2258,6 +2308,23 @@ JSX اجازه می‌دهد HTML-like code در JavaScript بنویسید.
             subtitle: "مدیریت state سراسری",
             estimatedTime: 40,
             difficulty: "متوسط",
+            interactiveType: 'tabs',
+            interactiveData: {
+              tabs: [
+                {
+                  label: "ایجاد Context",
+                  content: "const ThemeContext = createContext(); - یک Context جدید ایجاد می‌کند."
+                },
+                {
+                  label: "Provider",
+                  content: "<ThemeContext.Provider value={theme}> - مقدار را به تمام فرزندان ارائه می‌دهد."
+                },
+                {
+                  label: "مصرف",
+                  content: "const theme = useContext(ThemeContext); - مقدار Context را دریافت می‌کند."
+                }
+              ]
+            },
             content: `## Context API
 
 Context API برای مدیریت state سراسری بدون prop drilling استفاده می‌شود.
@@ -2585,6 +2652,17 @@ function App() {
             subtitle: "آشنایی با Node.js",
             estimatedTime: 30,
             difficulty: "متوسط",
+            interactiveType: 'comparison',
+            interactiveData: {
+              headers: ["ویژگی", "Node.js", "Python", "PHP"],
+              rows: [
+                ["زبان", "JavaScript", "Python", "PHP"],
+                ["سرعت", "بسیار سریع", "متوسط", "سریع"],
+                ["یادگیری", "آسان (اگر JS بدانید)", "آسان", "متوسط"],
+                ["مناسب برای", "Real-time, API", "Data Science, AI", "Web سنتی"],
+                ["جامعه", "بسیار بزرگ", "بسیار بزرگ", "بزرگ"]
+              ]
+            },
             content: `## Node.js چیست؟
 
 Node.js یک runtime برای اجرای JavaScript خارج از مرورگر است.
@@ -2909,6 +2987,17 @@ app.get('/api/profile', authenticate, (req, res) => {
             subtitle: "کار با دیتابیس NoSQL",
             estimatedTime: 35,
             difficulty: "متوسط",
+            interactiveType: 'comparison',
+            interactiveData: {
+              headers: ["ویژگی", "MongoDB (NoSQL)", "PostgreSQL (SQL)"],
+              rows: [
+                ["ساختار", "Document-based", "Table-based"],
+                ["Schema", "انعطاف‌پذیر", "ثابت"],
+                ["Scalability", "افقی", "عمودی"],
+                ["مناسب برای", "داده‌های نیمه‌ساختاریافته", "داده‌های ساختاریافته"],
+                ["Query Language", "JSON-based", "SQL"]
+              ]
+            },
             content: `## MongoDB چیست؟
 
 MongoDB یک دیتابیس NoSQL مبتنی بر سند است.
@@ -3180,6 +3269,17 @@ const users = await User.find()
             subtitle: "آشنایی با وردپرس",
             estimatedTime: 25,
             difficulty: "مبتدی",
+            interactiveType: 'comparison',
+            interactiveData: {
+              headers: ["ویژگی", "WordPress", "Joomla", "Drupal"],
+              rows: [
+                ["یادگیری", "آسان", "متوسط", "سخت"],
+                ["انعطاف‌پذیری", "بسیار بالا", "بالا", "بسیار بالا"],
+                ["افزونه‌ها", "۵۰,۰۰۰+", "۸,۰۰۰+", "۴۰,۰۰۰+"],
+                ["قالب‌ها", "۵,۰۰۰+", "۱,۰۰۰+", "۲,۰۰۰+"],
+                ["سهم بازار", "۴۳%", "۳%", "۲%"]
+              ]
+            },
             content: `## وردپرس چیست؟
 
 وردپرس یک CMS متن‌باز و رایگان است.
@@ -3513,6 +3613,17 @@ function myplugin_ajax_handler() {
             subtitle: "مفاهیم پایه Docker",
             estimatedTime: 30,
             difficulty: "پیشرفته",
+            interactiveType: 'comparison',
+            interactiveData: {
+              headers: ["ویژگی", "Docker Containers", "Virtual Machines"],
+              rows: [
+                ["حجم", "مگابایت", "گیگابایت"],
+                ["شروع", "ثانیه", "دقیقه"],
+                ["Performance", "Near-native", "Overhead"],
+                ["Isolation", "Process-level", "Full OS"],
+                ["مناسب برای", "Microservices", "Legacy apps"]
+              ]
+            },
             content: `## Docker چیست؟
 
 Docker ابزاری برای ساخت و مدیریت container‌ها است.
@@ -3820,6 +3931,17 @@ kill PID
             subtitle: "Frontend, Backend, Full Stack",
             estimatedTime: 30,
             difficulty: "مبتدی",
+            interactiveType: 'comparison',
+            interactiveData: {
+              headers: ["مسیر", "تمرکز", "تکنولوژی‌ها", "سطح دشواری"],
+              rows: [
+                ["Frontend", "UI/UX", "React, Vue, CSS", "متوسط"],
+                ["Backend", "سرور، API", "Node.js, Python", "متوسط-سخت"],
+                ["Full Stack", "هر دو", "MERN, LAMP", "سخت"],
+                ["WordPress", "قالب، افزونه", "PHP, MySQL", "آسان-متوسط"],
+                ["DevOps", "زیرساخت", "Docker, AWS", "سخت"]
+              ]
+            },
             content: `## مسیرهای شغلی
 
 ### ۱. Frontend Developer
