@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { courses } from './data/courses';
 import type { Course, Chapter, Lesson } from './data/courses';
+import { CodePlayground, VisualDiagram, InteractiveQuiz, Tabs, Accordion, ComparisonTable } from './components/Interactive';
 
 // ============================================
 // Icons
@@ -515,8 +516,49 @@ function LessonViewer({
               <div className="prose prose-invert max-w-none">{renderContent(lesson.content)}</div>
             </div>
 
+            {/* Interactive Content */}
+            {lesson.interactiveType === 'playground' && lesson.code && (
+              <div className="mb-6">
+                <h3 className="text-lg font-bold text-white mb-3 flex items-center gap-2">
+                  <span className="text-emerald-400"><Icon.code /></span> آزمایشگاه کد
+                </h3>
+                <CodePlayground 
+                  initialCode={lesson.code} 
+                  language={lesson.language}
+                  expectedOutput={lesson.interactiveData?.expectedOutput}
+                />
+              </div>
+            )}
+
+            {lesson.interactiveType === 'diagram' && lesson.interactiveData?.diagramType && (
+              <div className="mb-6">
+                <h3 className="text-lg font-bold text-white mb-3">نمایش بصری</h3>
+                <VisualDiagram type={lesson.interactiveData.diagramType} />
+              </div>
+            )}
+
+            {lesson.interactiveType === 'quiz' && lesson.interactiveData && (
+              <InteractiveQuiz
+                question={lesson.interactiveData.question}
+                options={lesson.interactiveData.options}
+                correctIndex={lesson.interactiveData.correctIndex}
+                explanation={lesson.interactiveData.explanation}
+              />
+            )}
+
+            {lesson.interactiveType === 'tabs' && lesson.interactiveData?.tabs && (
+              <Tabs tabs={lesson.interactiveData.tabs} />
+            )}
+
+            {lesson.interactiveType === 'comparison' && lesson.interactiveData && (
+              <ComparisonTable 
+                headers={lesson.interactiveData.headers}
+                rows={lesson.interactiveData.rows}
+              />
+            )}
+
             {/* Code */}
-            {lesson.code && (
+            {lesson.code && (!lesson.interactiveType || lesson.interactiveType !== 'playground') && (
               <div className="mb-6">
                 <h3 className="text-lg font-bold text-white mb-3 flex items-center gap-2">
                   <span className="text-cyan-400"><Icon.code /></span> کد عملی
