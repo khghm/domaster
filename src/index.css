@@ -1,1 +1,122 @@
 @import "tailwindcss";
+
+@layer base {
+  :root {
+    --primary: #6366f1;
+    --primary-dark: #4f46e5;
+    --secondary: #06b6d4;
+    --accent: #f59e0b;
+    --dark: #0f172a;
+    --darker: #020617;
+  }
+
+  body {
+    font-family: 'Vazirmatn', sans-serif;
+    direction: rtl;
+    background-color: #0f172a;
+    color: #e2e8f0;
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #6366f1 #1e293b;
+  }
+
+  *::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: #1e293b;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: #6366f1;
+    border-radius: 3px;
+  }
+}
+
+@layer components {
+  .gradient-text {
+    background: linear-gradient(135deg, #6366f1, #06b6d4, #f59e0b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .glass-card {
+    background: rgba(30, 41, 59, 0.7);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+  }
+
+  .glow-border {
+    box-shadow: 0 0 15px rgba(99, 102, 241, 0.3), inset 0 0 15px rgba(99, 102, 241, 0.1);
+  }
+
+  .code-block {
+    background: #1a1a2e;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    direction: ltr;
+    text-align: left;
+    font-family: 'Fira Code', 'Courier New', monospace;
+    font-size: 14px;
+    line-height: 1.8;
+    overflow-x: auto;
+  }
+
+  .code-block code {
+    color: #e2e8f0;
+  }
+
+  .keyword { color: #c084fc; }
+  .string { color: #34d399; }
+  .comment { color: #64748b; }
+  .function { color: #60a5fa; }
+  .number { color: #f59e0b; }
+  .tag { color: #f472b6; }
+  .attr { color: #06b6d4; }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  .animate-slide-up {
+    animation: slide-up 0.6s ease-out forwards;
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.8s ease-out forwards;
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 5px rgba(99, 102, 241, 0.3); }
+  50% { box-shadow: 0 0 30px rgba(99, 102, 241, 0.6); }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
