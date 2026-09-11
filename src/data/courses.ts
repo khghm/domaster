@@ -5,13 +5,17 @@ export interface Lesson {
   content: string;
   code?: string;
   language?: string;
-  outputPreview?: string;
   tips?: string[];
   warnings?: string[];
-  diagrams?: string[];
-  exercises?: { question: string; answer: string }[];
   estimatedTime?: number;
   difficulty?: 'مبتدی' | 'متوسط' | 'پیشرفته';
+}
+
+export interface Chapter {
+  id: string;
+  title: string;
+  description: string;
+  lessons: Lesson[];
 }
 
 export interface Course {
@@ -20,8 +24,7 @@ export interface Course {
   subtitle: string;
   description: string;
   color: string;
-  iconBg: string;
-  lessons: Lesson[];
+  chapters: Chapter[];
   prerequisites?: string[];
   outcomes?: string[];
   totalHours?: number;
@@ -29,560 +32,825 @@ export interface Course {
 
 export const courses: Course[] = [
   {
-    id: "html-fundamentals",
-    title: "مبانی HTML5",
-    subtitle: "ساختار و اسکلت صفحات وب",
-    description: "یادگیری کامل HTML5 از صفر شامل تگ‌ها، فرم‌ها، عناصر معنایی، چندرسانه‌ای و استانداردهای مدرن وب",
+    id: "html-css",
+    title: "HTML و CSS جامع",
+    subtitle: "از صفر تا طراحی حرفه‌ای صفحات وب",
+    description: "کتاب کامل HTML و CSS شامل ۶ فصل و بیش از ۲۰ درس. از مفاهیم پایه تا تکنیک‌های پیشرفته مانند Flexbox، Grid، انیمیشن‌ها و طراحی ریسپانسیو.",
     color: "from-orange-500 to-red-500",
-    iconBg: "bg-orange-500/10",
-    totalHours: 20,
-    prerequisites: ["آشنایی اولیه با کامپیوتر", "نصب مرورگر مدرن"],
+    totalHours: 40,
+    prerequisites: ["آشنایی اولیه با کامپیوتر"],
     outcomes: [
-      "ساختار کامل یک سند HTML را می‌شناسید",
-      "تگ‌های معنایی HTML5 را به درستی استفاده می‌کنید",
-      "فرم‌های حرفه‌ای با validation می‌سازید",
-      "عناصر چندرسانه‌ای را پیاده‌سازی می‌کنید",
-      "SEO-friendly HTML می‌نویسید"
+      "تسلط کامل بر HTML5 و عناصر معنایی",
+      "طراحی صفحات ریسپانسیو با Flexbox و Grid",
+      "ایجاد انیمیشن‌ها و transitions حرفه‌ای",
+      "نوشتن کد تمیز و قابل نگهداری",
+      "آشنایی با CSS Architecture و BEM"
     ],
-    lessons: [
+    chapters: [
       {
-        id: "html-intro",
-        title: "مقدمه‌ای بر HTML و وب",
-        subtitle: "HTML چیست و چگونه کار می‌کند؟",
-        estimatedTime: 25,
-        difficulty: "مبتدی",
-        content: `## HTML چیست؟
+        id: "ch1-intro",
+        title: "فصل ۱: مقدمه‌ای بر وب و HTML",
+        description: "آشنایی با اینترنت، مرورگرها و ساختار صفحات HTML",
+        lessons: [
+          {
+            id: "l1-1",
+            title: "اینترنت و وب چگونه کار می‌کنند؟",
+            subtitle: "درک زیرساخت وب از DNS تا مرورگر",
+            estimatedTime: 20,
+            difficulty: "مبتدی",
+            content: `## اینترنت و World Wide Web
 
-HTML مخفف **HyperText Markup Language** است. این زبان، زبان نشانه‌گذاری استاندارد برای ساخت صفحات وب محسوب می‌شود. HTML یک زبان برنامه‌نویسی نیست، بلکه یک زبان توصیفی است که ساختار و محتوای صفحه وب را تعریف می‌کند.
+بسیاری از افراد اینترنت و وب را یکسان می‌پندارند، اما این دو مفاهیم متفاوتی هستند.
 
-## تاریخچه مختصر HTML
+### اینترنت (Internet)
+شبکه‌ای جهانی از شبکه‌های کامپیوتری است که با پروتکل TCP/IP به هم متصل شده‌اند. اینترنت زیرساخت فیزیکی و منطقی است که امکان انتقال داده را فراهم می‌کند.
 
-| نسخه | سال انتشار | ویژگی کلیدی |
-|------|-----------|-------------|
-| HTML 1.0 | 1993 | اولین نسخه رسمی |
-| HTML 2.0 | 1995 | فرم‌ها و جداول |
-| HTML 4.01 | 1999 | CSS پشتیبانی |
-| XHTML | 2000 | ساختار XML-like |
-| HTML5 | 2014 | عناصر معنایی، Canvas، Audio/Video |
+### World Wide Web (WWW)
+یکی از سرویس‌هایی است که روی اینترنت اجرا می‌شود. وب مجموعه‌ای از اسناد و منابع است که با URL شناسایی شده و از طریق HTTP قابل دسترسی هستند.
 
-## چگونه HTML کار می‌کند؟
+### پروتکل HTTP/HTTPS
 
-وقتی شما آدرس یک وب‌سایت را در مرورگر وارد می‌کنید، مراحل زیر طی می‌شود:
+HTTP (HyperText Transfer Protocol) پروتکل اصلی انتقال داده در وب است.
 
-**مرحله ۱:** مرورگر درخواست HTTP به سرور ارسال می‌کند
-**مرحله ۲:** سرور فایل HTML مربوطه را پیدا و ارسال می‌کند
-**مرحله ۳:** مرورگر HTML را parse کرده و DOM Tree می‌سازد
-**مرحله ۴:** CSS parse و Render Tree ساخته می‌شود
-**مرحله ۵:** صفحه روی صفحه نمایش رسم (Paint) می‌شود
+**ساختار درخواست HTTP:**
+- Method: GET, POST, PUT, DELETE
+- URL: آدرس منبع
+- Headers: اطلاعات اضافی
+- Body: داده‌های ارسالی
 
-## ساختار پایه یک سند HTML
+**ساختار پاسخ HTTP:**
+- Status Code: 200 (موفق), 404 (یافت نشد), 500 (خطای سرور)
+- Headers: اطلاعات پاسخ
+- Body: محتوای پاسخ
 
-هر سند HTML از بخش‌های مشخصی تشکیل شده که هر کدام وظیفه خاصی دارند:
+### DNS (Domain Name System)
 
-- **DOCTYPE**: نوع سند و نسخه HTML را مشخص می‌کند
-- **html**: عنصر ریشه که تمام محتوای صفحه را در بر می‌گیرد
-- **head**: اطلاعات متا، عنوان، لینک‌ها و اسکریپت‌ها
-- **body**: محتوای قابل مشاهده صفحه
+DNS مانند دفترچه تلفن اینترنت عمل می‌کند و نام دامنه (مثل google.com) را به آدرس IP تبدیل می‌کند.
 
-## عناصر و تگ‌ها
+**مراحل بارگذاری یک صفحه وب:**
+1. کاربر URL را وارد می‌کند
+2. مرورگر DNS را پرس‌وجو می‌کند
+3. IP سرور دریافت می‌شود
+4. اتصال TCP برقرار می‌شود
+5. درخواست HTTP ارسال می‌شود
+6. سرور پاسخ HTML ارسال می‌کند
+7. مرورگر HTML را parse و render می‌کند
 
-در HTML ما با **عناصر** (Elements) سروکار داریم. هر عنصر از یک تگ باز و بسته تشکیل شده:
+### مرورگرها و موتورهای رندر
 
-- تگ باز: \`<p>\`
-- محتوا: \`سلام دنیا\`
-- تگ بسته: \`</p>\`
+مرورگر برنامه‌ای است که اسناد وب را نمایش می‌دهد. هر مرورگر از موتور رندر خاصی استفاده می‌کند:
 
-برخی تگ‌ها خودبسته (self-closing) هستند مثل \`<img />\`، \`<br />\` و \`<input />\`.
+- Chrome: Blink
+- Firefox: Gecko
+- Safari: WebKit
+- Edge: Blink
 
-## Attribute‌ها
+### ساختار یک سند HTML
 
-تگ‌ها می‌توانند ویژگی‌ها (attributes) داشته باشند که اطلاعات اضافی درباره عنصر ارائه می‌دهند:
-
-- \`class\`: برای استایل‌دهی و انتخاب با JavaScript
-- \`id\`: شناسه یکتا برای عنصر
-- \`src\`: آدرس منبع (برای تصاویر)
-- \`href\`: آدرس لینک (برای anchor tags)
-- \`style\`: استایل inline
-- \`data-*\`: attributes سفارشی`,
-        code: `<!DOCTYPE html>
+HTML از عناصر (Elements) تشکیل شده. هر عنصر از تگ باز، محتوا و تگ بسته تشکیل می‌شود.`,
+            code: `<!-- ساختار پایه یک سند HTML -->
+<!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="اولین صفحه وب من">
-    <meta name="author" content="نام شما">
-    <title>اولین صفحه وب من</title>
+    <meta name="description" content="توضیحات صفحه">
+    <title>عنوان صفحه</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- هدر صفحه -->
     <header>
-        <h1>به وب‌سایت من خوش آمدید</h1>
+        <h1>عنوان اصلی</h1>
         <nav>
-            <a href="#home">خانه</a>
-            <a href="#about">درباره</a>
-            <a href="#contact">تماس</a>
+            <a href="/">خانه</a>
+            <a href="/about">درباره</a>
         </nav>
     </header>
-
-    <!-- محتوای اصلی -->
+    
     <main>
-        <section id="home">
-            <h2>صفحه اصلی</h2>
-            <p>این یک پاراگراف نمونه است.</p>
-        </section>
+        <article>
+            <h2>عنوان مقاله</h2>
+            <p>محتوای مقاله...</p>
+        </article>
     </main>
-
-    <!-- فوتر -->
+    
     <footer>
-        <p>&copy; ۱۴۰۳ - تمامی حقوق محفوظ است</p>
+        <p>&copy; ۱۴۰۳</p>
     </footer>
+    
+    <script src="app.js"></script>
 </body>
 </html>`,
-        language: "html",
-        outputPreview: "یک صفحه وب ساده با هدر، ناوبری، محتوای اصلی و فوتر",
-        tips: [
-          "همیشه DOCTYPE را در اولین خط فایل HTML قرار دهید",
-          "از lang و dir attributes برای مشخص کردن زبان و جهت متن استفاده کنید",
-          "meta viewport برای ریسپانسیو بودن صفحات ضروری است",
-          "تگ title برای SEO بسیار مهم است"
-        ],
-        warnings: [
-          "هرگز تگ‌ها را به صورت تودرتوی نادرست نبندید",
-          "از تگ‌های منسوخ شده مثل <font>، <center> و <marquee> استفاده نکنید"
-        ],
-        diagrams: [
-          "DOCTYPE → html → head + body",
-          "head → meta + title + link + style",
-          "body → header + main + footer"
-        ],
-        exercises: [
+            language: "html",
+            tips: [
+              "همیشه DOCTYPE را در خط اول قرار دهید",
+              "meta viewport برای ریسپانسیو ضروری است",
+              "از lang و dir برای زبان و جهت متن استفاده کنید"
+            ]
+          },
           {
-            question: "یک سند HTML کامل بسازید که شامل header با عنوان و navigation، main با سه section مختلف و footer باشد.",
-            answer: `<!DOCTYPE html>
+            id: "l1-2",
+            title: "عناصر متنی و ساختاری HTML",
+            subtitle: "تگ‌های پایه برای نمایش محتوا",
+            estimatedTime: 25,
+            difficulty: "مبتدی",
+            content: `## عناصر متنی HTML
+
+HTML طیف وسیعی از عناصر برای نمایش انواع مختلف متن ارائه می‌دهد.
+
+### عناوین (Headings)
+
+شش سطح عنوان از h1 تا h6 وجود دارد. h1 مهم‌ترین و h6 کم‌اهمیت‌ترین است.
+
+**نکات مهم:**
+- فقط یک h1 در هر صفحه داشته باشید
+- سلسله‌مراتب را رعایت کنید (از h1 به h3 نپرید)
+- عناوین برای SEO بسیار مهم هستند
+
+### پاراگراف‌ها
+
+تگ \`<p>\` برای پاراگراف‌های متن استفاده می‌شود.
+
+### لیست‌ها
+
+سه نوع لیست در HTML وجود دارد:
+
+**1. لیست مرتب (Ordered List):**
+\`\`\`html
+<ol>
+    <li>مورد اول</li>
+    <li>مورد دوم</li>
+</ol>
+\`\`\`
+
+**2. لیست نامرتب (Unordered List):**
+\`\`\`html
+<ul>
+    <li>مورد اول</li>
+    <li>مورد دوم</li>
+</ul>
+\`\`\`
+
+**3. لیست تعریفی (Definition List):**
+\`\`\`html
+<dl>
+    <dt>HTML</dt>
+    <dd>زبان نشانه‌گذاری ابرمتن</dd>
+</dl>
+\`\`\`
+
+### عناصر قالب‌بندی متن
+
+- \`<strong>\` - متن مهم (bold)
+- \`<em>\` - تأکید (italic)
+- \`<mark>\` - هایلایت
+- \`<del>\` - متن حذف شده
+- \`<ins>\` - متن اضافه شده
+- \`<sub>\` - زیرنویس
+- \`<sup>\` - بالانویس
+- \`<code>\` - کد
+- \`<pre>\` - متن پیش‌قالب‌بندی شده
+- \`<blockquote>\` - نقل قول
+- \`<abbr>\` - مخفف
+- \`<cite>\` - عنوان اثر`,
+            code: `<!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ساختار کامل HTML</title>
+    <title>عناصر متنی HTML</title>
+    <style>
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            line-height: 1.8;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 { color: #4f46e5; border-bottom: 2px solid #4f46e5; }
+        h2 { color: #06b6d4; }
+        code {
+            background: #f1f5f9;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        pre {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 16px;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+        blockquote {
+            border-right: 4px solid #4f46e5;
+            padding-right: 16px;
+            margin-right: 0;
+            color: #64748b;
+            font-style: italic;
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <h1>وب‌سایت من</h1>
-        <nav>
+    <h1>آموزش عناصر متنی HTML</h1>
+    
+    <h2>عناوین</h2>
+    <p>عناوین از <code>&lt;h1&gt;</code> تا <code>&lt;h6&gt;</code> هستند.</p>
+    
+    <h2>پاراگراف‌ها</h2>
+    <p>این یک پاراگراف نمونه است. HTML فضای خالی اضافی را نادیده می‌گیرد.</p>
+    <p>برای خط جدید از <code>&lt;br&gt;</code> استفاده کنید.<br>
+    این خط بعد از br است.</p>
+    
+    <h2>لیست‌ها</h2>
+    <h3>لیست مرتب:</h3>
+    <ol>
+        <li>HTML را یاد بگیرید</li>
+        <li>CSS را یاد بگیرید</li>
+        <li>JavaScript را یاد بگیرید</li>
+    </ol>
+    
+    <h3>لیست نامرتب:</h3>
+    <ul>
+        <li>React</li>
+        <li>Vue</li>
+        <li>Angular</li>
+    </ul>
+    
+    <h3>لیست تودرتو:</h3>
+    <ul>
+        <li>فرانت‌اند
             <ul>
-                <li><a href="#home">خانه</a></li>
-                <li><a href="#services">خدمات</a></li>
-                <li><a href="#contact">تماس</a></li>
+                <li>HTML</li>
+                <li>CSS</li>
+                <li>JavaScript</li>
             </ul>
-        </nav>
-    </header>
-
-    <main>
-        <section id="home">
-            <h2>خانه</h2>
-            <p>محتوای بخش خانه</p>
-        </section>
-
-        <section id="services">
-            <h2>خدمات</h2>
-            <p>محتوای بخش خدمات</p>
-        </section>
-
-        <section id="contact">
-            <h2>تماس با ما</h2>
-            <p>محتوای بخش تماس</p>
-        </section>
-    </main>
-
-    <footer>
-        <p>&copy; ۱۴۰۳ وب‌سایت من</p>
-    </footer>
+        </li>
+        <li>بک‌اند
+            <ul>
+                <li>Node.js</li>
+                <li>Python</li>
+            </ul>
+        </li>
+    </ul>
+    
+    <h2>عناصر قالب‌بندی</h2>
+    <p>متن <strong>مهم</strong> با strong نمایش داده می‌شود.</p>
+    <p>متن <em>تأکیدی</em> با em نمایش داده می‌شود.</p>
+    <p>متن <mark>هایلایت شده</mark> با mark.</p>
+    <p>متن <del>حذف شده</del> و <ins>اضافه شده</del>.</p>
+    <p>فرمول آب: H<sub>2</sub>O</p>
+    <p>توان: x<sup>2</sup></p>
+    
+    <h2>کد</h2>
+    <p>کد inline: <code>console.log("Hello")</code></p>
+    
+    <pre><code>function greet(name) {
+    return "Hello " + name;
+}
+console.log(greet("World"));</code></pre>
+    
+    <h2>نقل قول</h2>
+    <blockquote>
+        <p>بهترین زمان برای کاشت درخت بیست سال پیش بود. دومین بهترین زمان، اکنون است.</p>
+        <cite>ضرب‌المثل چینی</cite>
+    </blockquote>
+    
+    <h2>مخفف‌ها</h2>
+    <p><abbr title="HyperText Markup Language">HTML</abbr> زبان نشانه‌گذاری است.</p>
 </body>
-</html>`
+</html>`,
+            language: "html",
+            tips: [
+              "فقط یک h1 در هر صفحه داشته باشید",
+              "سلسله‌مراتب عناوین را رعایت کنید",
+              "از strong و em به جای b و i استفاده کنید"
+            ]
+          },
+          {
+            id: "l1-3",
+            title: "لینک‌ها و ناوبری",
+            subtitle: "ایجاد لینک‌های داخلی و خارجی",
+            estimatedTime: 20,
+            difficulty: "مبتدی",
+            content: `## لینک‌ها در HTML
+
+لینک‌ها (Hyperlinks) اساس وب هستند و امکان ناوبری بین صفحات و منابع را فراهم می‌کنند.
+
+### تگ anchor
+
+تگ \`<a>\` برای ایجاد لینک استفاده می‌شود.
+
+### انواع لینک
+
+**1. لینک مطلق (Absolute):**
+\`\`\`html
+<a href="https://example.com">لینک خارجی</a>
+\`\`\`
+
+**2. لینک نسبی (Relative):**
+\`\`\`html
+<a href="/about.html">درباره ما</a>
+<a href="../images/photo.jpg">تصویر</a>
+\`\`\`
+
+**3. لینک داخلی (Anchor Link):**
+\`\`\`html
+<a href="#section1">برو به بخش ۱</a>
+<h2 id="section1">بخش ۱</h2>
+\`\`\`
+
+**4. لینک ایمیل:**
+\`\`\`html
+<a href="mailto:info@example.com">ارسال ایمیل</a>
+\`\`\`
+
+**5. لینک تلفن:**
+\`\`\`html
+<a href="tel:+989121234567">تماس</a>
+\`\`\`
+
+### Attribute‌های مهم
+
+- \`href\`: آدرس مقصد
+- \`target\`: نحوه باز شدن لینک
+  - \`_self\`: در همان تب (پیش‌فرض)
+  - \`_blank\`: در تب جدید
+  - \`_parent\`: در frame والد
+  - \`_top\`: در بالاترین frame
+- \`rel\`: رابطه با سند مقصد
+  - \`noopener\`: امنیت برای target="_blank"
+  - \`noreferrer\`: عدم ارسال referrer
+  - \`nofollow\`: عدم انتقال PageRank
+- \`download\`: دانلود فایل به جای باز کردن
+- \`title\`: tooltip هنگام hover
+
+### Best Practices
+
+1. همیشه \`rel="noopener noreferrer"\` را برای \`target="_blank"\` اضافه کنید
+2. متن لینک باید معنادار باشد (نه "اینجا کلیک کنید")
+3. از لینک‌های نسبی برای صفحات داخلی استفاده کنید
+4. لینک‌های خارجی را در تب جدید باز کنید`,
+            code: `<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>لینک‌ها در HTML</title>
+    <style>
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.8;
+        }
+        a {
+            color: #4f46e5;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.2s;
+        }
+        a:hover {
+            border-bottom-color: #4f46e5;
+        }
+        section {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 8px;
+        }
+        .nav-menu {
+            display: flex;
+            gap: 20px;
+            list-style: none;
+            padding: 0;
+            background: #1e293b;
+            padding: 15px 20px;
+            border-radius: 8px;
+        }
+        .nav-menu a {
+            color: #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+    <h1>آموزش لینک‌ها در HTML</h1>
+    
+    <!-- منوی ناوبری -->
+    <nav>
+        <ul class="nav-menu">
+            <li><a href="#external">لینک خارجی</a></li>
+            <li><a href="#internal">لینک داخلی</a></li>
+            <li><a href="#email">ایمیل</a></li>
+            <li><a href="#download">دانلود</a></li>
+        </ul>
+    </nav>
+    
+    <section id="external">
+        <h2>لینک‌های خارجی</h2>
+        
+        <p>لینک ساده به سایت دیگر:</p>
+        <a href="https://developer.mozilla.org" 
+           target="_blank" 
+           rel="noopener noreferrer">
+            MDN Web Docs (در تب جدید)
+        </a>
+        
+        <p>لینک با عنوان:</p>
+        <a href="https://google.com" 
+           target="_blank" 
+           rel="noopener noreferrer"
+           title="جستجو در گوگل">
+            گوگل
+        </a>
+    </section>
+    
+    <section id="internal">
+        <h2>لینک‌های داخلی</h2>
+        
+        <p>لینک نسبی به صفحه دیگر:</p>
+        <a href="/about.html">درباره ما</a>
+        
+        <p>لینک به بخش خاصی از صفحه:</p>
+        <a href="#conclusion">برو به نتیجه‌گیری</a>
+        
+        <h3 id="conclusion">نتیجه‌گیری</h3>
+        <p>لینک‌ها اساس وب هستند...</p>
+    </section>
+    
+    <section id="email">
+        <h2>لینک‌های ایمیل و تلفن</h2>
+        
+        <p>ارسال ایمیل:</p>
+        <a href="mailto:info@example.com?subject=سلام&body=متن ایمیل">
+            ارسال ایمیل به ما
+        </a>
+        
+        <p>تماس تلفنی:</p>
+        <a href="tel:+989121234567">
+            تماس: ۰۹۱۲۱۲۳۴۵۶۷
+        </a>
+    </section>
+    
+    <section id="download">
+        <h2>دانلود فایل</h2>
+        
+        <p>دانلود با نام دلخواه:</p>
+        <a href="/files/document.pdf" download="report-2024.pdf">
+            دانلود گزارش (PDF)
+        </a>
+        
+        <p>دانلود تصویر:</p>
+        <a href="/images/photo.jpg" download>
+            دانلود تصویر
+        </a>
+    </section>
+    
+    <section>
+        <h2>لینک‌های تصویری</h2>
+        
+        <a href="https://example.com">
+            <img src="/images/banner.jpg" 
+                 alt="بنر تبلیغاتی" 
+                 width="300">
+        </a>
+    </section>
+    
+    <section>
+        <h2>لینک‌های پیچیده</h2>
+        
+        <p>لینک با پارامترهای URL:</p>
+        <a href="/search?q=html&lang=fa&page=1">
+            جستجوی HTML
+        </a>
+        
+        <p>لینک با Fragment:</p>
+        <a href="/docs/api.html#authentication">
+            مستندات API - بخش احراز هویت
+        </a>
+    </section>
+</body>
+</html>`,
+            language: "html",
+            tips: [
+              "برای لینک‌های خارجی از target='_blank' و rel='noopener noreferrer' استفاده کنید",
+              "متن لینک باید معنادار باشد",
+              "از لینک‌های نسبی برای صفحات داخلی استفاده کنید"
+            ]
           }
         ]
       },
       {
-        id: "html-semantic",
-        title: "عناصر معنایی HTML5",
-        subtitle: "ساختاردهی هوشمند محتوا",
-        estimatedTime: 30,
-        difficulty: "مبتدی",
-        content: `## چرا عناصر معنایی مهم هستند؟
+        id: "ch2-semantic",
+        title: "فصل ۲: عناصر معنایی HTML5",
+        description: "ساختاردهی هوشمند محتوا با عناصر معنایی",
+        lessons: [
+          {
+            id: "l2-1",
+            title: "عناصر معنایی ساختاری",
+            subtitle: "header, nav, main, footer و سایر عناصر",
+            estimatedTime: 30,
+            difficulty: "مبتدی",
+            content: `## عناصر معنایی ساختاری
 
-عناصر معنایی (Semantic Elements) تگ‌هایی هستند که معنای محتوای خود را به طور واضح بیان می‌کنند. استفاده از این عناصر به جای \`<div>\` و \`<span>\` مزایای زیر را دارد:
+عناصر معنایی تگ‌هایی هستند که معنای محتوای خود را به طور واضح بیان می‌کنند.
+
+### چرا عناصر معنایی مهم هستند؟
 
 **۱. دسترسی‌پذیری (Accessibility):**
-صفحه‌خوان‌ها و ابزارهای کمکی می‌توانند ساختار صفحه را بهتر درک کنند و برای کاربران نابینا تجربه بهتری فراهم کنند.
+صفحه‌خوان‌ها ساختار صفحه را بهتر درک می‌کنند.
 
 **۲. سئو (SEO):**
-موتورهای جستجو مانند گوگل، ساختار معنایی صفحه را بهتر درک می‌کنند و رتبه بهتری به صفحات معنایی می‌دهند.
+موتورهای جستجو محتوا را بهتر می‌فهمند.
 
 **۳. خوانایی کد:**
-کد HTML معنایی برای توسعه‌دهندگان دیگر قابل فهم‌تر است.
+کد برای توسعه‌دهندگان دیگر قابل فهم‌تر است.
 
-**۴. نگهداری آسان‌تر:**
-ساختار مشخص، تغییرات آینده را ساده‌تر می‌کند.
+### عناصر اصلی
 
-## عناصر معنایی اصلی HTML5
+**header:**
+سربرگ صفحه یا بخش. معمولاً شامل لوگو، عنوان و navigation.
 
-### ساختار کلی صفحه:
+**nav:**
+بخش ناوبری. لینک‌های اصلی سایت.
 
-- \`<header>\` - سربرگ صفحه یا بخش. معمولاً شامل لوگو، عنوان و navigation
-- \`<nav>\` - بخش ناوبری. لینک‌های اصلی سایت
-- \`<main>\` - محتوای اصلی صفحه. فقط یکبار در هر صفحه
-- \`<article>\` - محتوای مستقل و کامل مثل یک پست بلاگ
-- \`<section>\` - بخش‌بندی موضوعی محتوا
-- \`<aside>\` - محتوای جانبی مثل sidebar
-- \`<footer>\` - پاورقی صفحه یا بخش
-- \`<figure>\` - محتوای تصویری با caption
-- \`<figcaption>\` - توضیح تصویر
-- \`<details>\` - محتوای قابل باز/بسته شدن
-- \`<summary>\` - عنوان بخش details
-- \`<mark>\` - متن هایلایت شده
-- \`<time>\` - تاریخ و زمان
-- \`<address>\` - اطلاعات تماس
+**main:**
+محتوای اصلی صفحه. فقط یکبار در هر صفحه.
 
-### تفاوت article و section:
+**article:**
+محتوای مستقل و کامل مثل یک پست بلاگ.
 
-- **article**: محتوایی که به تنهایی معنادار است و می‌تواند مستقل توزیع شود (مثل یک پست بلاگ، یک کامنت، یک محصول)
-- **section**: بخش‌بندی موضوعی محتوا که معمولاً یک عنوان دارد
+**section:**
+بخش‌بندی موضوعی محتوا.
 
-### تفاوت div و section:
+**aside:**
+محتوای جانبی مثل sidebar.
 
-- **div**: بدون معنای خاص، فقط برای grouping و استایل‌دهی
-- **section**: بخش معنادار از محتوا با موضوع مشخص`,
-        code: `<!DOCTYPE html>
+**footer:**
+پاورقی صفحه یا بخش.
+
+### تفاوت‌های مهم
+
+**article vs section:**
+- article: محتوایی که به تنهایی معنادار است
+- section: بخش‌بندی موضوعی با عنوان
+
+**div vs section:**
+- div: بدون معنای خاص
+- section: بخش معنادار با موضوع مشخص`,
+            code: `<!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>وبلاگ تکنولوژی</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            line-height: 1.8;
+            color: #334155;
+        }
+        header {
+            background: #1e293b;
+            color: white;
+            padding: 20px;
+        }
+        header h1 { font-size: 24px; margin-bottom: 10px; }
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+        }
+        nav a {
+            color: #cbd5e1;
+            text-decoration: none;
+        }
+        nav a:hover { color: white; }
+        
+        .layout {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+        
+        main article {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        main article h2 {
+            color: #4f46e5;
+            margin-bottom: 15px;
+        }
+        main article .meta {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        
+        aside {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 12px;
+            height: fit-content;
+        }
+        aside h3 {
+            color: #1e293b;
+            margin-bottom: 15px;
+        }
+        aside ul {
+            list-style: none;
+        }
+        aside li {
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        footer {
+            background: #1e293b;
+            color: #94a3b8;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+        }
+    </style>
 </head>
 <body>
     <header>
-        <div class="logo">
-            <img src="logo.svg" alt="لوگو وبلاگ">
-            <h1>وبلاگ تکنولوژی</h1>
-        </div>
+        <h1>وبلاگ تکنولوژی</h1>
         <nav aria-label="ناوبری اصلی">
             <ul>
-                <li><a href="/" aria-current="page">خانه</a></li>
+                <li><a href="/">خانه</a></li>
                 <li><a href="/articles">مقالات</a></li>
                 <li><a href="/tutorials">آموزش‌ها</a></li>
                 <li><a href="/about">درباره ما</a></li>
             </ul>
         </nav>
     </header>
-
-    <main>
-        <!-- بخش معرفی -->
-        <section aria-labelledby="intro-heading">
-            <h2 id="intro-heading">آخرین مقالات</h2>
-            <p>جدیدترین مطالب دنیای تکنولوژی</p>
-        </section>
-
-        <!-- لیست مقالات -->
-        <section aria-labelledby="articles-heading">
-            <h2 id="articles-heading" class="sr-only">مقالات</h2>
-
+    
+    <div class="layout">
+        <main>
             <article>
                 <header>
-                    <figure>
-                        <img src="react-article.jpg" 
-                             alt="تصویر مقاله React 19">
-                        <figcaption>نسخه جدید React</figcaption>
-                    </figure>
-                    <h3>
-                        <a href="/articles/react-19">
-                            معرفی React 19 و قابلیت‌های جدید
-                        </a>
-                    </h3>
+                    <h2>معرفی React 19</h2>
                     <div class="meta">
                         <time datetime="2024-03-15">۲۵ اسفند ۱۴۰۲</time>
-                        <address>
-                            نوشته <a href="/author/ali">علی محمدی</a>
-                        </address>
+                        | نوشته <a href="/author/ali">علی محمدی</a>
                     </div>
                 </header>
-
-                <div class="excerpt">
-                    <p>
-                        React 19 با قابلیت‌های جدیدی مانند Server Components،
-                        Actions و بهبودهای عملکردی منتشر شده است...
-                    </p>
-                </div>
-
-                <footer>
-                    <ul class="tags">
-                        <li><a href="/tag/react">React</a></li>
-                        <li><a href="/tag/javascript">JavaScript</a></li>
+                
+                <p>React 19 با قابلیت‌های جدیدی مانند Server Components و Actions منتشر شده است...</p>
+                
+                <section>
+                    <h3>ویژگی‌های جدید</h3>
+                    <ul>
+                        <li>Server Components</li>
+                        <li>Actions</li>
+                        <li>بهبود عملکرد</li>
                     </ul>
+                </section>
+                
+                <footer>
+                    <p>برچسب‌ها: 
+                        <a href="/tag/react">React</a>,
+                        <a href="/tag/javascript">JavaScript</a>
+                    </p>
                 </footer>
             </article>
-
+            
             <article>
                 <header>
-                    <h3>
-                        <a href="/articles/css-container">
-                            CSS Container Queries revolution
-                        </a>
-                    </h3>
-                    <time datetime="2024-03-14">۲۴ اسفند ۱۴۰۲</time>
+                    <h2>CSS Container Queries</h2>
+                    <div class="meta">
+                        <time datetime="2024-03-14">۲۴ اسفند ۱۴۰۲</time>
+                    </div>
                 </header>
                 <p>Container Queries بازی را عوض کردند...</p>
             </article>
-        </section>
-    </main>
-
-    <aside aria-label="سایدبار">
-        <section>
-            <h2>دسته‌بندی‌ها</h2>
-            <nav aria-label="دسته‌بندی مقالات">
+        </main>
+        
+        <aside>
+            <section>
+                <h3>دسته‌بندی‌ها</h3>
+                <nav aria-label="دسته‌بندی مقالات">
+                    <ul>
+                        <li><a href="/cat/frontend">فرانت‌اند (۲۵)</a></li>
+                        <li><a href="/cat/backend">بک‌اند (۱۸)</a></li>
+                        <li><a href="/cat/devops">DevOps (۱۲)</a></li>
+                    </ul>
+                </nav>
+            </section>
+            
+            <section>
+                <h3>مقالات محبوب</h3>
                 <ul>
-                    <li><a href="/cat/frontend">فرانت‌اند (۲۵)</a></li>
-                    <li><a href="/cat/backend">بک‌اند (۱۸)</a></li>
-                    <li><a href="/cat/devops">DevOps (۱۲)</a></li>
+                    <li><a href="/popular/1">آموزش Flexbox</a></li>
+                    <li><a href="/popular/2">راهنمای Git</a></li>
                 </ul>
-            </nav>
-        </section>
-
-        <section>
-            <h2>خبرنامه</h2>
-            <form>
-                <label for="newsletter-email">ایمیل شما:</label>
-                <input type="email" id="newsletter-email" 
-                       placeholder="example@mail.com" required>
-                <button type="submit">عضویت</button>
-            </form>
-        </section>
-    </aside>
-
+            </section>
+        </aside>
+    </div>
+    
     <footer>
         <nav aria-label="ناوبری فوتر">
-            <ul>
+            <ul style="display: flex; justify-content: center; gap: 20px; list-style: none; margin-bottom: 10px;">
                 <li><a href="/privacy">حریم خصوصی</a></li>
                 <li><a href="/terms">قوانین</a></li>
-                <li><a href="/sitemap">نقشه سایت</a></li>
+                <li><a href="/contact">تماس</a></li>
             </ul>
         </nav>
         <p>&copy; ۱۴۰۳ وبلاگ تکنولوژی</p>
     </footer>
 </body>
 </html>`,
-        language: "html",
-        tips: [
-          "فقط یک <main> در هر صفحه داشته باشید",
-          "از aria-label برای توضیح نقش عناصر ناوبری استفاده کنید",
-          "هر <article> باید به تنهایی معنادار باشد",
-          "از <time datetime='...'> برای تاریخ‌ها استفاده کنید"
-        ],
-        warnings: [
-          "از <div> به عنوان جایگزین عناصر معنایی استفاده نکنید",
-          "<h1> تا <h6> را سلسله‌مراتبی استفاده کنید - از h1 به h3 نپرید"
-        ],
-        diagrams: [
-          "header > nav + logo",
-          "main > section* > article* > header + content + footer",
-          "aside > section* > nav/form",
-          "footer > nav + copyright"
-        ],
-        exercises: [
-          {
-            question: "یک صفحه محصول فروشگاهی با ساختار معنایی کامل بسازید. شامل header با navigation، main با اطلاعات محصول (تصویر، عنوان، توضیحات، قیمت، دکمه خرید)، aside با محصولات مرتبط و footer.",
-            answer: `<!DOCTYPE html>
-<html lang="fa" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لپ‌تاپ ایسوس ROG - فروشگاه دیجیتال</title>
-</head>
-<body>
-    <header>
-        <a href="/" class="logo">فروشگاه دیجیتال</a>
-        <nav aria-label="ناوبری اصلی">
-            <ul>
-                <li><a href="/laptops">لپ‌تاپ</a></li>
-                <li><a href="/phones">موبایل</a></li>
-                <li><a href="/accessories">لوازم جانبی</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <main>
-        <nav aria-label="مسیر navigation" class="breadcrumb">
-            <ol>
-                <li><a href="/">خانه</a></li>
-                <li><a href="/laptops">لپ‌تاپ</a></li>
-                <li aria-current="page">ایسوس ROG</li>
-            </ol>
-        </nav>
-
-        <article class="product">
-            <header>
-                <h1>لپ‌تاپ گیمینگ ایسوس ROG Strix G16</h1>
-                <p class="sku">کد محصول: ASUS-ROG-2024</p>
-            </header>
-
-            <figure class="product-gallery">
-                <img src="asus-rog-main.jpg" 
-                     alt="لپ‌تاپ ایسوس ROG Strix G16 - نمای جلو">
-                <figcaption>نمای اصلی محصول</figcaption>
-            </figure>
-
-            <section class="product-info" aria-label="اطلاعات محصول">
-                <h2>مشخصات</h2>
-                <dl>
-                    <dt>پردازنده</dt>
-                    <dd>Intel Core i9-13980HX</dd>
-                    <dt>رم</dt>
-                    <dd>32GB DDR5</dd>
-                    <dt>حافظه</dt>
-                    <dd>1TB NVMe SSD</dd>
-                    <dt>گرافیک</dt>
-                    <dd>NVIDIA RTX 4070 8GB</dd>
-                </dl>
-
-                <section class="description">
-                    <h2>توضیحات</h2>
-                    <p>لپ‌تاپ گیمینگ ایسوس ROG Strix G16 با پردازنده نسل ۱۳ اینتل...</p>
-                </section>
-
-                <section class="pricing">
-                    <p class="price">۸۵,۰۰۰,۰۰۰ تومان</p>
-                    <p class="original-price"><s>۹۲,۰۰۰,۰۰۰</s></p>
-                    <form>
-                        <label for="quantity">تعداد:</label>
-                        <input type="number" id="quantity" 
-                               value="1" min="1" max="5">
-                        <button type="submit">افزودن به سبد خرید</button>
-                    </form>
-                </section>
-            </section>
-
-            <section class="reviews" aria-label="نظرات کاربران">
-                <h2>نظرات کاربران</h2>
-                <article class="review">
-                    <header>
-                        <h3>عالی برای گیمینگ</h3>
-                        <time datetime="2024-03-10">۲۰ اسفند ۱۴۰۲</time>
-                    </header>
-                    <p>کیفیت ساخت و عملکرد فوق‌العاده...</p>
-                    <footer>
-                        <address>توسط محمد رضایی</address>
-                    </footer>
-                </article>
-            </section>
-        </article>
-    </main>
-
-    <aside aria-label="محصولات مرتبط">
-        <section>
-            <h2>محصولات مشابه</h2>
-            <ul>
-                <li>
-                    <article>
-                        <a href="/product/msi-raider">
-                            <img src="msi.jpg" alt="MSI Raider">
-                            <h3>MSI Raider GE78</h3>
-                            <p>۹۲,۰۰۰,۰۰۰ تومان</p>
-                        </a>
-                    </article>
-                </li>
-            </ul>
-        </section>
-    </aside>
-
-    <footer>
-        <address>
-            <p>تهران، خیابان ولیعصر</p>
-            <p>تلفن: <a href="tel:02112345678">۰۲۱-۱۲۳۴۵۶۷۸</a></p>
-            <p>ایمیل: <a href="mailto:info@digishop.ir">info@digishop.ir</a></p>
-        </address>
-        <p>&copy; ۱۴۰۳ فروشگاه دیجیتال</p>
-    </footer>
-</body>
-</html>`
+            language: "html",
+            tips: [
+              "فقط یک <main> در هر صفحه داشته باشید",
+              "هر <article> باید به تنهایی معنادار باشد",
+              "از aria-label برای توضیح نقش عناصر استفاده کنید"
+            ]
           }
         ]
       },
       {
-        id: "html-forms",
-        title: "فرم‌ها و اعتبارسنجی",
-        subtitle: "ساخت فرم‌های حرفه‌ای و قابل دسترس",
-        estimatedTime: 35,
-        difficulty: "متوسط",
-        content: `## اهمیت فرم‌ها در وب
+        id: "ch3-forms",
+        title: "فصل ۳: فرم‌ها و اعتبارسنجی",
+        description: "ساخت فرم‌های حرفه‌ای و قابل دسترس",
+        lessons: [
+          {
+            id: "l3-1",
+            title: "مبانی فرم‌ها",
+            subtitle: "عناصر input و انواع مختلف آن‌ها",
+            estimatedTime: 35,
+            difficulty: "متوسط",
+            content: `## فرم‌ها در HTML
 
-فرم‌ها اصلی‌ترین روش تعامل کاربر با وب‌سایت هستند. از فرم ورود و ثبت‌نام گرفته تا جستجو، پرداخت و ارسال نظر، همه از فرم‌ها استفاده می‌کنند.
+فرم‌ها اصلی‌ترین روش تعامل کاربر با وب‌سایت هستند.
 
-## عناصر اصلی فرم
+### تگ form
 
-### تگ form:
+\`<form>\` ظرف تمام عناصر فرم است.
 
-تگ \`<form>\` ظرف تمام عناصر فرم است. دو attribute مهم دارد:
-- **action**: آدرسی که داده‌ها به آن ارسال می‌شوند
-- **method**: روش ارسال (GET یا POST)
+**Attribute‌های مهم:**
+- \`action\`: آدرس ارسال داده
+- \`method\`: GET یا POST
+- \`enctype\`: نوع encoding برای فایل
+- \`novalidate\`: غیرفعال کردن validation مرورگر
 
-### انواع input:
+### انواع input
 
 HTML5 انواع مختلف input ارائه می‌دهد:
 
-| نوع | کاربرد | ویژگی |
-|-----|--------|-------|
-| text | متن ساده | maxlength, pattern |
-| email | ایمیل | validation خودکار |
-| password | رمز عبور | autocomplete |
-| number | عدد | min, max, step |
-| tel | تلفن | pattern |
-| url | آدرس وب | validation URL |
-| date | تاریخ | date picker |
-| time | زمان | time picker |
-| range | بازه عددی | slider |
-| color | انتخاب رنگ | color picker |
-| file | آپلود فایل | accept, multiple |
-| checkbox | انتخاب چندتایی | checked |
-| radio | انتخاب یکی | name مشترک |
+- \`text\`: متن ساده
+- \`email\`: ایمیل (با validation)
+- \`password\`: رمز عبور
+- \`number\`: عدد
+- \`tel\`: تلفن
+- \`url\`: آدرس وب
+- \`date\`: تاریخ
+- \`time\`: زمان
+- \`range\`: بازه عددی
+- \`color\`: انتخاب رنگ
+- \`file\`: آپلود فایل
+- \`checkbox\`: انتخاب چندتایی
+- \`radio\`: انتخاب یکی
+- \`hidden\`: مخفی
 
-### label و ارتباط با input:
+### label
 
-هر input باید یک label مرتبط داشته باشد. این کار به دو روش انجام می‌شود:
-1. **for/id**: مقدار for در label با id در input یکسان باشد
-2. **wrapping**: input داخل label قرار گیرد
+هر input باید label داشته باشد:
 
-### fieldset و legend:
+\`\`\`html
+<label for="email">ایمیل:</label>
+<input type="email" id="email" name="email">
+\`\`\`
 
-برای گروه‌بندی عناصر مرتبط از fieldset و legend استفاده می‌شود. این کار دسترسی‌پذیری را بهبود می‌دهد.
+### fieldset و legend
 
-## اعتبارسنجی (Validation)
+برای گروه‌بندی عناصر مرتبط:
 
-### اعتبارسنجی HTML5:
-
-- **required**: فیلد اجباری
-- **minlength/maxlength**: حداقل/حداکثر طول
-- **min/max**: حداقل/حداکثر مقدار عددی
-- **pattern**: الگوی regex
-- **type**: نوع داده (email, url, number)
-- **step**: گام‌های مجاز
-
-### اعتبارسنجی سفارشی:
-
-با attribute‌های زیر می‌توانید پیام خطای سفارشی نمایش دهید:
-- \`pattern\`: الگوی معتبر
-- \`title\`: توضیح الگو
-- \`oninvalid\`: رویداد نامعتبر بودن`,
-        code: `<!DOCTYPE html>
+\`\`\`html
+<fieldset>
+    <legend>اطلاعات شخصی</legend>
+    <label>نام: <input type="text"></label>
+    <label>سن: <input type="number"></label>
+</fieldset>
+\`\`\``,
+            code: `<!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>فرم ثبت‌نام</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * { box-sizing: border-box; }
         body {
             font-family: 'Vazirmatn', sans-serif;
-            background: linear-gradient(135deg, #0f172a, #1e293b);
+            background: linear-gradient(135deg, #667eea, #764ba2);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -590,87 +858,71 @@ HTML5 انواع مختلف input ارائه می‌دهد:
             padding: 20px;
         }
         .form-container {
-            background: rgba(30, 41, 59, 0.8);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(148, 163, 184, 0.1);
-            border-radius: 20px;
+            background: white;
             padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             max-width: 500px;
             width: 100%;
         }
-        h1 { color: #e2e8f0; margin-bottom: 8px; font-size: 24px; }
-        .subtitle { color: #94a3b8; margin-bottom: 32px; }
+        h1 { color: #4f46e5; margin-bottom: 8px; }
+        .subtitle { color: #64748b; margin-bottom: 30px; }
         .form-group { margin-bottom: 20px; }
         label {
             display: block;
-            color: #cbd5e1;
+            color: #334155;
             margin-bottom: 6px;
-            font-size: 14px;
             font-weight: 500;
         }
         .required { color: #ef4444; }
         input, select, textarea {
             width: 100%;
-            padding: 12px 16px;
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid #334155;
-            border-radius: 10px;
-            color: #e2e8f0;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
             font-size: 14px;
             transition: border-color 0.2s;
         }
         input:focus, select:focus, textarea:focus {
             outline: none;
-            border-color: #6366f1;
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+            border-color: #4f46e5;
         }
-        input:invalid:not(:placeholder-shown) {
-            border-color: #ef4444;
-        }
-        input:valid:not(:placeholder-shown) {
-            border-color: #10b981;
-        }
-        .hint { font-size: 12px; color: #64748b; margin-top: 4px; }
-        .error { font-size: 12px; color: #ef4444; margin-top: 4px; }
         fieldset {
-            border: 1px solid #334155;
-            border-radius: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
             padding: 16px;
             margin-bottom: 20px;
         }
         legend {
-            color: #cbd5e1;
+            color: #334155;
             font-weight: 500;
             padding: 0 8px;
         }
-        .radio-group, .checkbox-group {
+        .radio-group {
             display: flex;
-            gap: 16px;
-            flex-wrap: wrap;
-            margin-top: 8px;
+            gap: 20px;
+            margin-top: 10px;
         }
-        .radio-label, .checkbox-label {
+        .radio-label {
             display: flex;
             align-items: center;
-            gap: 8px;
-            color: #94a3b8;
+            gap: 6px;
             cursor: pointer;
         }
-        button[type="submit"] {
+        button {
             width: 100%;
             padding: 14px;
-            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
             border: none;
-            border-radius: 10px;
+            border-radius: 8px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: transform 0.2s;
         }
-        button[type="submit"]:hover {
+        button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
         }
     </style>
 </head>
@@ -678,77 +930,38 @@ HTML5 انواع مختلف input ارائه می‌دهد:
     <div class="form-container">
         <h1>ایجاد حساب کاربری</h1>
         <p class="subtitle">لطفاً اطلاعات خود را وارد کنید</p>
-
-        <form action="/api/register" method="POST" novalidate>
-            <!-- نام و نام خانوادگی -->
+        
+        <form action="/register" method="POST">
             <div class="form-group">
-                <label for="fullname">
+                <label for="name">
                     نام و نام خانوادگی <span class="required">*</span>
                 </label>
-                <input 
-                    type="text" 
-                    id="fullname" 
-                    name="fullname"
-                    placeholder="مثال: علی محمدی"
-                    required
-                    minlength="3"
-                    maxlength="50"
-                    pattern="[\\p{L}\\s]{3,50}"
-                    title="حداقل ۳ کاراکتر، فقط حروف"
-                    autocomplete="name"
-                >
-                <p class="hint">حداقل ۳ کاراکتر</p>
+                <input type="text" id="name" name="name" 
+                       placeholder="مثال: علی محمدی" required>
             </div>
-
-            <!-- ایمیل -->
+            
             <div class="form-group">
                 <label for="email">
                     ایمیل <span class="required">*</span>
                 </label>
-                <input 
-                    type="email" 
-                    id="email" 
-                    name="email"
-                    placeholder="example@mail.com"
-                    required
-                    autocomplete="email"
-                >
+                <input type="email" id="email" name="email" 
+                       placeholder="example@mail.com" required>
             </div>
-
-            <!-- رمز عبور -->
+            
             <div class="form-group">
                 <label for="password">
                     رمز عبور <span class="required">*</span>
                 </label>
-                <input 
-                    type="password" 
-                    id="password" 
-                    name="password"
-                    placeholder="حداقل ۸ کاراکتر"
-                    required
-                    minlength="8"
-                    pattern="(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
-                    title="حداقل یک عدد، یک حرف بزرگ و یک حرف کوچک"
-                    autocomplete="new-password"
-                >
-                <p class="hint">حداقل ۸ کاراکتر شامل عدد و حرف بزرگ و کوچک</p>
+                <input type="password" id="password" name="password" 
+                       placeholder="حداقل ۸ کاراکتر" required minlength="8">
             </div>
-
-            <!-- شماره تلفن -->
+            
             <div class="form-group">
                 <label for="phone">شماره تلفن</label>
-                <input 
-                    type="tel" 
-                    id="phone" 
-                    name="phone"
-                    placeholder="۰۹۱۲۳۴۵۶۷۸۹"
-                    pattern="09[0-9]{9}"
-                    title="شماره موبایل ۱۱ رقمی"
-                    autocomplete="tel"
-                >
+                <input type="tel" id="phone" name="phone" 
+                       placeholder="۰۹۱۲۳۴۵۶۷۸۹" pattern="09[0-9]{9}">
             </div>
-
-            <!-- جنسیت -->
+            
             <fieldset>
                 <legend>جنسیت</legend>
                 <div class="radio-group">
@@ -760,332 +973,175 @@ HTML5 انواع مختلف input ارائه می‌دهد:
                         <input type="radio" name="gender" value="female">
                         زن
                     </label>
-                    <label class="radio-label">
-                        <input type="radio" name="gender" value="other">
-                        ترجیح نمی‌دهم بگویم
-                    </label>
                 </div>
             </fieldset>
-
-            <!-- سطح برنامه‌نویسی -->
-            <div class="form-group">
-                <label for="level">سطح برنامه‌نویسی</label>
-                <select id="level" name="level">
-                    <option value="">انتخاب کنید...</option>
-                    <option value="beginner">مبتدی</option>
-                    <option value="intermediate">متوسط</option>
-                    <option value="advanced">پیشرفته</option>
-                    <option value="expert">حرفه‌ای</option>
-                </select>
-            </div>
-
-            <!-- علاقه‌مندی‌ها -->
-            <fieldset>
-                <legend>زمینه‌های مورد علاقه</legend>
-                <div class="checkbox-group">
-                    <label class="checkbox-label">
-                        <input type="checkbox" name="interests" value="frontend">
-                        فرانت‌اند
-                    </label>
-                    <label class="checkbox-label">
-                        <input type="checkbox" name="interests" value="backend">
-                        بک‌اند
-                    </label>
-                    <label class="checkbox-label">
-                        <input type="checkbox" name="interests" value="mobile">
-                        موبایل
-                    </label>
-                    <label class="checkbox-label">
-                        <input type="checkbox" name="interests" value="devops">
-                        DevOps
-                    </label>
-                </div>
-            </fieldset>
-
-            <!-- بیوگرافی -->
+            
             <div class="form-group">
                 <label for="bio">بیوگرافی</label>
-                <textarea 
-                    id="bio" 
-                    name="bio"
-                    rows="4"
-                    maxlength="500"
-                    placeholder="درباره خودتان بنویسید..."
-                ></textarea>
-                <p class="hint">حداکثر ۵۰۰ کاراکتر</p>
+                <textarea id="bio" name="bio" rows="4" 
+                          placeholder="درباره خودتان بنویسید..."></textarea>
             </div>
-
-            <!-- قوانین -->
-            <div class="form-group">
-                <label class="checkbox-label">
-                    <input type="checkbox" name="terms" required>
-                    <span>قوانین و مقررات را می‌پذیرم <span class="required">*</span></span>
-                </label>
-            </div>
-
-            <button type="submit">ایجاد حساب کاربری</button>
+            
+            <button type="submit">ایجاد حساب</button>
         </form>
     </div>
 </body>
 </html>`,
-        language: "html",
-        tips: [
-          "همیشه label را با for/id به input متصل کنید",
-          "از autocomplete attributes برای تجربه کاربری بهتر استفاده کنید",
-          "اعتبارسنجی سمت سرور ضروری است - سمت کلاینت کافی نیست",
-          "از fieldset و legend برای گروه‌بندی عناصر مرتبط استفاده کنید"
-        ],
-        warnings: [
-          "هرگز رمز عبور را با GET ارسال نکنید",
-          "فیلدهای حساس را با autocomplete='off' محافظت کنید",
-          "pattern regex را تست کنید - ممکن است در مرورگرهای مختلف متفاوت عمل کند"
-        ],
-        exercises: [
-          {
-            question: "یک فرم سفارش غذا بسازید با فیلدهای: نام مشتری، آدرس، شماره تلفن، انتخاب غذا (radio buttons)، تعداد (number input)، توضیحات اضافی (textarea)، و دکمه ارسال. همه فیلدهای ضروری را validate کنید.",
-            answer: `<form action="/order" method="POST">
-    <fieldset>
-        <legend>اطلاعات مشتری</legend>
-        
-        <div class="form-group">
-            <label for="customer-name">نام <span class="required">*</span></label>
-            <input type="text" id="customer-name" name="name" 
-                   required minlength="2" autocomplete="name">
-        </div>
-
-        <div class="form-group">
-            <label for="phone">تلفن <span class="required">*</span></label>
-            <input type="tel" id="phone" name="phone" 
-                   required pattern="09[0-9]{9}" 
-                   title="شماره ۱۱ رقمی موبایل"
-                   autocomplete="tel">
-        </div>
-
-        <div class="form-group">
-            <label for="address">آدرس <span class="required">*</span></label>
-            <textarea id="address" name="address" rows="3" 
-                      required minlength="10"></textarea>
-        </div>
-    </fieldset>
-
-    <fieldset>
-        <legend>انتخاب غذا</legend>
-        
-        <div class="radio-group">
-            <label><input type="radio" name="food" value="pizza" required> پیتزا</label>
-            <label><input type="radio" name="food" value="burger"> برگر</label>
-            <label><input type="radio" name="food" value="salad"> سالاد</label>
-            <label><input type="radio" name="food" value="pasta"> پاستا</label>
-        </div>
-
-        <div class="form-group">
-            <label for="quantity">تعداد</label>
-            <input type="number" id="quantity" name="quantity" 
-                   min="1" max="10" value="1">
-        </div>
-    </fieldset>
-
-    <div class="form-group">
-        <label for="notes">توضیحات اضافی</label>
-        <textarea id="notes" name="notes" rows="2" 
-                  maxlength="200" 
-                  placeholder="مثلاً: بدون پیاز"></textarea>
-    </div>
-
-    <button type="submit">ثبت سفارش</button>
-</form>`
+            language: "html",
+            tips: [
+              "همیشه label را با for/id به input متصل کنید",
+              "از autocomplete برای تجربه کاربری بهتر استفاده کنید",
+              "اعتبارسنجی سمت سرور ضروری است"
+            ]
           }
         ]
-      }
-    ]
-  },
-  {
-    id: "css-mastery",
-    title: "CSS پیشرفته و مدرن",
-    subtitle: "استایل‌دهی حرفه‌ای صفحات وب",
-    description: "تسلط کامل بر CSS3 شامل Flexbox، Grid، انیمیشن‌ها، متغیرها، و تکنیک‌های پیشرفته طراحی واکنش‌گرا",
-    color: "from-blue-500 to-cyan-500",
-    iconBg: "bg-blue-500/10",
-    totalHours: 30,
-    prerequisites: ["تسلط بر HTML5"],
-    outcomes: [
-      "تسلط کامل بر Flexbox و Grid",
-      "ساخت صفحات کاملاً ریسپانسیو",
-      "ایجاد انیمیشن‌ها و transitions حرفه‌ای",
-      "استفاده از CSS Variables و Custom Properties",
-      "آشنایی با CSS Architecture (BEM, ITCSS)"
-    ],
-    lessons: [
+      },
       {
-        id: "css-selectors",
-        title: "انتخابگرها و خاصیت‌ها",
-        subtitle: "CSS Selectors از مبتدی تا پیشرفته",
-        estimatedTime: 30,
-        difficulty: "مبتدی",
-        content: `## انتخابگرها (Selectors) در CSS
+        id: "ch4-css-basics",
+        title: "فصل ۴: مبانی CSS",
+        description: "انتخابگرها، خاصیت‌ها و مدل جعبه‌ای",
+        lessons: [
+          {
+            id: "l4-1",
+            title: "مقدمه‌ای بر CSS",
+            subtitle: "CSS چیست و چگونه کار می‌کند؟",
+            estimatedTime: 25,
+            difficulty: "مبتدی",
+            content: `## CSS چیست؟
 
-انتخابگرها مشخص می‌کنند کدام عناصر HTML تحت تأثیر استایل‌ها قرار بگیرند. شناخت کامل انتخابگرها برای نوشتن CSS کارآمد ضروری است.
+CSS (Cascading Style Sheets) زبان استایل‌دهی برای اسناد HTML است. CSS ظاهر و چیدمان صفحات وب را کنترل می‌کند.
 
-## دسته‌بندی انتخابگرها
+## روش‌های اعمال CSS
 
-### ۱. انتخابگرهای پایه:
+**۱. Inline Style:**
+\`\`\`html
+<p style="color: blue;">متن آبی</p>
+\`\`\`
 
-- **Universal Selector** (\`*\`): همه عناصر
-- **Type Selector** (\`p\`, \`h1\`): عناصر بر اساس نوع تگ
-- **Class Selector** (\`.classname\`): عناصر با کلاس مشخص
-- **ID Selector** (\`#idname\`): عنصر با ID مشخص
-- **Attribute Selector** (\`[attr]\`): عناصر با attribute مشخص
+**۲. Internal Style:**
+\`\`\`html
+<style>
+    p { color: blue; }
+</style>
+\`\`\`
 
-### ۲. Combinator‌ها:
+**۳. External Style (توصیه شده):**
+\`\`\`html
+<link rel="stylesheet" href="styles.css">
+\`\`\`
 
-- **Descendant** (\`A B\`): B داخل A (هر عمقی)
-- **Child** (\`A > B\`): B فرزند مستقیم A
-- **Adjacent Sibling** (\`A + B\`): B بلافاصله بعد از A
-- **General Sibling** (\`A ~ B\`): B بعد از A (هم‌سطح)
+## انتخابگرها (Selectors)
 
-### ۳. Pseudo-classes:
+**۱. انتخابگر نوع:**
+\`\`\`css
+p { color: blue; }
+\`\`\`
 
-- \`:hover\` - وقتی موس روی عنصر است
-- \`:focus\` - وقتی عنصر فوکوس دارد
-- \`:active\` - وقتی عنصر فعال است (کلیک شده)
-- \`:first-child\` - اولین فرزند
-- \`:last-child\` - آخرین فرزند
-- \`:nth-child(n)\` - فرزند nام
-- \`:not(selector)\` - همه به جز selector
-- \`:is()\` - هر کدام از selector‌ها
-- \`:where()\` - مثل :is ولی specificity صفر
-- \`:has()\` - والدی که فرزند مشخص دارد
+**۲. انتخابگر کلاس:**
+\`\`\`css
+.highlight { background: yellow; }
+\`\`\`
 
-### ۴. Pseudo-elements:
+**۳. انتخابگر ID:**
+\`\`\`css
+#header { height: 60px; }
+\`\`\`
 
-- \`::before\` - محتوای قبل از عنصر
-- \`::after\` - محتوای بعد از عنصر
-- \`::first-line\` - اولین خط متن
-- \`::first-letter\` - اولین حرف
-- \`::selection\` - متن انتخاب شده
-- \`::placeholder\` - placeholder input
+**۴. انتخابگر Attribute:**
+\`\`\`css
+input[type="email"] { border: 1px solid blue; }
+\`\`\`
 
 ## Specificity (اولویت)
 
-وقتی چند قانون CSS به یک عنصر اعمال شوند، بر اساس specificity تصمیم‌گیری می‌شود:
+وقتی چند قانون به یک عنصر اعمال شوند:
+1. Inline style: 1000
+2. ID: 100
+3. Class/Attribute: 10
+4. Type: 1
 
-| نوع | Specificity | مثال |
-|-----|-------------|------|
-| Inline style | 1,0,0,0 | style="..." |
-| ID | 0,1,0,0 | #header |
-| Class/Attribute/Pseudo-class | 0,0,1,0 | .nav, :hover |
-| Type/Pseudo-element | 0,0,0,1 | div, ::before |
-| Universal | 0,0,0,0 | * |
+## مدل جعبه‌ای (Box Model)
 
-## Specificity Calculation
+هر عنصر HTML یک جعبه است شامل:
+- Content: محتوای عنصر
+- Padding: فاصله داخلی
+- Border: حاشیه
+- Margin: فاصله خارجی
 
-\`div.container > ul li.active a:hover\`
+\`\`\`css
+.box {
+    width: 200px;
+    padding: 20px;
+    border: 2px solid black;
+    margin: 10px;
+}
+\`\`\`
 
-- div: 0,0,0,1
-- .container: 0,0,1,0
-- ul: 0,0,0,1
-- li: 0,0,0,1
-- .active: 0,0,1,0
-- a: 0,0,0,1
-- :hover: 0,0,1,0
+با \`box-sizing: border-box\`، padding و border در width محاسبه می‌شوند.`,
+            code: `/* ===== روش‌های اعمال CSS ===== */
 
-مجموع: 0,1,3,3
+/* External CSS (styles.css) */
 
-## Inheritance (وراثت)
-
-برخی خاصیت‌ها از والد به فرزند ارث‌بری می‌شوند:
-- **ارث‌بری می‌شوند**: color, font-*, text-*, line-height, visibility
-- **ارثبری نمی‌شوند**: margin, padding, border, background, display
-
-می‌توانید با \`inherit\`, \`initial\`, \`unset\` و \`revert\` وراثت را کنترل کنید.`,
-        code: `/* ===== انتخابگرهای پایه ===== */
-
-/* Universal */
-* { box-sizing: border-box; }
-
-/* Type */
-p { line-height: 1.8; }
-h1, h2, h3 { font-weight: 700; }
-
-/* Class */
-.card { border-radius: 12px; padding: 24px; }
-.btn-primary { background: #4f46e5; color: white; }
-
-/* ID */
-#main-header { position: sticky; top: 0; }
-
-/* Attribute */
-input[type="email"] { border-color: #3b82f6; }
-a[target="_blank"]::after { content: " ↗"; }
-[data-theme="dark"] { background: #0f172a; }
-
-/* ===== Combinators ===== */
-
-/* Descendant - همه li داخل nav */
-nav li { display: inline-block; }
-
-/* Child - فقط فرزند مستقیم */
-.card > .card-title { font-size: 1.5rem; }
-
-/* Adjacent Sibling - h2 بلافاصله بعد از h1 */
-h1 + h2 { margin-top: 0; }
-
-/* General Sibling - همه p بعد از h2 */
-h2 ~ p { color: #64748b; }
-
-/* ===== Pseudo-classes ===== */
-
-/* State */
-button:hover { transform: translateY(-2px); }
-input:focus { border-color: #4f46e5; outline: none; }
-a:active { transform: scale(0.98); }
-li:first-child { border-top: none; }
-li:last-child { border-bottom: none; }
-tr:nth-child(even) { background: rgba(0,0,0,0.02); }
-li:nth-child(3n) { color: #4f46e5; }
-
-/* Modern Selectors */
-/* :is() - هر کدام match شود */
-:is(h1, h2, h3) + p { margin-top: 0; }
-
-/* :where() - مثل :is ولی بدون specificity */
-:where(.card, .panel, .box) > h2 { font-size: 1.25rem; }
-
-/* :has() - والد دارای فرزند */
-.card:has(img) { padding: 0; }
-form:has(:invalid) .submit-btn { opacity: 0.5; }
-li:has(> a:active) { background: #f0f0f0; }
-
-/* :not() */
-p:not(.lead) { font-size: 1rem; }
-input:not([type="checkbox"]) { width: 100%; }
-
-/* ===== Pseudo-elements ===== */
-
-p::first-letter {
-    font-size: 2em;
-    font-weight: bold;
-    color: #4f46e5;
+/* انتخابگرهای پایه */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
-p::selection {
-    background: #4f46e5;
+body {
+    font-family: 'Vazirmatn', sans-serif;
+    line-height: 1.6;
+    color: #333;
+}
+
+/* انتخابگر کلاس */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* انتخابگر ID */
+#main-header {
+    background: #1e293b;
     color: white;
+    padding: 20px;
 }
 
-input::placeholder {
-    color: #94a3b8;
-    font-style: italic;
+/* انتخابگر ترکیبی */
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
 }
 
-.card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, #4f46e5, #06b6d4);
+/* انتخابگر فرزند */
+.nav > li {
+    display: inline-block;
+}
+
+/* انتخابگر Descendant */
+.article p {
+    margin-bottom: 16px;
+}
+
+/* ===== Box Model ===== */
+
+/* مدل جعبه‌ای پیش‌فرض (content-box) */
+.box-content {
+    width: 200px;
+    padding: 20px;
+    border: 5px solid blue;
+    /* عرض کل: 200 + 40 + 10 = 250px */
+}
+
+/* مدل جعبه‌ای border-box */
+.box-border {
+    width: 200px;
+    padding: 20px;
+    border: 5px solid blue;
+    box-sizing: border-box;
+    /* عرض کل: 200px (padding و border شامل می‌شوند) */
 }
 
 /* ===== Specificity Examples ===== */
@@ -1099,216 +1155,129 @@ p { color: black; }
 /* Specificity: 0,1,0,0 - برنده نهایی */
 #content { color: red; }
 
-/* ===== Inheritance Control ===== */
-.child-element {
-    color: inherit;      /* ارث از والد */
-    margin: initial;     /* مقدار اولیه */
-    padding: unset;      /* اگر ارث‌بری می‌شود: inherit، وگرنه: initial */
-    border: revert;      /* برگشت به user-agent stylesheet */
+/* ===== Units ===== */
+
+.lengths {
+    /* Absolute */
+    width: 200px;
+    
+    /* Relative to parent */
+    width: 50%;
+    
+    /* Relative to font-size */
+    font-size: 1.5em;
+    margin: 2rem;
+    
+    /* Relative to viewport */
+    width: 100vw;
+    height: 100vh;
+    
+    /* Relative to root font-size */
+    font-size: 16px; /* 1rem = 16px */
+    padding: 1.5rem; /* 24px */
 }`,
-        language: "css",
-        tips: [
-          "از :is() و :where() برای ساده‌تر کردن selector‌ها استفاده کنید",
-          ":has() یک parent selector واقعی است - از آن بهره ببرید",
-          "از ID selector کمتر استفاده کنید - specificity خیلی بالایی دارد",
-          "BEM naming convention به مدیریت specificity کمک می‌کند"
-        ],
-        warnings: [
-          "!important را تا حد امکان استفاده نکنید - نشانه کد ضعیف است",
-          "از selector‌های خیلی طولانی پرهیز کنید - نگهداری سخت می‌شود",
-          "Specificity بالاتر همیشه برنده نیست - source order هم مهم است"
-        ],
-        exercises: [
-          {
-            question: "CSS بنویسید که: ۱) تمام لینک‌های خارجی (target='_blank') آیکون فلش کنارشان داشته باشد ۲) سطرهای زوج جدول رنگ پس‌زمینه متفاوت داشته باشند ۳) اولین حرف هر پاراگراف بزرگ و رنگی باشد ۴) کارت‌هایی که تصویر دارند padding متفاوتی داشته باشند.",
-            answer: `/* ۱. لینک‌های خارجی با آیکون */
-a[target="_blank"]::after {
-    content: " ↗";
-    font-size: 0.8em;
-    color: #6366f1;
-    vertical-align: super;
-}
-
-/* ۲. سطرهای زوج جدول */
-table tbody tr:nth-child(even) {
-    background-color: rgba(99, 102, 241, 0.05);
-}
-
-table tbody tr:nth-child(odd) {
-    background-color: transparent;
-}
-
-table tbody tr:hover {
-    background-color: rgba(99, 102, 241, 0.1);
-    transition: background-color 0.2s ease;
-}
-
-/* ۳. اولین حرف هر پاراگراف */
-.article-content p::first-letter {
-    font-size: 3em;
-    font-weight: 700;
-    color: #4f46e5;
-    float: right;
-    line-height: 0.8;
-    margin-left: 8px;
-    margin-top: 4px;
-}
-
-/* ۴. کارت‌های دارای تصویر */
-.card:has(img) {
-    padding: 0;
-    overflow: hidden;
-}
-
-.card:has(img) .card-body {
-    padding: 20px;
-}
-
-.card:has(img) img {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-    display: block;
-}
-
-/* کارت‌های بدون تصویر */
-.card:not(:has(img)) {
-    padding: 24px;
-}`
+            language: "css",
+            tips: [
+              "همیشه از box-sizing: border-box استفاده کنید",
+              "External CSS بهترین روش است",
+              "از ID selector کمتر استفاده کنید"
+            ]
           }
         ]
       },
       {
-        id: "css-flexbox",
-        title: "Flexbox - چیدمان انعطاف‌پذیر",
-        subtitle: "تسلط کامل بر Flexbox",
-        estimatedTime: 40,
-        difficulty: "متوسط",
-        content: `## Flexbox چیست؟
+        id: "ch5-layout",
+        title: "فصل ۵: سیستم‌های چیدمان",
+        description: "Flexbox و Grid برای طراحی حرفه‌ای",
+        lessons: [
+          {
+            id: "l5-1",
+            title: "Flexbox - چیدمان انعطاف‌پذیر",
+            subtitle: "تسلط کامل بر Flexbox",
+            estimatedTime: 40,
+            difficulty: "متوسط",
+            content: `## Flexbox چیست؟
 
-Flexbox (Flexible Box Layout) یک مدل چیدمان یک‌بعدی در CSS3 است که برای طراحی رابط‌های کاربری انعطاف‌پذیر و واکنش‌گرا طراحی شده است. Flexbox کار توزیع فضا و تراز آیتم‌ها در یک کانتینر را بسیار ساده می‌کند.
+Flexbox یک مدل چیدمان یک‌بعدی برای طراحی رابط‌های کاربری انعطاف‌پذیر است.
 
 ## مفاهیم اصلی
 
-### Flex Container و Flex Items:
+**Flex Container:** عنصر والد با \`display: flex\`
 
-- **Flex Container**: عنصر والد که \`display: flex\` دارد
-- **Flex Items**: فرزندان مستقیم container
+**Flex Items:** فرزندان مستقیم container
 
-### محورهای اصلی:
-
-- **Main Axis**: محور اصلی (پیش‌فرض: افقی - چپ به راست)
-- **Cross Axis**: محور عرضی (عمود بر main axis)
-
-جهت main axis با \`flex-direction\` تعیین می‌شود.
+**محورها:**
+- Main Axis: محور اصلی (پیش‌فرض: افقی)
+- Cross Axis: محور عرضی (عمود بر main)
 
 ## خواص Container
 
-### display: flex
-کانتینر را به flex container تبدیل می‌کند.
-
 ### flex-direction
-جهت main axis را مشخص می‌کند:
-- \`row\` (پیش‌فرض): چپ به راست (در RTL راست به چپ)
-- \`row-reverse\`: برعکس row
+جهت main axis:
+- \`row\`: چپ به راست (پیش‌فرض)
+- \`row-reverse\`: راست به چپ
 - \`column\`: بالا به پایین
 - \`column-reverse\`: پایین به بالا
-
-### flex-wrap
-آیا آیتم‌ها به خط بعد بروند:
-- \`nowrap\` (پیش‌فرض): همه در یک خط
-- \`wrap\`: شکستن به خطوط جدید
-- \`wrap-reverse\`: شکستن برعکس
 
 ### justify-content
 تراز در main axis:
 - \`flex-start\`: ابتدا
 - \`flex-end\`: انتها
 - \`center\`: وسط
-- \`space-between\`: فاصله مساوی بین آیتم‌ها
-- \`space-around\`: فاصله مساوی دور آیتم‌ها
+- \`space-between\`: فاصله مساوی بین
+- \`space-around\`: فاصله مساوی دور
 - \`space-evenly\`: فاصله کاملاً مساوی
 
 ### align-items
 تراز در cross axis:
-- \`stretch\` (پیش‌فرض): کشیدن به ارتفاع container
+- \`stretch\`: کشیدن (پیش‌فرض)
 - \`flex-start\`: بالا
 - \`flex-end\`: پایین
 - \`center\`: وسط
-- \`baseline\`: تراز بر اساس baseline متن
+- \`baseline\`: تراز baseline
 
-### align-content
-تراز خطوط متعدد (وقتی wrap فعال است):
-- مقادیر مشابه justify-content
+### flex-wrap
+شکستن خطوط:
+- \`nowrap\`: یک خط (پیش‌فرض)
+- \`wrap\`: شکستن
+- \`wrap-reverse\`: شکستن برعکس
 
 ### gap
-فاصله بین آیتم‌ها (جایگزین margin):
-- \`gap: 20px\` - فاصله یکسان
-- \`gap: 20px 30px\` - row-gap و column-gap
+فاصله بین آیتم‌ها
 
 ## خواص Items
 
-### flex-grow
-میزان رشد آیتم نسبت به بقیه (پیش‌فرض: 0)
-
-### flex-shrink
-میزان انقباض آیتم (پیش‌فرض: 1)
-
-### flex-basis
-اندازه اولیه قبل از توزیع فضای خالی (پیش‌فرض: auto)
-
-### flex (shorthand)
-\`flex: grow shrink basis\` - مثال: \`flex: 1 0 200px\`
+### flex
+\`flex: grow shrink basis\`
 
 ### align-self
-تراز شخصی (override align-items)
+تراز شخصی
 
 ### order
-ترتیب نمایش (پیش‌فرض: 0)`,
-        code: `/* ===== راه‌اندازی Flexbox ===== */
+ترتیب نمایش`,
+            code: `/* ===== Flexbox Basics ===== */
+
 .flex-container {
     display: flex;
-    /* direction: row | row-reverse | column | column-reverse */
-    flex-direction: row;
-    /* wrap: nowrap | wrap | wrap-reverse */
+    flex-direction: row; /* یا column */
     flex-wrap: wrap;
-    /* shorthand */
-    /* flex-flow: row wrap; */
+    gap: 20px;
 }
 
-/* ===== تراز در Main Axis ===== */
+/* ===== Navbar ===== */
 
-/* فاصله مساوی بین آیتم‌ها */
-.nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-/* وسط‌چین کامل */
-.center-everything {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-}
-
-/* ===== Navbar حرفه‌ای ===== */
 .navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 16px 24px;
-    background: rgba(15, 23, 42, 0.95);
-    backdrop-filter: blur(10px);
-    position: sticky;
-    top: 0;
-    z-index: 100;
+    background: #1e293b;
 }
 
 .navbar-logo {
     font-size: 20px;
     font-weight: 700;
+    color: white;
 }
 
 .navbar-menu {
@@ -1326,16 +1295,26 @@ Flexbox (Flexible Box Layout) یک مدل چیدمان یک‌بعدی در CSS3
 }
 
 .navbar-menu a:hover {
-    color: #e2e8f0;
-    background: rgba(255,255,255,0.05);
+    color: white;
+    background: rgba(255,255,255,0.1);
 }
 
-/* ===== Card Grid با Flexbox ===== */
+/* ===== Centering ===== */
+
+/* Perfect Center */
+.center-perfect {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* ===== Card Grid ===== */
+
 .card-grid {
     display: flex;
     flex-wrap: wrap;
     gap: 24px;
-    padding: 24px;
 }
 
 .card-grid .card {
@@ -1344,6 +1323,7 @@ Flexbox (Flexible Box Layout) یک مدل چیدمان یک‌بعدی در CSS3
 }
 
 /* ===== Holy Grail Layout ===== */
+
 .page {
     display: flex;
     flex-direction: column;
@@ -1351,32 +1331,49 @@ Flexbox (Flexible Box Layout) یک مدل چیدمان یک‌بعدی در CSS3
 }
 
 .page-header {
-    flex: 0 0 auto; /* ثابت */
+    flex: 0 0 auto;
 }
 
 .page-body {
     display: flex;
-    flex: 1 1 auto; /* رشد کند */
+    flex: 1;
 }
 
 .page-sidebar {
-    flex: 0 0 250px; /* عرض ثابت */
+    flex: 0 0 250px;
 }
 
 .page-main {
-    flex: 1 1 0%; /* فضای باقیمانده */
-    min-width: 0; /* جلوگیری از overflow */
-}
-
-.page-aside {
-    flex: 0 0 300px;
+    flex: 1;
+    min-width: 0;
 }
 
 .page-footer {
     flex: 0 0 auto;
 }
 
+/* ===== Responsive without Media Query ===== */
+
+.auto-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.auto-grid > * {
+    flex: 1 1 280px;
+}
+
+/* ===== Vertical Stack ===== */
+
+.stack {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
 /* ===== Sticky Footer ===== */
+
 body {
     display: flex;
     flex-direction: column;
@@ -1384,772 +1381,515 @@ body {
 }
 
 main {
-    flex: 1; /* فوتر را به پایین می‌چسباند */
-}
-
-/* ===== Responsive بدون Media Query ===== */
-.auto-cards {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-}
-
-.auto-cards > * {
-    flex: 1 1 280px; /* حداقل 280px، رشد کند */
-    max-width: 100%;
-}
-
-/* ===== Order برای تغییر ترتیب ===== */
-.featured-item {
-    order: -1; /* اول نمایش داده شود */
-}
-
-.last-item {
-    order: 999; /* آخر نمایش داده شود */
-}
-
-/* ===== align-self ===== */
-.special-item {
-    align-self: flex-end; /* بقیه stretch ولی این پایین */
-}
-
-/* ===== Centering Patterns ===== */
-
-/* Perfect Center */
-.perfect-center {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-/* Bottom Center */
-.bottom-center {
-    display: flex;
-    justify-content: center;
-    align-items: flex-end;
-}
-
-/* Space Between with wrapping */
-.tag-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    justify-content: flex-start;
-}
-
-/* Vertical Stack with spacing */
-.stack {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-/* Horizontal scroll */
-.horizontal-scroll {
-    display: flex;
-    overflow-x: auto;
-    gap: 16px;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-}
-
-.horizontal-scroll > * {
-    flex: 0 0 300px;
-    scroll-snap-align: start;
-}`,
-        language: "css",
-        tips: [
-          "flex: 1 1 0% بهتر از flex: 1 است - از مشکلات sizing جلوگیری می‌کند",
-          "gap در Flexbox پشتیبانی می‌شود - نیازی به margin نیست",
-          "min-width: 0 روی flex items برای جلوگیری از overflow ضروری است",
-          "align-content فقط وقتی کار می‌کند که چند خط وجود داشته باشد"
-        ],
-        warnings: [
-          "Flexbox یک‌بعدی است - برای layout دوبعدی از Grid استفاده کنید",
-          "flex-wrap بدون عرض مشخص ممکن است unexpected باشد",
-          "order فقط ترتیب بصری را عوض می‌کند - ترتیب DOM تغییر نمی‌کند"
-        ],
-        exercises: [
-          {
-            question: "یک layout بسازید با navbar بالا، sidebar راست، محتوای اصلی وسط، و فوتر پایین. در موبایل همه زیر هم باشند.",
-            answer: `/* Desktop Layout */
-.layout {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-}
-
-.header {
-    flex: 0 0 64px;
-    background: #1e293b;
-    display: flex;
-    align-items: center;
-    padding: 0 24px;
-}
-
-.body {
-    display: flex;
     flex: 1;
-}
-
-.sidebar {
-    flex: 0 0 260px;
-    background: #0f172a;
-    padding: 24px;
-    border-left: 1px solid #334155;
-}
-
-.main-content {
-    flex: 1 1 0%;
-    padding: 32px;
-    min-width: 0;
-}
-
-.footer {
-    flex: 0 0 auto;
-    background: #1e293b;
-    padding: 24px;
-    text-align: center;
-    border-top: 1px solid #334155;
-}
-
-/* Tablet - بدون sidebar */
-@media (max-width: 1024px) {
-    .sidebar {
-        flex: 0 0 200px;
-    }
-}
-
-/* Mobile - همه زیر هم */
-@media (max-width: 768px) {
-    .body {
-        flex-direction: column;
-    }
-    
-    .sidebar {
-        flex: 0 0 auto;
-        border-left: none;
-        border-bottom: 1px solid #334155;
-    }
-    
-    .main-content {
-        padding: 16px;
-    }
-}`
+}`,
+            language: "css",
+            tips: [
+              "flex: 1 1 0% بهتر از flex: 1 است",
+              "gap در Flexbox پشتیبانی می‌شود",
+              "min-width: 0 برای جلوگیری از overflow"
+            ]
           }
         ]
       },
       {
-        id: "css-grid",
-        title: "CSS Grid - چیدمان شبکه‌ای",
-        subtitle: "قدرتمندترین سیستم layout CSS",
-        estimatedTime: 45,
-        difficulty: "متوسط",
-        content: `## CSS Grid چیست؟
+        id: "ch6-responsive",
+        title: "فصل ۶: طراحی ریسپانسیو",
+        description: "ساخت صفحات واکنش‌گرا برای همه دستگاه‌ها",
+        lessons: [
+          {
+            id: "l6-1",
+            title: "Media Queries و Breakpoints",
+            subtitle: "سازگاری با اندازه‌های مختلف صفحه",
+            estimatedTime: 30,
+            difficulty: "متوسط",
+            content: `## طراحی ریسپانسیو
 
-CSS Grid Layout قدرتمندترین سیستم چیدمان در CSS است. برخلاف Flexbox که یک‌بعدی است، Grid دوبعدی کار می‌کند - یعنی هم ردیف و هم ستون را همزمان مدیریت می‌کند.
+طراحی ریسپانسیو یعنی ساخت صفحاتی که در اندازه‌های مختلف صفحه نمایش به خوبی کار کنند.
 
-## مفاهیم پایه
+## رویکردها
 
-### Grid Container:
-عنصری با \`display: grid\` یا \`display: inline-grid\`
+**Mobile First:**
+اول برای موبایل طراحی کنید، سپس با media query برای صفحات بزرگتر.
 
-### Grid Items:
-فرزندان مستقیم container
+**Desktop First:**
+اول برای دسکتاپ طراحی کنید، سپس برای موبایل调整.
 
-### Grid Lines:
-خطوط افقی و عمودی که شبکه را تشکیل می‌دهند
+توصیه: Mobile First
 
-### Grid Tracks:
-فضای بین دو خط (ردیف یا ستون)
-
-### Grid Cell:
-کوچکترین واحد - تقاطع یک ردیف و یک ستون
-
-### Grid Area:
-فضای مستطیلی شامل یک یا چند cell
-
-## تعریف ستون‌ها و ردیف‌ها
-
-### grid-template-columns و grid-template-rows:
+## Media Queries
 
 \`\`\`css
+/* Mobile First */
 .container {
-    display: grid;
-    /* 3 ستون با عرض مشخص */
-    grid-template-columns: 200px 1fr 300px;
-    
-    /* ردیف‌ها */
-    grid-template-rows: auto 1fr auto;
-    
-    /* repeat() برای تکرار */
-    grid-template-columns: repeat(3, 1fr);
-    
-    /* auto-fit/auto-fill برای responsive */
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    width: 100%;
+    padding: 16px;
+}
+
+/* Tablet (768px و بالاتر) */
+@media (min-width: 768px) {
+    .container {
+        max-width: 720px;
+        margin: 0 auto;
+    }
+}
+
+/* Desktop (1024px و بالاتر) */
+@media (min-width: 1024px) {
+    .container {
+        max-width: 960px;
+    }
+}
+
+/* Large Desktop (1280px و بالاتر) */
+@media (min-width: 1280px) {
+    .container {
+        max-width: 1200px;
+    }
 }
 \`\`\`
 
-### واحد fr:
-\`fr\` (fraction) بخشی از فضای خالی موجود را اشغال می‌کند. \`1fr 2fr\` یعنی ستون دوم دو برابر اول.
+## Breakpoints معمول
 
-### minmax():
-حداقل و حداکثر اندازه مشخص می‌کند:
-\`minmax(200px, 1fr)\` = حداقل 200px، حداکثر 1fr
+- 640px: موبایل بزرگ
+- 768px: تبلت
+- 1024px: لپ‌تاپ
+- 1280px: دسکتاپ
+- 1536px: دسکتاپ بزرگ
 
-### auto-fit vs auto-fill:
-- \`auto-fill\`: تا حد ممکن ستون ایجاد می‌کند (حتی خالی)
-- \`auto-fit\`: ستون‌های خالی را حذف و بقیه را گسترش می‌دهد
+## Units ریسپانسیو
 
-## قرار دادن آیتم‌ها
+- \`%\`: درصدی از والد
+- \`vw/vh\`: درصدی از viewport
+- \`rem/em\`: نسبی به font-size
+- \`clamp()\`: حداقل، ترجیحی، حداکثر
 
-### grid-column و grid-row:
 \`\`\`css
-.item {
-    grid-column: 1 / 3; /* از خط 1 تا 3 */
-    grid-row: 2 / 4;
-    /* shorthand */
-    grid-area: 2 / 1 / 4 / 3; /* row-start / col-start / row-end / col-end */
+.font-size {
+    font-size: clamp(16px, 4vw, 24px);
 }
-\`\`\`
-
-### span:
-\`\`\`css
-.item {
-    grid-column: span 2; /* 2 ستون اشغال کند */
-    grid-row: span 3;
-}
-\`\`\`
-
-### Named Lines:
-\`\`\`css
-.container {
-    grid-template-columns: [start] 1fr [middle] 1fr [end];
-}
-.item {
-    grid-column: start / end;
-}
-\`\`\`
-
-## Grid Template Areas
-
-نام‌گذاری نواحی برای layout بصری:
-\`\`\`css
-.container {
-    grid-template-areas:
-        "header header header"
-        "sidebar main aside"
-        "footer footer footer";
-}
-.header { grid-area: header; }
-.sidebar { grid-area: sidebar; }
-.main { grid-area: main; }
-.aside { grid-area: aside; }
-.footer { grid-area: footer; }
 \`\`\``,
-        code: `/* ===== Grid Basics ===== */
-.grid-container {
+            code: `/* ===== Mobile First Approach ===== */
+
+/* Base Styles (Mobile) */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Vazirmatn', sans-serif;
+    line-height: 1.6;
+}
+
+.container {
+    width: 100%;
+    padding: 0 16px;
+    margin: 0 auto;
+}
+
+/* Grid System */
+.grid {
     display: grid;
-    /* 3 ستون مساوی */
-    grid-template-columns: 1fr 1fr 1fr;
-    /* یا با repeat */
-    grid-template-columns: repeat(3, 1fr);
-    /* ردیف‌ها */
-    grid-template-rows: auto 1fr auto;
-    /* فاصله */
-    gap: 24px;
-    /* shorthand: row-gap column-gap */
-    gap: 24px 16px;
-}
-
-/* ===== Responsive Grid (بدون media query!) ===== */
-.responsive-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 24px;
-}
-
-/* ===== Dashboard Layout ===== */
-.dashboard {
-    display: grid;
-    grid-template-columns: 250px 1fr 300px;
-    grid-template-rows: 64px 1fr 48px;
-    grid-template-areas:
-        "header  header  header"
-        "sidebar main    aside"
-        "footer  footer  footer";
-    min-height: 100vh;
-    gap: 0;
-}
-
-.dashboard-header  { grid-area: header; }
-.dashboard-sidebar { grid-area: sidebar; }
-.dashboard-main    { grid-area: main; }
-.dashboard-aside   { grid-area: aside; }
-.dashboard-footer  { grid-area: footer; }
-
-/* ===== Spanning Items ===== */
-.featured-card {
-    grid-column: span 2; /* 2 ستون */
-    grid-row: span 2;    /* 2 ردیف */
-}
-
-.full-width {
-    grid-column: 1 / -1; /* از اول تا آخر */
-}
-
-/* ===== Overlapping Items ===== */
-.image-stack {
-    display: grid;
-    grid-template: 1fr / 1fr;
-}
-.image-stack > * {
-    grid-area: 1 / 1; /* همه روی هم */
-}
-
-/* ===== Named Lines ===== */
-.page-layout {
-    display: grid;
-    grid-template-columns: 
-        [full-start] 1fr 
-        [content-start] min(800px, 100% - 48px) 
-        [content-end] 1fr 
-        [full-end];
-}
-
-.content {
-    grid-column: content-start / content-end;
-}
-
-.full-bleed {
-    grid-column: full-start / full-end;
-}
-
-/* ===== Masonry-like Layout ===== */
-.masonry {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    grid-auto-rows: 10px;
+    grid-template-columns: 1fr;
     gap: 16px;
 }
 
-.masonry-item {
-    grid-row-end: span var(--rows, 20);
+/* Navbar */
+.navbar {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px;
 }
 
-/* ===== Complex Layout ===== */
-.magazine-layout {
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    grid-auto-rows: minmax(100px, auto);
-    gap: 20px;
-    padding: 20px;
+.navbar-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
-.magazine-hero {
-    grid-column: 1 / 8;
-    grid-row: 1 / 3;
-}
+/* ===== Tablet (768px+) ===== */
 
-.magazine-side {
-    grid-column: 8 / 13;
-    grid-row: 1 / 2;
-}
-
-.magazine-article-1 {
-    grid-column: 1 / 5;
-}
-
-.magazine-article-2 {
-    grid-column: 5 / 9;
-}
-
-.magazine-article-3 {
-    grid-column: 9 / 13;
-}
-
-/* ===== Subgrid ===== */
-.card-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
-}
-
-.card {
-    display: grid;
-    grid-template-rows: subgrid;
-    grid-row: span 3; /* title, content, footer */
-}
-
-/* ===== Alignment ===== */
-.grid-center {
-    display: grid;
-    place-items: center; /* shorthand */
-    /* یا جداگانه: */
-    justify-items: center; /* horizontal */
-    align-items: center;   /* vertical */
-}
-
-/* Content alignment */
-.grid-container {
-    justify-content: center; /* کل grid */
-    align-content: center;
-}
-
-/* Self alignment */
-.grid-item {
-    justify-self: end;
-    align-self: start;
-}`,
-        language: "css",
-        tips: [
-          "auto-fit + minmax() بهترین روش برای responsive grid بدون media query است",
-          "از grid-template-areas برای layout‌های پیچیده استفاده کنید - بصری و خوانا است",
-          "gap در Grid پشتیبانی کامل دارد",
-          "subgrid برای تراز محتوای داخلی کارت‌ها عالی است"
-        ],
-        warnings: [
-          "Grid برای layout کلی صفحه، Flexbox برای کامپوننت‌های داخلی مناسب‌تر است",
-          "grid-area با 4 مقدار: row-start / column-start / row-end / column-end",
-          "fr واحد فقط در Grid کار می‌کند نه Flexbox"
-        ],
-        exercises: [
-          {
-            question: "یک grid بسازید که ۴ کارت در ردیف اول (هر کدام 1 ستون)، ۱ کارت بزرگ در ردیف دوم (2 ستون) و ۲ کارت معمولی داشته باشد. در موبایل همه تک‌ستونه باشند.",
-            answer: `.portfolio-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 24px;
-    padding: 24px;
-}
-
-/* ردیف اول: 4 کارت معمولی */
-.portfolio-grid .card:nth-child(1),
-.portfolio-grid .card:nth-child(2),
-.portfolio-grid .card:nth-child(3),
-.portfolio-grid .card:nth-child(4) {
-    grid-column: span 1;
-}
-
-/* ردیف دوم: 1 کارت بزرگ */
-.portfolio-grid .card:nth-child(5) {
-    grid-column: span 2;
-}
-
-/* ردیف دوم: 2 کارت معمولی */
-.portfolio-grid .card:nth-child(6),
-.portfolio-grid .card:nth-child(7) {
-    grid-column: span 1;
-}
-
-/* Tablet: 2 ستون */
-@media (max-width: 1024px) {
-    .portfolio-grid {
+@media (min-width: 768px) {
+    .container {
+        max-width: 720px;
+        padding: 0 24px;
+    }
+    
+    .grid {
         grid-template-columns: repeat(2, 1fr);
+        gap: 24px;
     }
-    .portfolio-grid .card:nth-child(5) {
-        grid-column: span 2;
+    
+    .navbar {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .navbar-menu {
+        flex-direction: row;
     }
 }
 
-/* Mobile: 1 ستون */
-@media (max-width: 640px) {
-    .portfolio-grid {
-        grid-template-columns: 1fr;
+/* ===== Desktop (1024px+) ===== */
+
+@media (min-width: 1024px) {
+    .container {
+        max-width: 960px;
     }
-    .portfolio-grid .card:nth-child(5) {
-        grid-column: span 1;
+    
+    .grid {
+        grid-template-columns: repeat(3, 1fr);
     }
-}`
+}
+
+/* ===== Large Desktop (1280px+) ===== */
+
+@media (min-width: 1280px) {
+    .container {
+        max-width: 1200px;
+    }
+    
+    .grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* ===== Responsive Typography ===== */
+
+h1 {
+    font-size: clamp(24px, 5vw, 48px);
+}
+
+h2 {
+    font-size: clamp(20px, 4vw, 36px);
+}
+
+p {
+    font-size: clamp(14px, 2vw, 16px);
+}
+
+/* ===== Responsive Images ===== */
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* ===== Hide/Show Elements ===== */
+
+.mobile-only {
+    display: block;
+}
+
+.desktop-only {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .mobile-only {
+        display: none;
+    }
+    
+    .desktop-only {
+        display: block;
+    }
+}`,
+            language: "css",
+            tips: [
+              "Mobile First را رعایت کنید",
+              "از clamp() برای typography ریسپانسیو استفاده کنید",
+              "تصاویر را با max-width: 100% ریسپانسیو کنید"
+            ]
           }
         ]
       }
     ]
   },
   {
-    id: "javascript-complete",
+    id: "javascript",
     title: "جاوااسکریپت کامل",
-    subtitle: "از مقدماتی تا پیشرفته",
-    description: "تسلط کامل بر JavaScript مدرن شامل ES6+، برنامه‌نویسی ناهمگام، DOM، و الگوهای طراحی",
+    subtitle: "از مبتدی تا پیشرفته",
+    description: "تسلط کامل بر JavaScript مدرن شامل ES6+، برنامه‌نویسی ناهمگام، DOM و الگوهای طراحی",
     color: "from-yellow-500 to-amber-500",
-    iconBg: "bg-yellow-500/10",
-    totalHours: 50,
-    prerequisites: ["HTML و CSS پایه"],
+    totalHours: 60,
+    prerequisites: ["HTML و CSS"],
     outcomes: [
       "تسلط بر ES6+ features",
-      "درک عمیق از async programming",
+      "درک عمیق async programming",
       "کار حرفه‌ای با DOM",
       "آشنایی با الگوهای طراحی",
       "نوشتن کد تمیز و maintainable"
     ],
-    lessons: [
+    chapters: [
       {
-        id: "js-variables-types",
-        title: "متغیرها و انواع داده",
-        subtitle: "پایه‌های جاوااسکریپت",
-        estimatedTime: 35,
-        difficulty: "مبتدی",
-        content: `## متغیرها در JavaScript
+        id: "js-ch1",
+        title: "فصل ۱: مبانی JavaScript",
+        description: "متغیرها، انواع داده و عملگرها",
+        lessons: [
+          {
+            id: "js-l1-1",
+            title: "متغیرها و انواع داده",
+            subtitle: "let، const و انواع داده در JavaScript",
+            estimatedTime: 30,
+            difficulty: "مبتدی",
+            content: `## متغیرها در JavaScript
 
 JavaScript سه کلمه کلیدی برای تعریف متغیر دارد:
 
 ### var (منسوخ شده)
-- function-scoped (نه block-scoped)
-- hoisted (به بالای scope منتقل می‌شود)
-- قابل redeclare و reassign
+- function-scoped
+- hoisted
+- قابل redeclare
 
 ### let (مدرن)
 - block-scoped
-- hoisted ولی در Temporal Dead Zone
-- قابل reassign ولی نه redeclare
+- قابل reassign
+- نه redeclare
 
 ### const (مدرن)
 - block-scoped
-- باید هنگام تعریف مقداردهی شود
-- قابل reassign نیست (ولی mutable است!)
+- غیرقابل reassign
+- باید مقداردهی شود
 
-## انواع داده (Data Types)
+## انواع داده
 
-### Primitive Types (غیرقابل تغییر):
+### Primitive Types:
+- String
+- Number
+- Boolean
+- undefined
+- null
+- Symbol
+- BigInt
 
-**1. String:**
-\`\`\`js
-const str1 = "Hello";     // double quotes
-const str2 = 'World';     // single quotes
-const str3 = \`Hello \${name}\`; // template literal
-\`\`\`
+### Reference Types:
+- Object
+- Array
+- Function`,
+            code: `// ===== let vs const =====
 
-**2. Number:**
-\`\`\`js
-const int = 42;
-const float = 3.14;
-const negative = -10;
-const infinity = Infinity;
-const notNumber = NaN; // Not a Number
-\`\`\`
+let count = 0;
+count = 1; // OK
 
-**3. BigInt:**
-\`\`\`js
-const big = 9007199254740991n;
-\`\`\`
-
-**4. Boolean:**
-\`\`\`js
-const isActive = true;
-const isDeleted = false;
-\`\`\`
-
-**5. undefined:**
-متغیر تعریف شده ولی بدون مقدار
-
-**6. null:**
-مقدار خالی (عمداً)
-
-**7. Symbol:**
-\`\`\`js
-const id = Symbol('description');
-\`\`\`
-
-### Reference Types (قابل تغییر):
-
-**Object:**
-\`\`\`js
-const user = { name: "Ali", age: 25 };
-\`\`\`
-
-**Array:**
-\`\`\`js
-const fruits = ["apple", "banana", "cherry"];
-\`\`\`
-
-**Function:**
-\`\`\`js
-const greet = function(name) { return \`Hello \${name}\`; };
-\`\`\`
-
-## Type Coercion
-
-JavaScript به طور خودکار نوع‌ها را تبدیل می‌کند:
-- \`"5" + 3\` → \`"53"\` (string concatenation)
-- \`"5" - 3\` → \`2\` (numeric subtraction)
-- \`"5" == 5\` → \`true\` (loose equality)
-- \`"5" === 5\` → \`false\` (strict equality)
-
-## Truthy و Falsy Values
-
-**Falsy** (همه اینها false هستند):
-- \`false\`
-- \`0\`
-- \`""\` (empty string)
-- \`null\`
-- \`undefined\`
-- \`NaN\`
-
-**Truthy** (همه مقادیر دیگر true هستند)`,
-        code: `// ===== var vs let vs const =====
-
-// var - function scoped (مشکل‌دار)
-function exampleVar() {
-    if (true) {
-        var x = 10;
-    }
-    console.log(x); // 10 - بیرون از if هم قابل دسترسی!
-}
-
-// let - block scoped (بهتر)
-function exampleLet() {
-    if (true) {
-        let y = 10;
-    }
-    console.log(y); // ReferenceError!
-}
-
-// const - block scoped + immutable binding
-const PI = 3.14159;
-// PI = 3; // TypeError!
-
-// ولی objects mutable هستند:
-const user = { name: "Ali" };
-user.name = "Reza"; // OK! - خود object تغییر می‌کند
-// user = {}; // TypeError! - reference نمی‌تواند تغییر کند
+const PI = 3.14;
+// PI = 3; // Error!
 
 // ===== انواع داده =====
 
-// String methods
-const str = "Hello, World!";
-str.length;           // 13
-str.toUpperCase();    // "HELLO, WORLD!"
-str.toLowerCase();    // "hello, world!"
-str.includes("World"); // true
-str.startsWith("Hello"); // true
-str.endsWith("!");    // true
-str.slice(0, 5);      // "Hello"
-str.split(", ");      // ["Hello", "World!"]
-str.trim();           // حذف whitespace
-str.replace("World", "JS"); // "Hello, JS!"
-str.repeat(3);        // "Hello, World!Hello, World!Hello, World!"
-str.padStart(20, "."); // ".......Hello, World!"
-str.padEnd(20, ".");
-
-// Template Literals
+// String
 const name = "Ali";
+const greeting = \`Hello \${name}\`;
+
+// Number
 const age = 25;
-const message = \`
-    Name: \${name}
-    Age: \${age}
-    Born: \${2024 - age}
-    Adult: \${age >= 18 ? "Yes" : "No"}
-\`;
+const price = 99.99;
 
-// Number methods
-const num = 42.567;
-num.toFixed(2);       // "42.57"
-num.toPrecision(4);   // "42.57"
-Number.isInteger(42); // true
-Number.isNaN(NaN);    // true
-Number.isFinite(42);  // true
-parseInt("42px");     // 42
-parseFloat("3.14em"); // 3.14
+// Boolean
+const isActive = true;
 
-// Boolean coercion
-Boolean(0);         // false
-Boolean("");        // false
-Boolean(null);      // false
-Boolean(undefined); // false
-Boolean(NaN);       // false
-Boolean("hello");   // true
-Boolean(42);        // true
-Boolean([]);        // true (even empty array!)
-Boolean({});        // true (even empty object!)
+// undefined
+let x; // undefined
+
+// null
+const empty = null;
+
+// Array
+const fruits = ["apple", "banana"];
+
+// Object
+const user = {
+    name: "Ali",
+    age: 25
+};
+
+// ===== Type Checking =====
+
+typeof "hello"    // "string"
+typeof 42         // "number"
+typeof true       // "boolean"
+typeof undefined  // "undefined"
+typeof null       // "object" (bug!)
+typeof {}         // "object"
+typeof []         // "object"
+typeof function(){} // "function"
+
+// Array check
+Array.isArray([1, 2, 3]); // true`,
+            language: "javascript",
+            tips: [
+              "همیشه const را پیش‌فرض استفاده کنید",
+              "از === به جای == استفاده کنید",
+              "typeof null برابر object است (bug تاریخی)"
+            ]
+          },
+          {
+            id: "js-l1-2",
+            title: "عملگرها و عبارات شرطی",
+            subtitle: "if, switch, ternary و عملگرهای منطقی",
+            estimatedTime: 25,
+            difficulty: "مبتدی",
+            content: `## عملگرها در JavaScript
+
+### عملگرهای مقایسه‌ای:
+- \`==\` : برابری (با type coercion)
+- \`===\` : برابری سخت‌گیرانه
+- \`!=\` : نابرابری
+- \`!==\` : نابرابری سخت‌گیرانه
+- \`>\`, \`<\`, \`>=\`, \`<=\`
+
+### عملگرهای منطقی:
+- \`&&\` : AND
+- \`||\` : OR
+- \`!\` : NOT
+- \`??\` : Nullish Coalescing
+
+### عملگرهای شرطی (Ternary):
+\`\`\`js
+const result = condition ? valueIfTrue : valueIfFalse;
+\`\`\`
+
+## عبارات شرطی
+
+### if/else:
+\`\`\`js
+if (condition) {
+    // code
+} else if (otherCondition) {
+    // code
+} else {
+    // code
+}
+\`\`\`
+
+### switch:
+\`\`\`js
+switch (expression) {
+    case value1:
+        // code
+        break;
+    case value2:
+        // code
+        break;
+    default:
+        // code
+}
+\`\`\``,
+            code: `// ===== عملگرهای مقایسه =====
+
+console.log(5 == "5");    // true (coercion)
+console.log(5 === "5");   // false (strict)
+console.log(5 != "5");    // false
+console.log(5 !== "5");   // true
+
+// ===== عملگرهای منطقی =====
+
+const a = true;
+const b = false;
+
+console.log(a && b);  // false
+console.log(a || b);  // true
+console.log(!a);      // false
+
+// Short-circuit evaluation
+const user = null;
+const name = user && user.name;  // null
+const displayName = user || "Guest";  // "Guest"
 
 // Nullish Coalescing (??)
-const value1 = null ?? "default";    // "default"
-const value2 = undefined ?? "default"; // "default"
-const value3 = 0 ?? "default";       // 0 (not "default"!)
-const value4 = "" ?? "default";      // "" (not "default"!)
+const value1 = 0 ?? "default";     // 0 (not "default")
+const value2 = null ?? "default";  // "default"
+const value3 = "" ?? "default";    // "" (not "default")
 
-// Optional Chaining (?.)
-const data = { user: { profile: { name: "Ali" } } };
-data.user?.profile?.name;    // "Ali"
-data.user?.settings?.theme;  // undefined (no error!)
-data.users?.[0]?.name;       // undefined (safe array access)
+// ===== Ternary Operator =====
 
-// typeof operator
-typeof "hello"     // "string"
-typeof 42          // "number"
-typeof true        // "boolean"
-typeof undefined   // "undefined"
-typeof null        // "object" (bug تاریخی!)
-typeof {}          // "object"
-typeof []          // "object"
-typeof function(){} // "function"
-typeof Symbol()    // "symbol"
+const age = 20;
+const status = age >= 18 ? "adult" : "minor";
+console.log(status);  // "adult"
 
-// Array.isArray (بررسی دقیق آرایه)
-Array.isArray([1, 2, 3]);  // true
-Array.isArray("hello");    // false`,
-        language: "javascript",
-        tips: [
-          "همیشه از === به جای == استفاده کنید",
-          "const را پیش‌فرض قرار دهید، فقط وقتی نیاز به تغییر دارید let بزنید",
-          "Optional chaining (?.) از خطاهای undefined جلوگیری می‌کند",
-          "Nullish coalescing (??) فقط null و undefined را handle می‌کند"
-        ],
-        warnings: [
-          "typeof null برابر 'object' است - این یک bug تاریخی در JS است",
-          "const جلوی تغییر object/array را نمی‌گیرد - فقط reference ثابت است",
-          "NaN === NaN همیشه false است! از Number.isNaN() استفاده کنید"
-        ],
-        exercises: [
-          {
-            question: "تابعی بنویسید که یک مقدار بگیرد و نوع دقیق آن را برگرداند (string, number, boolean, null, undefined, array, object, function).",
-            answer: `function getType(value) {
-    if (value === null) return 'null';
-    if (value === undefined) return 'undefined';
-    if (Array.isArray(value)) return 'array';
-    
-    const type = typeof value;
-    return type; // string, number, boolean, object, function, symbol
+// Nested ternary (not recommended)
+const score = 85;
+const grade = score >= 90 ? "A" : score >= 80 ? "B" : "C";
+console.log(grade);  // "B"
+
+// ===== if/else =====
+
+const temperature = 25;
+
+if (temperature > 30) {
+    console.log("Hot!");
+} else if (temperature > 20) {
+    console.log("Warm");
+} else if (temperature > 10) {
+    console.log("Cool");
+} else {
+    console.log("Cold!");
 }
 
-// تست:
-console.log(getType("hello"));     // "string"
-console.log(getType(42));          // "number"
-console.log(getType(true));        // "boolean"
-console.log(getType(null));        // "null"
-console.log(getType(undefined));   // "undefined"
-console.log(getType([1, 2, 3]));   // "array"
-console.log(getType({ a: 1 }));    // "object"
-console.log(getType(() => {}));    // "function"
-console.log(getType(Symbol()));    // "symbol"
+// ===== switch =====
 
-// نسخه پیشرفته‌تر با جزئیات بیشتر:
-function getDetailedType(value) {
-    if (value === null) return 'null';
-    if (value === undefined) return 'undefined';
-    if (Array.isArray(value)) return 'array';
-    if (value instanceof Date) return 'date';
-    if (value instanceof RegExp) return 'regexp';
-    if (value instanceof Error) return 'error';
-    if (value instanceof Map) return 'map';
-    if (value instanceof Set) return 'set';
-    
-    return typeof value;
-}`
+const day = "Monday";
+
+switch (day) {
+    case "Saturday":
+    case "Friday":
+        console.log("Weekend!");
+        break;
+    case "Monday":
+    case "Tuesday":
+    case "Wednesday":
+    case "Thursday":
+        console.log("Weekday");
+        break;
+    default:
+        console.log("Invalid day");
+}
+
+// ===== Truthy and Falsy =====
+
+// Falsy values:
+// false, 0, "", null, undefined, NaN
+
+if (0) {
+    console.log("This won't run");
+}
+
+if ("hello") {
+    console.log("This will run");
+}
+
+// Practical example
+const username = "";
+if (username) {
+    console.log(\`Hello, \${username}\`);
+} else {
+    console.log("Please enter your name");
+}`,
+            language: "javascript",
+            tips: [
+              "همیشه از === استفاده کنید",
+              "?? فقط null و undefined را handle می‌کند",
+              "از ternary تو در تو پرهیز کنید"
+            ]
           }
         ]
       },
       {
-        id: "js-functions",
-        title: "توابع و Scope",
-        subtitle: "درک عمیق توابع در JavaScript",
-        estimatedTime: 40,
-        difficulty: "متوسط",
-        content: `## توابع در JavaScript
-
-توابع بلوک‌های کد قابل استفاده مجدد هستند. در JavaScript توابع first-class citizen هستند - یعنی می‌توان آنها را به متغیر اختصاص داد، به عنوان آرگومان پاس داد و برگرداند.
-
-## انواع تعریف تابع
+        id: "js-ch2",
+        title: "فصل ۲: توابع و Scope",
+        description: "انواع توابع، closures و scope",
+        lessons: [
+          {
+            id: "js-l2-1",
+            title: "توابع در JavaScript",
+            subtitle: "Function Declaration، Expression و Arrow Functions",
+            estimatedTime: 35,
+            difficulty: "متوسط",
+            content: `## انواع توابع
 
 ### Function Declaration:
 \`\`\`js
@@ -2157,8 +1897,7 @@ function greet(name) {
     return \`Hello \${name}\`;
 }
 \`\`\`
-- Hoisted (قبل از تعریف قابل استفاده است)
-- نام‌دار
+- Hoisted (قبل از تعریف قابل استفاده)
 
 ### Function Expression:
 \`\`\`js
@@ -2166,183 +1905,138 @@ const greet = function(name) {
     return \`Hello \${name}\`;
 };
 \`\`\`
-- Hoisted نیست
-- می‌تواند anonymous یا named باشد
+- Not hoisted
 
 ### Arrow Function:
 \`\`\`js
 const greet = (name) => \`Hello \${name}\`;
 \`\`\`
-- سینتکس کوتاه‌تر
-- this لکسیکال (از scope بیرونی)
-- arguments object ندارد
-- نمی‌تواند constructor باشد
+- Shorter syntax
+- Lexical this
 
-## Parameters و Arguments
+## Parameters
 
 ### Default Parameters:
 \`\`\`js
-function greet(name = "Guest", greeting = "Hello") {
-    return \`\${greeting}, \${name}!\`;
+function greet(name = "Guest") {
+    return \`Hello \${name}\`;
 }
 \`\`\`
 
 ### Rest Parameters:
 \`\`\`js
 function sum(...numbers) {
-    return numbers.reduce((total, n) => total + n, 0);
-}
-\`\`\`
-
-### Destructuring Parameters:
-\`\`\`js
-function displayUser({ name, age, city = "Unknown" }) {
-    console.log(\`\${name}, \${age}, \${city}\`);
+    return numbers.reduce((a, b) => a + b, 0);
 }
 \`\`\`
 
 ## Scope
 
 ### Global Scope:
-متغیرهای خارج از هر تابع یا block
+متغیرهای خارج از هر تابع
 
 ### Function Scope:
-متغیرهای تعریف شده با var در تابع
+متغیرهای var در تابع
 
 ### Block Scope:
-متغیرهای تعریف شده با let/const در {}
-
-### Lexical Scope:
-توابع داخلی به متغیرهای scope بیرونی دسترسی دارند
+متغیرهای let/const در {}
 
 ## Closures
 
-Closure وقتی یک تابع به متغیرهای scope بیرونی خود دسترسی دارد حتی بعد از اینکه آن scope تمام شده.
-
-## Higher-Order Functions
-
-توابعی که تابع دیگری می‌گیرند یا برمی‌گردانند:
-- map, filter, reduce
-- setTimeout, setInterval
-- Event handlers`,
-        code: `// ===== Function Declaration =====
-function calculateArea(width, height) {
-    return width * height;
+Closure وقتی یک تابع به متغیرهای scope بیرونی دسترسی دارد حتی بعد از اتمام آن scope.`,
+            code: `// ===== Function Declaration =====
+function add(a, b) {
+    return a + b;
 }
-console.log(calculateArea(5, 3)); // 15
+console.log(add(5, 3));  // 8
 
 // ===== Function Expression =====
-const calculatePerimeter = function(width, height) {
-    return 2 * (width + height);
+const multiply = function(a, b) {
+    return a * b;
 };
 
 // ===== Arrow Functions =====
 // Full syntax
-const multiply = (a, b) => {
-    return a * b;
+const divide = (a, b) => {
+    return a / b;
 };
 
-// Concise body (implicit return)
-const add = (a, b) => a + b;
+// Concise body
+const subtract = (a, b) => a - b;
 
-// Single parameter (no parens needed)
+// Single parameter
 const double = x => x * 2;
 
 // No parameters
 const getRandom = () => Math.random();
 
-// Returning object (needs parens)
+// Returning object
 const createUser = (name, age) => ({ name, age });
 
 // ===== Default Parameters =====
-function createProfile(name, role = "developer", active = true) {
-    return { name, role, active };
+function greet(name = "Guest", greeting = "Hello") {
+    return \`\${greeting}, \${name}!\`;
 }
-createProfile("Ali");                    // { name: "Ali", role: "developer", active: true }
-createProfile("Sara", "designer");       // { name: "Sara", role: "designer", active: true }
-createProfile("Reza", "manager", false); // { name: "Reza", role: "manager", active: false }
+
+console.log(greet());              // "Hello, Guest!"
+console.log(greet("Ali"));         // "Hello, Ali!"
+console.log(greet("Sara", "Hi"));  // "Hi, Sara!"
 
 // ===== Rest Parameters =====
-function logAll(...items) {
-    items.forEach((item, i) => console.log(\`\${i + 1}. \${item}\`));
+function sum(...numbers) {
+    return numbers.reduce((total, num) => total + num, 0);
 }
-logAll("HTML", "CSS", "JavaScript");
 
-// Combine with regular params
+console.log(sum(1, 2, 3, 4, 5));  // 15
+
 function logFirst(first, ...rest) {
     console.log("First:", first);
     console.log("Rest:", rest);
 }
-logFirst(1, 2, 3, 4, 5); // First: 1, Rest: [2, 3, 4, 5]
 
-// ===== Destructuring Parameters =====
-function renderCard({ title, content, tags = [], author = "Unknown" }) {
-    return \`
-        <article>
-            <h2>\${title}</h2>
-            <p>\${content}</p>
-            <span>By: \${author}</span>
-            <div>\${tags.map(t => \`#\${t}\`).join(" ")}</div>
-        </article>
-    \`;
-}
-
-renderCard({
-    title: "Learning JS",
-    content: "JavaScript is awesome",
-    tags: ["js", "web"],
-    author: "Ali"
-});
+logFirst(1, 2, 3, 4);  // First: 1, Rest: [2, 3, 4]
 
 // ===== Closures =====
-function createCounter(initialValue = 0) {
-    let count = initialValue;
+function createCounter() {
+    let count = 0;
     
     return {
         increment: () => ++count,
         decrement: () => --count,
-        getCount: () => count,
-        reset: () => { count = initialValue; return count; }
+        getCount: () => count
     };
 }
 
-const counter = createCounter(10);
-counter.increment(); // 11
-counter.increment(); // 12
-counter.decrement(); // 11
-counter.getCount();  // 11
-counter.reset();     // 10
+const counter = createCounter();
+counter.increment();  // 1
+counter.increment();  // 2
+counter.decrement();  // 1
+counter.getCount();   // 1
 
 // Practical closure: private variables
 function createBankAccount(initialBalance) {
     let balance = initialBalance;
-    const transactions = [];
     
     return {
         deposit(amount) {
-            if (amount <= 0) throw new Error("Amount must be positive");
             balance += amount;
-            transactions.push({ type: "deposit", amount, balance });
             return balance;
         },
         withdraw(amount) {
             if (amount > balance) throw new Error("Insufficient funds");
             balance -= amount;
-            transactions.push({ type: "withdraw", amount, balance });
             return balance;
         },
-        getBalance: () => balance,
-        getHistory: () => [...transactions]
+        getBalance: () => balance
     };
 }
 
 const account = createBankAccount(1000);
-account.deposit(500);   // 1500
-account.withdraw(200);  // 1300
-account.getBalance();   // 1300
+account.deposit(500);    // 1500
+account.withdraw(200);   // 1300
+account.getBalance();    // 1300
 
 // ===== Higher-Order Functions =====
-// Function that returns a function
 function createMultiplier(factor) {
     return (number) => number * factor;
 }
@@ -2350,296 +2044,141 @@ function createMultiplier(factor) {
 const triple = createMultiplier(3);
 const quadruple = createMultiplier(4);
 
-triple(5);    // 15
-quadruple(5); // 20
+console.log(triple(5));     // 15
+console.log(quadruple(5));  // 20
 
-// Function that takes a function
-function repeat(n, action) {
-    for (let i = 0; i < n; i++) {
-        action(i);
-    }
-}
-
-repeat(3, console.log); // 0, 1, 2
-
-// Practical HOF: retry mechanism
-function withRetry(fn, maxRetries = 3) {
-    return async (...args) => {
-        for (let i = 0; i < maxRetries; i++) {
-            try {
-                return await fn(...args);
-            } catch (error) {
-                if (i === maxRetries - 1) throw error;
-                console.log(\`Retry \${i + 1}/\${maxRetries}\`);
-                await new Promise(r => setTimeout(r, 1000 * (i + 1)));
-            }
-        }
-    };
-}
-
-// Usage
-const fetchData = withRetry(async (url) => {
-    const res = await fetch(url);
-    if (!res.ok) throw new Error("Network error");
-    return res.json();
-}, 3);
-
-// ===== IIFE (Immediately Invoked Function Expression) =====
+// ===== IIFE =====
 const result = (function() {
-    const private = "secret";
-    return { getPrivate: () => private };
+    const secret = "hidden";
+    return { getSecret: () => secret };
 })();
 
-// ===== Memoization with Closure =====
-function memoize(fn) {
-    const cache = new Map();
-    
-    return function(...args) {
-        const key = JSON.stringify(args);
-        
-        if (cache.has(key)) {
-            return cache.get(key);
-        }
-        
-        const result = fn(...args);
-        cache.set(key, result);
-        return result;
-    };
-}
-
-const expensiveCalc = memoize((n) => {
-    console.log("Computing...");
-    return n * n;
-});
-
-expensiveCalc(5); // Computing... 25
-expensiveCalc(5); // 25 (from cache, no "Computing!")`,
-        language: "javascript",
-        tips: [
-          "Arrow functions برای callback‌ها و توابع کوتاه عالی هستند",
-          "از closure برای encapsulation و private state استفاده کنید",
-          "Default parameters از || بهترند - فقط undefined را handle می‌کنند",
-          "Memoization برای توابع expensive بسیار مفید است"
-        ],
-        exercises: [
-          {
-            question: "یک تابع pipe بسازید که چندین تابع را بگیرد و آنها را از چپ به راست روی یک مقدار اعمال کند.",
-            answer: `// Pipe: اعمال توابع از چپ به راست
-const pipe = (...fns) => (initialValue) => 
-    fns.reduce((acc, fn) => fn(acc), initialValue);
-
-// Compose: اعمال توابع از راست به چپ
-const compose = (...fns) => (initialValue) => 
-    fns.reduceRight((acc, fn) => fn(acc), initialValue);
-
-// توابع کمکی
-const add10 = x => x + 10;
-const multiply2 = x => x * 2;
-const subtract3 = x => x - 3;
-const toString = x => \`Result: \${x}\`;
-
-// استفاده از pipe
-const transform = pipe(add10, multiply2, subtract3, toString);
-transform(5); // "Result: 27"
-// مراحل: 5 → 15 → 30 → 27 → "Result: 27"
-
-// مثال عملی: پردازش داده کاربر
-const processUser = pipe(
-    user => ({ ...user, name: user.name.trim() }),
-    user => ({ ...user, email: user.email.toLowerCase() }),
-    user => ({ ...user, createdAt: new Date().toISOString() }),
-    user => ({ ...user, id: crypto.randomUUID() })
-);
-
-const rawUser = { name: "  Ali  ", email: "ALI@MAIL.COM" };
-const processedUser = processUser(rawUser);
-// { name: "Ali", email: "ali@mail.com", createdAt: "...", id: "..." }
-
-// Pipe async
-const pipeAsync = (...fns) => (initialValue) =>
-    fns.reduce((acc, fn) => acc.then(fn), Promise.resolve(initialValue));
-
-// استفاده:
-const fetchAndProcess = pipeAsync(
-    url => fetch(url),
-    res => res.json(),
-    data => data.filter(item => item.active),
-    items => items.map(item => item.name)
-);
-
-fetchAndProcess('/api/users').then(console.log);`
+console.log(result.getSecret());  // "hidden"`,
+            language: "javascript",
+            tips: [
+              "Arrow functions برای callback‌ها عالی هستند",
+              "از closure برای encapsulation استفاده کنید",
+              "Default parameters از || بهترند"
+            ]
           }
         ]
       }
     ]
   },
   {
-    id: "react-complete",
+    id: "react",
     title: "React.js حرفه‌ای",
     subtitle: "ساخت وب اپلیکیشن‌های مدرن",
-    description: "آموزش جامع React از صفر تا پیشرفته شامل Hooks، State Management، Routing و بهترین شیوه‌ها",
+    description: "آموزش جامع React شامل Components، Hooks، State Management و Routing",
     color: "from-cyan-500 to-blue-600",
-    iconBg: "bg-cyan-500/10",
     totalHours: 45,
-    prerequisites: ["JavaScript ES6+", "HTML و CSS"],
+    prerequisites: ["JavaScript ES6+"],
     outcomes: [
-      "ساخت کامپوننت‌های React حرفه‌ای",
-      "تسلط بر Hooks و State Management",
-      "کار با React Router",
-      "اتصال به API و Backend",
-      "بهینه‌سازی Performance"
+      "ساخت کامپوننت‌های React",
+      "تسلط بر Hooks",
+      "State Management",
+      "React Router",
+      "اتصال به API"
     ],
-    lessons: [
+    chapters: [
       {
-        id: "react-intro",
-        title: "مقدمه‌ای بر React",
-        subtitle: "React چیست و چرا مهم است؟",
-        estimatedTime: 30,
-        difficulty: "مبتدی",
-        content: `## React چیست؟
+        id: "react-ch1",
+        title: "فصل ۱: مقدمه‌ای بر React",
+        description: "React چیست و چرا مهم است؟",
+        lessons: [
+          {
+            id: "react-l1-1",
+            title: "React چیست؟",
+            subtitle: "آشنایی با مفاهیم پایه React",
+            estimatedTime: 25,
+            difficulty: "متوسط",
+            content: `## React چیست؟
 
-React یک کتابخانه JavaScript برای ساخت رابط‌های کاربری (UI) است که توسط Meta (Facebook) توسعه داده شده و در سال 2013 منتشر شد. React بر اساس چند مفهوم کلیدی ساخته شده:
+React یک کتابخانه JavaScript برای ساخت UI است که توسط Meta توسعه داده شده.
 
-### ۱. Component-Based Architecture:
-UI به کامپوننت‌های مستقل و قابل استفاده مجدد تقسیم می‌شود. هر کامپوننت منطق، استایل و ساختار خود را دارد.
+### مفاهیم کلیدی:
 
-### ۲. Virtual DOM:
-React یک کپی مجازی از DOM واقعی می‌سازد. وقتی state تغییر می‌کند، React تغییرات را در Virtual DOM اعمال کرده و سپس حداقل تغییرات لازم را به DOM واقعی اعمال می‌کند.
+**۱. Component-Based:**
+UI به کامپوننت‌های مستقل تقسیم می‌شود.
 
-### ۳. Unidirectional Data Flow:
-داده‌ها فقط از بالا به پایین (parent to child) جریان دارند. این پیش‌بینی‌پذیری برنامه را بالا می‌برد.
+**۲. Virtual DOM:**
+React یک کپی مجازی از DOM می‌سازد.
 
-### ۴. Declarative Programming:
-شما توصیف می‌کنید UI باید چه شکلی باشد، React خودش بهترین روش برای رسیدن به آن حالت را پیدا می‌کند.
+**۳. Unidirectional Data Flow:**
+داده‌ها فقط از parent به child جریان دارند.
+
+**۴. Declarative:**
+شما توصیف می‌کنید UI چه شکلی باشد.
 
 ## JSX
 
-JSX (JavaScript XML) سینتکسی است که اجازه می‌دهد HTML-like code در JavaScript بنویسید. JSX در نهایت به JavaScript تبدیل می‌شود.
+JSX اجازه می‌دهد HTML-like code در JavaScript بنویسید.
 
 ### قوانین JSX:
-1. باید یک عنصر ریشه داشته باشد (یا Fragment)
-2. تگ‌ها باید بسته شوند
-3. className به جای class
-4. htmlFor به جای for
-5. {} برای JavaScript expressions
-6. style به صورت object
-
-## Components
-
-### Function Components (توصیه شده):
-توابعی که props می‌گیرند و JSX برمی‌گردانند.
-
-### Props:
-داده‌هایی که از parent به child پاس داده می‌شوند. فقط خواندنی هستند.
-
-### State:
-داده‌های داخلی کامپوننت که با تغییر آن، کامپوننت re-render می‌شود.
-
-### Children:
-محتوایی که بین تگ‌های باز و بسته کامپوننت قرار می‌گیرد.`,
-        code: `// ===== اولین کامپوننت React =====
+- یک عنصر ریشه
+- تگ‌های بسته
+- className به جای class
+- {} برای expressions`,
+            code: `// ===== اولین کامپوننت =====
 import React from 'react';
 
-// Function Component ساده
 function Welcome({ name }) {
     return <h1>Hello, {name}!</h1>;
 }
 
-// استفاده
-function App() {
-    return (
-        <div>
-            <Welcome name="Ali" />
-            <Welcome name="Sara" />
-        </div>
-    );
-}
-
 // ===== JSX Rules =====
-function JsxExamples() {
+function Example() {
     const name = "Ali";
     const isLoggedIn = true;
-    const items = ['HTML', 'CSS', 'JavaScript'];
-    const style = { color: 'blue', fontSize: '18px' };
+    const items = ['HTML', 'CSS', 'JS'];
     
     return (
         <div className="container">
-            {/* 1. Fragment برای بدون wrapper */}
+            {/* Fragment */}
             <>
                 <h1>Title</h1>
                 <p>Subtitle</p>
             </>
             
-            {/* 2. JavaScript expressions با {} */}
+            {/* Expressions */}
             <p>Hello, {name.toUpperCase()}!</p>
             <p>2 + 2 = {2 + 2}</p>
-            <p>Random: {Math.random()}</p>
             
-            {/* 3. Conditional rendering */}
+            {/* Conditional */}
             {isLoggedIn ? (
                 <p>Welcome back!</p>
             ) : (
                 <p>Please login</p>
             )}
             
-            {/* 4. Short-circuit */}
+            {/* Short-circuit */}
             {isLoggedIn && <p>You are logged in</p>}
             
-            {/* 5. List rendering */}
+            {/* List */}
             <ul>
-                {items.map((item, index) => (
-                    <li key={index}>{item}</li>
+                {items.map((item, i) => (
+                    <li key={i}>{item}</li>
                 ))}
             </ul>
             
-            {/* 6. Inline styles (object) */}
-            <div style={style}>Styled text</div>
-            <div style={{ padding: '20px', background: '#f0f0f0' }}>
-                Direct style
+            {/* Inline styles */}
+            <div style={{ color: 'blue', fontSize: '18px' }}>
+                Styled text
             </div>
-            
-            {/* 7. Dynamic className */}
-            <div className={\`card \${isLoggedIn ? 'active' : 'inactive'}\`}>
-                Card content
-            </div>
-            
-            {/* 8. htmlFor instead of for */}
-            <label htmlFor="email">Email:</label>
-            <input id="email" type="email" />
-            
-            {/* 9. Self-closing tags */}
-            <img src="photo.jpg" alt="Photo" />
-            <input type="text" placeholder="Enter text" />
-            <br />
-            <hr />
         </div>
     );
 }
 
 // ===== Props =====
-function Button({ 
-    children, 
-    variant = 'primary', 
-    size = 'md', 
-    disabled = false, 
-    onClick 
-}) {
-    const baseStyles = 'rounded-lg font-medium transition-colors';
-    const variants = {
-        primary: 'bg-indigo-600 text-white hover:bg-indigo-700',
-        secondary: 'bg-gray-200 text-gray-800 hover:bg-gray-300',
-        danger: 'bg-red-600 text-white hover:bg-red-700',
-    };
-    const sizes = {
-        sm: 'px-3 py-1.5 text-sm',
-        md: 'px-4 py-2 text-base',
-        lg: 'px-6 py-3 text-lg',
+function Button({ children, variant = 'primary', onClick }) {
+    const styles = {
+        primary: 'bg-blue-500 text-white',
+        secondary: 'bg-gray-200 text-gray-800',
     };
     
     return (
-        <button
-            className={\`\${baseStyles} \${variants[variant]} \${sizes[size]}\`}
-            disabled={disabled}
+        <button 
+            className={styles[variant]}
             onClick={onClick}
         >
             {children}
@@ -2647,262 +2186,86 @@ function Button({
     );
 }
 
-// استفاده:
-<Button variant="primary" size="lg" onClick={() => alert('Clicked!')}>
-    Submit
-</Button>
-
-// ===== Children =====
-function Card({ title, children, footer }) {
-    return (
-        <div className="card">
-            {title && <div className="card-header"><h3>{title}</h3></div>}
-            <div className="card-body">{children}</div>
-            {footer && <div className="card-footer">{footer}</div>}
-        </div>
-    );
-}
-
-// استفاده:
-<Card 
-    title="User Profile"
-    footer={<Button>Save Changes</Button>}
->
-    <p>Name: Ali</p>
-    <p>Email: ali@example.com</p>
-</Card>
-
-// ===== Props Destructuring & Defaults =====
-function Avatar({ 
-    src, 
-    alt = "User avatar", 
-    size = 40, 
-    rounded = true 
-}) {
-    return (
-        <img
-            src={src}
-            alt={alt}
-            width={size}
-            height={size}
-            style={{ borderRadius: rounded ? '50%' : '8px' }}
-        />
-    );
-}
-
-// ===== Prop Types (با TypeScript بهتر است) =====
-import PropTypes from 'prop-types';
-
-ProductCard.propTypes = {
-    title: PropTypes.string.isRequired,
-    price: PropTypes.number.isRequired,
-    image: PropTypes.string,
-    onAddToCart: PropTypes.func,
-    tags: PropTypes.arrayOf(PropTypes.string),
-};
-
-ProductCard.defaultProps = {
-    image: '/placeholder.jpg',
-    tags: [],
-};`,
-        language: "jsx",
-        tips: [
-          "همیشه Function Components استفاده کنید",
-          "Props را destructure کنید - خوانایی بالاتر",
-          "default values را در destructuring تعریف کنید",
-          "children برای محتوای dynamic عالی است"
-        ],
-        warnings: [
-          "هرگز props را مستقیماً تغییر ندهید",
-          "key در list‌ها باید unique باشد - از index استفاده نکنید مگر چاره‌ای نباشد",
-          "JSX در نهایت JavaScript است - هر expression معتبری داخل {} مجاز است"
-        ],
-        exercises: [
-          {
-            question: "یک کامپوننت ProductCard بسازید که نام، قیمت، تصویر، و دکمه خرید داشته باشد. اگر موجودی صفر باشد، دکمه غیرفعال شود و متن 'ناموجود' نشان دهد.",
-            answer: `function ProductCard({ name, price, image, stock, onAddToCart }) {
-    const isAvailable = stock > 0;
-    const discount = stock < 5; // تخفیف برای تعداد کم
-    
-    return (
-        <div className="product-card">
-            <div className="product-image">
-                <img src={image} alt={name} />
-                {!isAvailable && (
-                    <span className="badge sold-out">ناموجود</span>
-                )}
-                {discount && isAvailable && (
-                    <span className="badge discount">تخفیف ویژه</span>
-                )}
-            </div>
-            
-            <div className="product-info">
-                <h3 className="product-name">{name}</h3>
-                
-                <div className="product-price">
-                    <span className="current-price">
-                        {price.toLocaleString()} تومان
-                    </span>
-                    {discount && (
-                        <span className="original-price">
-                            {(price * 1.2).toLocaleString()} تومان
-                        </span>
-                    )}
-                </div>
-                
-                <p className="stock-info">
-                    {isAvailable 
-                        ? \`\${stock} عدد در انبار\` 
-                        : 'ناموجود'}
-                </p>
-                
-                <button
-                    className={\`add-to-cart-btn \${!isAvailable ? 'disabled' : ''}\`}
-                    disabled={!isAvailable}
-                    onClick={() => onAddToCart({ name, price })}
-                >
-                    {isAvailable ? 'افزودن به سبد خرید' : 'ناموجود'}
-                </button>
-            </div>
-        </div>
-    );
-}
-
-// استفاده:
-<ProductCard
-    name="لپ‌تاپ ایسوس"
-    price={45000000}
-    image="/laptop.jpg"
-    stock={3}
-    onAddToCart={(product) => console.log('Added:', product)}
-/>`
+// استفاده
+<Button variant="primary" onClick={() => alert('Clicked!')}>
+    Click me
+</Button>`,
+            language: "jsx",
+            tips: [
+              "همیشه Function Components استفاده کنید",
+              "Props را destructure کنید",
+              "key در list‌ها باید unique باشد"
+            ]
           }
         ]
       }
     ]
   },
   {
-    id: "backend-nodejs",
-    title: "Backend با Node.js",
+    id: "nodejs",
+    title: "Node.js و Backend",
     subtitle: "ساخت سرور و API حرفه‌ای",
-    description: "آموزش کامل Node.js، Express، MongoDB، احراز هویت و ساخت REST API",
+    description: "آموزش Node.js، Express، MongoDB و ساخت REST API",
     color: "from-green-500 to-emerald-600",
-    iconBg: "bg-green-500/10",
     totalHours: 40,
-    prerequisites: ["JavaScript ES6+", "آشنایی با HTTP"],
+    prerequisites: ["JavaScript ES6+"],
     outcomes: [
-      "ساخت REST API حرفه‌ای",
-      "کار با Express.js",
-      "طراحی دیتابیس MongoDB",
-      "پیاده‌سازی Authentication",
+      "ساخت REST API",
+      "کار با Express",
+      "MongoDB و Mongoose",
+      "Authentication",
       "استقرار روی سرور"
     ],
-    lessons: [
+    chapters: [
       {
-        id: "node-intro",
-        title: "مقدمه‌ای بر Node.js",
-        subtitle: "Node.js چیست و چگونه کار می‌کند؟",
-        estimatedTime: 30,
-        difficulty: "مبتدی",
-        content: `## Node.js چیست؟
+        id: "node-ch1",
+        title: "فصل ۱: مقدمه‌ای بر Node.js",
+        description: "Node.js چیست و چگونه کار می‌کند؟",
+        lessons: [
+          {
+            id: "node-l1-1",
+            title: "Node.js چیست؟",
+            subtitle: "آشنایی با Node.js و معماری آن",
+            estimatedTime: 30,
+            difficulty: "متوسط",
+            content: `## Node.js چیست؟
 
-Node.js یک runtime environment متن‌باز برای اجرای JavaScript خارج از مرورگر است. Node.js بر پایه V8 engine گوگل کروم ساخته شده و از مدل event-driven و non-blocking I/O استفاده می‌کند.
+Node.js یک runtime برای اجرای JavaScript خارج از مرورگر است.
 
-## معماری Node.js
+### ویژگی‌ها:
+- مبتنی بر V8 Engine
+- Event-driven
+- Non-blocking I/O
+- Single-threaded
 
-### V8 Engine:
-موتور JavaScript گوگل که کد JS را به machine code تبدیل می‌کند.
+### معماری:
+1. V8 Engine
+2. libuv (Event Loop)
+3. Node Bindings
+4. Node API
 
-### libuv:
-کتابخانه C که event loop و non-blocking I/O را مدیریت می‌کند.
+### Module System:
 
-### Node.js Bindings:
-لایه‌ای که V8 و libuv را به هم متصل می‌کند و API‌های Node را فراهم می‌آورد.
-
-### Node.js API:
-ماژول‌های built-in مثل fs, http, path, os و...
-
-## Event Loop
-
-Node.js single-threaded است ولی با Event Loop می‌تواند عملیات ناهمگام را مدیریت کند:
-
-**مراحل Event Loop:**
-1. **Timers**: setTimeout, setInterval
-2. **Pending callbacks**: callbacks عملیات I/O
-3. **Idle/Prepare**: داخلی
-4. **Poll**: عملیات I/O جدید
-5. **Check**: setImmediate
-6. **Close callbacks**: رویدادهای close
-
-## Node.js vs Browser JavaScript
-
-| ویژگی | Browser | Node.js |
-|--------|---------|---------|
-| Global Object | window | global |
-| DOM | دارد | ندارد |
-| File System | ندارد | دارد (fs) |
-| Module System | ES Modules | CommonJS/ESM |
-
-## Module System
-
-### CommonJS (سنتی):
+**CommonJS:**
 \`\`\`js
-// export
 module.exports = { func };
-// import
 const { func } = require('./module');
 \`\`\`
 
-### ES Modules (مدرن):
+**ES Modules:**
 \`\`\`js
-// export
 export const func = () => {};
-// import
 import { func } from './module.js';
-\`\`\`
-
-## npm (Node Package Manager)
-
-npm بزرگترین registry پکیج‌های JavaScript است.
-
-### دستورات اصلی:
-- \`npm init\` - ایجاد package.json
-- \`npm install package\` - نصب dependency
-- \`npm install -D package\` - نصب devDependency
-- \`npm run script\` - اجرای script
-- \`npx command\` - اجرای package بدون نصب`,
-        code: `// ===== اولین سرور Node.js =====
+\`\`\``,
+            code: `// ===== اولین سرور Node.js =====
 const http = require('http');
 
 const server = http.createServer((req, res) => {
-    // تنظیم header
-    res.writeHead(200, { 
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-    });
-    
-    // مسیریابی ساده
-    if (req.url === '/api/users' && req.method === 'GET') {
-        const users = [
-            { id: 1, name: 'Ali', email: 'ali@mail.com' },
-            { id: 2, name: 'Sara', email: 'sara@mail.com' },
-        ];
-        res.end(JSON.stringify({ success: true, data: users }));
-    } 
-    else if (req.url === '/api/health') {
-        res.end(JSON.stringify({ 
-            status: 'OK', 
-            uptime: process.uptime(),
-            timestamp: new Date().toISOString()
-        }));
-    }
-    else {
-        res.writeHead(404);
-        res.end(JSON.stringify({ error: 'Not Found' }));
-    }
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
+    res.end('Hello World!');
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = 3000;
 server.listen(PORT, () => {
     console.log(\`Server running on port \${PORT}\`);
 });
@@ -2914,26 +2277,17 @@ export const formatDate = (date) => {
 };
 
 export const slugify = (text) => {
-    return text
-        .toLowerCase()
-        .replace(/[^\\w\\s-]/g, '')
-        .replace(/\\s+/g, '-')
-        .trim();
+    return text.toLowerCase().replace(/\\s+/g, '-');
 };
-
-export default { formatDate, slugify };
 
 // file: main.js
 import { formatDate, slugify } from './utils.js';
-import utils from './utils.js';
 
 console.log(formatDate(new Date()));
-console.log(slugify("Hello World!"));
+console.log(slugify("Hello World"));
 
 // ===== File System =====
-import { readFile, writeFile, mkdir } from 'fs/promises';
-import { existsSync } from 'fs';
-import path from 'path';
+import { readFile, writeFile } from 'fs/promises';
 
 // خواندن فایل
 async function readConfig() {
@@ -2941,17 +2295,13 @@ async function readConfig() {
         const data = await readFile('./config.json', 'utf-8');
         return JSON.parse(data);
     } catch (error) {
-        console.error('Error reading config:', error.message);
+        console.error('Error:', error.message);
         return {};
     }
 }
 
 // نوشتن فایل
 async function saveData(filename, data) {
-    const dir = path.dirname(filename);
-    if (!existsSync(dir)) {
-        await mkdir(dir, { recursive: true });
-    }
     await writeFile(filename, JSON.stringify(data, null, 2));
 }
 
@@ -2961,224 +2311,203 @@ dotenv.config();
 
 const config = {
     port: process.env.PORT || 3000,
-    nodeEnv: process.env.NODE_ENV || 'development',
     dbUri: process.env.MONGODB_URI,
     jwtSecret: process.env.JWT_SECRET,
-};
-
-// ===== Process Info =====
-console.log('Node version:', process.version);
-console.log('Platform:', process.platform);
-console.log('PID:', process.pid);
-console.log('Memory:', process.memoryUsage());
-console.log('CPU:', process.cpuUsage());
-console.log('Uptime:', process.uptime());
-
-// ===== package.json Scripts =====
-// {
-//   "name": "my-api",
-//   "version": "1.0.0",
-//   "type": "module",
-//   "scripts": {
-//     "dev": "nodemon src/index.js",
-//     "start": "node src/index.js",
-//     "test": "jest",
-//     "lint": "eslint src/",
-//     "build": "tsc"
-//   },
-//   "dependencies": {
-//     "express": "^4.18.2",
-//     "mongoose": "^8.0.0"
-//   },
-//   "devDependencies": {
-//     "nodemon": "^3.0.0",
-//     "jest": "^29.7.0"
-//   }
-// }`,
-        language: "javascript",
-        tips: [
-          "از ES Modules استفاده کنید - آینده JavaScript است",
-          "Environment variables را در .env نگه دارید",
-          "npm scripts برای اتوماسیون عالی هستند",
-          "process.env برای تنظیمات environment-specific استفاده کنید"
-        ],
-        warnings: [
-          "هرگز secrets را در کد hardcode نکنید",
-          "فایل .env را در .gitignore قرار دهید",
-          "Error handling در Node.js بسیار مهم است"
-        ],
-        exercises: [
-          {
-            question: "یک HTTP server ساده بسازید که مسیرهای /api/products (GET)، /api/products/:id (GET) و /api/health (GET) را handle کند.",
-            answer: `import http from 'http';
-import url from 'url';
-
-// داده‌های نمونه
-const products = [
-    { id: 1, name: 'لپ‌تاپ', price: 45000000, category: 'electronics' },
-    { id: 2, name: 'هدفون', price: 2500000, category: 'accessories' },
-    { id: 3, name: 'کیبورد', price: 1800000, category: 'accessories' },
-    { id: 4, name: 'مانیتور', price: 15000000, category: 'electronics' },
-];
-
-const server = http.createServer((req, res) => {
-    const parsedUrl = url.parse(req.url, true);
-    const pathname = parsedUrl.pathname;
-    
-    // CORS headers
-    res.setHeader('Content-Type', 'application/json');
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    
-    // Health check
-    if (pathname === '/api/health' && req.method === 'GET') {
-        res.writeHead(200);
-        res.end(JSON.stringify({
-            status: 'healthy',
-            uptime: process.uptime(),
-            timestamp: new Date().toISOString(),
-            products_count: products.length
-        }));
-        return;
-    }
-    
-    // GET /api/products - لیست همه محصولات
-    if (pathname === '/api/products' && req.method === 'GET') {
-        const { category, search, sort } = parsedUrl.query;
-        
-        let filtered = [...products];
-        
-        // فیلتر دسته‌بندی
-        if (category) {
-            filtered = filtered.filter(p => p.category === category);
-        }
-        
-        // جستجو
-        if (search) {
-            filtered = filtered.filter(p => 
-                p.name.includes(search)
-            );
-        }
-        
-        // مرتب‌سازی
-        if (sort === 'price_asc') {
-            filtered.sort((a, b) => a.price - b.price);
-        } else if (sort === 'price_desc') {
-            filtered.sort((a, b) => b.price - a.price);
-        }
-        
-        res.writeHead(200);
-        res.end(JSON.stringify({
-            success: true,
-            count: filtered.length,
-            data: filtered
-        }));
-        return;
-    }
-    
-    // GET /api/products/:id - یک محصول
-    const productMatch = pathname.match(/^\\/api\\/products\\/(\\d+)$/);
-    if (productMatch && req.method === 'GET') {
-        const id = parseInt(productMatch[1]);
-        const product = products.find(p => p.id === id);
-        
-        if (product) {
-            res.writeHead(200);
-            res.end(JSON.stringify({ success: true, data: product }));
-        } else {
-            res.writeHead(404);
-            res.end(JSON.stringify({ 
-                success: false, 
-                error: 'Product not found' 
-            }));
-        }
-        return;
-    }
-    
-    // 404
-    res.writeHead(404);
-    res.end(JSON.stringify({ 
-        success: false, 
-        error: 'Route not found' 
-    }));
-});
-
-const PORT = 3000;
-server.listen(PORT, () => {
-    console.log(\`API Server running at http://localhost:\${PORT}\`);
-    console.log(\`Health: http://localhost:\${PORT}/api/health\`);
-    console.log(\`Products: http://localhost:\${PORT}/api/products\`);
-});`
+};`,
+            language: "javascript",
+            tips: [
+              "از ES Modules استفاده کنید",
+              "Environment variables را در .env نگه دارید",
+              "Error handling بسیار مهم است"
+            ]
           }
         ]
       }
     ]
   },
   {
-    id: "wordpress-pro",
+    id: "mongodb",
+    title: "MongoDB و Mongoose",
+    subtitle: "طراحی و مدیریت دیتابیس",
+    description: "آموزش MongoDB، Mongoose، Schema Design و بهینه‌سازی",
+    color: "from-emerald-500 to-teal-600",
+    totalHours: 25,
+    prerequisites: ["Node.js و Express"],
+    outcomes: [
+      "طراحی Schema",
+      "کوئری‌های پیچیده",
+      "Aggregation Pipeline",
+      "بهینه‌سازی Performance",
+      "مدیریت Index‌ها"
+    ],
+    chapters: [
+      {
+        id: "mongo-ch1",
+        title: "فصل ۱: مقدمه‌ای بر MongoDB",
+        description: "MongoDB چیست و چگونه کار می‌کند؟",
+        lessons: [
+          {
+            id: "mongo-l1-1",
+            title: "MongoDB و Mongoose",
+            subtitle: "کار با دیتابیس NoSQL",
+            estimatedTime: 35,
+            difficulty: "متوسط",
+            content: `## MongoDB چیست؟
+
+MongoDB یک دیتابیس NoSQL مبتنی بر سند است.
+
+### مفاهیم:
+- **Database**: ظرف اصلی
+- **Collection**: گروهی از Documents
+- **Document**: یک رکورد JSON-like
+- **Field**: یک خاصیت در Document
+
+## Mongoose
+
+Mongoose یک ODM برای MongoDB است:
+- Schema-based modeling
+- Validation
+- Middleware
+- Query building
+
+## Schema Types:
+- String, Number, Date
+- Boolean, Buffer
+- ObjectId, Array
+- Mixed, Map
+
+## Validation:
+- required, min/max
+- minlength/maxlength
+- enum, match`,
+            code: `// ===== اتصال به MongoDB =====
+import mongoose from 'mongoose';
+
+const connectDB = async () => {
+    try {
+        const conn = await mongoose.connect(process.env.MONGODB_URI);
+        console.log(\`MongoDB Connected: \${conn.connection.host}\`);
+    } catch (error) {
+        console.error('Error:', error.message);
+        process.exit(1);
+    }
+};
+
+// ===== User Model =====
+const userSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        required: [true, 'نام الزامی است'],
+        trim: true,
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+        lowercase: true,
+    },
+    password: {
+        type: String,
+        required: true,
+        minlength: 8,
+        select: false,
+    },
+    role: {
+        type: String,
+        enum: ['user', 'admin'],
+        default: 'user',
+    },
+}, { timestamps: true });
+
+const User = mongoose.model('User', userSchema);
+
+// ===== CRUD Operations =====
+
+// CREATE
+const user = await User.create({
+    name: 'Ali',
+    email: 'ali@example.com',
+    password: 'password123',
+});
+
+// READ
+const users = await User.find({ role: 'user' })
+    .select('name email')
+    .sort({ createdAt: -1 })
+    .limit(10);
+
+// UPDATE
+const updated = await User.findByIdAndUpdate(
+    id,
+    { name: 'New Name' },
+    { new: true }
+);
+
+// DELETE
+await User.findByIdAndDelete(id);`,
+            language: "javascript",
+            tips: [
+              "از lean() برای query‌های فقط خواندنی استفاده کنید",
+              "Index‌ها برای فیلدهای پرکاربرد بسازید",
+              "Validation سمت سرور ضروری است"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "wordpress",
     title: "وردپرس حرفه‌ای",
     subtitle: "قالب‌نویسی و افزونه‌نویسی",
-    description: "آموزش جامع وردپرس از نصب تا قالب‌نویسی حرفه‌ای، افزونه‌نویسی و بهینه‌سازی",
+    description: "آموزش وردپرس، قالب‌نویسی، افزونه‌نویسی و WooCommerce",
     color: "from-indigo-500 to-purple-600",
-    iconBg: "bg-indigo-500/10",
     totalHours: 35,
     prerequisites: ["HTML, CSS و PHP پایه"],
     outcomes: [
       "نصب و پیکربندی وردپرس",
       "قالب‌نویسی از صفر",
-      "افزونه‌نویسی حرفه‌ای",
-      "WooCommerce و فروشگاه",
-      "بهینه‌سازی سرعت و امنیت"
+      "افزونه‌نویسی",
+      "WooCommerce",
+      "بهینه‌سازی"
     ],
-    lessons: [
+    chapters: [
       {
-        id: "wp-intro",
-        title: "مقدمه‌ای بر وردپرس",
-        subtitle: "وردپرس چیست و چرا محبوب‌ترین CMS است؟",
-        estimatedTime: 25,
-        difficulty: "مبتدی",
-        content: `## وردپرس چیست؟
+        id: "wp-ch1",
+        title: "فصل ۱: مقدمه‌ای بر وردپرس",
+        description: "وردپرس چیست و چگونه کار می‌کند؟",
+        lessons: [
+          {
+            id: "wp-l1-1",
+            title: "وردپرس چیست؟",
+            subtitle: "آشنایی با وردپرس و معماری آن",
+            estimatedTime: 25,
+            difficulty: "مبتدی",
+            content: `## وردپرس چیست؟
 
-وردپرس یک سیستم مدیریت محتوا (CMS) متن‌باز و رایگان است که با PHP و MySQL ساخته شده. وردپرس بیش از ۴۳٪ از وب‌سایت‌های جهان را قدرت می‌دهد و محبوب‌ترین CMS دنیاست.
+وردپرس یک CMS متن‌باز و رایگان است که با PHP و MySQL ساخته شده.
 
-## انواع وردپرس
+### انواع وردپرس:
 
-### WordPress.org (Self-hosted):
-- نرم‌افزار رایگان و متن‌باز
+**WordPress.org (Self-hosted):**
+- نرم‌افزار رایگان
 - نصب روی هاست شخصی
 - کنترل کامل
-- قابلیت نصب قالب و افزونه دلخواه
 
-### WordPress.com (Hosted):
-- سرویس میزبانی توسط Automattic
-- محدودیت‌هایی در پلن رایگان
-- آسان‌تر ولی کمتر انعطاف‌پذیر
-
-## معماری وردپرس
+**WordPress.com (Hosted):**
+- سرویس میزبانی
+- محدودیت‌هایی دارد
 
 ### ساختار فایل‌ها:
-- \`wp-admin/\` - پنل مدیریت
-- \`wp-includes/\` - فایل‌های هسته
-- \`wp-content/\` - قالب‌ها، افزونه‌ها، آپلودها
-- \`wp-config.php\` - تنظیمات اصلی
-- \`.htaccess\` - تنظیمات Apache
-
-### دیتابیس:
-- \`wp_posts\` - پست‌ها و صفحات
-- \`wp_users\` - کاربران
-- \`wp_options\` - تنظیمات
-- \`wp_postmeta\` - متادیتای پست‌ها
-- \`wp_terms\` - دسته‌بندی‌ها و برچسب‌ها
+- wp-admin/: پنل مدیریت
+- wp-includes/: فایل‌های هسته
+- wp-content/: قالب‌ها، افزونه‌ها
+- wp-config.php: تنظیمات
 
 ### Template Hierarchy:
-وردپرس بر اساس نوع درخواست، فایل template مناسب را انتخاب می‌کند:
-- صفحه اصلی: front-page.php → home.php → index.php
-- پست تک: single-{post-type}.php → single.php → index.php
-- صفحه: page-{slug}.php → page.php → index.php
-- آرشیو: archive-{post-type}.php → archive.php → index.php
-- دسته‌بندی: category-{slug}.php → category.php → archive.php
+وردپرس بر اساس نوع درخواست، template مناسب را انتخاب می‌کند.
 
 ### The Loop:
-مکانیزم اصلی وردپرس برای نمایش محتوا:
 \`\`\`php
 if (have_posts()) :
     while (have_posts()) : the_post();
@@ -3186,2142 +2515,227 @@ if (have_posts()) :
         the_content();
     endwhile;
 endif;
-\`\`\`
-
-## Hooks: System
-
-### Actions:
-نقاطی که می‌توانید کد اضافه کنید:
-\`\`\`php
-add_action('init', 'my_function');
-add_action('wp_enqueue_scripts', 'my_styles');
-\`\`\`
-
-### Filters:
-نقاطی که می‌توانید داده را تغییر دهید:
-\`\`\`php
-add_filter('the_title', 'my_title_filter');
-add_filter('the_content', 'my_content_filter');
 \`\`\``,
-        code: `<?php
+            code: `<?php
 /**
- * Template Name: صفحه اصلی سفارشی
- * 
- * ساختار یک فایل قالب وردپرس
+ * Template Name: صفحه اصلی
  */
 
-// جلوگیری از دسترسی مستقیم
-if (!defined('ABSPATH')) {
-    exit;
-}
-
-// هدر
 get_header(); ?>
 
-<main id="primary" class="site-main">
-    
-    <?php // Hero Section ?>
-    <section class="hero-section">
-        <div class="container">
-            <h1 class="hero-title">
-                <?php echo esc_html(get_bloginfo('name')); ?>
-            </h1>
-            <p class="hero-description">
-                <?php echo esc_html(get_bloginfo('description')); ?>
-            </p>
-            
-            <?php if (has_custom_logo()) : ?>
-                <div class="hero-logo">
-                    <?php the_custom_logo(); ?>
-                </div>
-            <?php endif; ?>
-        </div>
-    </section>
-
-    <?php // آخرین مقالات ?>
-    <section class="latest-posts">
-        <div class="container">
-            <h2 class="section-title">آخرین مطالب</h2>
-            
-            <?php
-            $latest_posts = new WP_Query(array(
-                'posts_per_page' => 6,
-                'post_status'    => 'publish',
-                'orderby'        => 'date',
-                'order'          => 'DESC',
-            ));
-            
-            if ($latest_posts->have_posts()) : ?>
-                <div class="posts-grid">
-                    <?php while ($latest_posts->have_posts()) : 
-                        $latest_posts->the_post(); ?>
-                        
-                        <article id="post-<?php the_ID(); ?>" 
-                                 <?php post_class('post-card'); ?>>
-                            
-                            <?php if (has_post_thumbnail()) : ?>
-                                <div class="post-thumbnail">
-                                    <a href="<?php the_permalink(); ?>">
-                                        <?php the_post_thumbnail('medium_large'); ?>
-                                    </a>
-                                </div>
-                            <?php endif; ?>
-                            
-                            <div class="post-content">
-                                <header class="post-header">
-                                    <h3 class="post-title">
-                                        <a href="<?php the_permalink(); ?>">
-                                            <?php the_title(); ?>
-                                        </a>
-                                    </h3>
-                                    
-                                    <div class="post-meta">
-                                        <time datetime="<?php echo get_the_date('c'); ?>">
-                                            <?php echo get_the_date(); ?>
-                                        </time>
-                                        <span class="author">
-                                            <?php the_author(); ?>
-                                        </span>
-                                    </div>
-                                </header>
-                                
-                                <div class="post-excerpt">
-                                    <?php echo wp_trim_words(get_the_excerpt(), 20); ?>
-                                </div>
-                                
-                                <footer class="post-footer">
-                                    <a href="<?php the_permalink(); ?>" 
-                                       class="read-more">
-                                        ادامه مطلب
-                                    </a>
-                                </footer>
-                            </div>
-                        </article>
-                        
-                    <?php endwhile; ?>
-                </div>
-                
-                <?php // Pagination ?>
-                <div class="pagination">
-                    <?php
-                    echo paginate_links(array(
-                        'total'        => $latest_posts->max_num_pages,
-                        'current'      => max(1, get_query_var('paged')),
-                        'prev_text'    => '&laquo; قبلی',
-                        'next_text'    => 'بعدی &raquo;',
-                        'type'         => 'list',
-                    ));
-                    ?>
-                </div>
-                
-            <?php else : ?>
-                <p class="no-posts">مطلبی یافت نشد.</p>
-            <?php endif;
-            
-            wp_reset_postdata(); ?>
-        </div>
-    </section>
-
-    <?php // بخش دسته‌بندی‌ها ?>
-    <section class="categories-section">
-        <div class="container">
-            <h2 class="section-title">دسته‌بندی‌ها</h2>
-            
-            <?php
-            $categories = get_categories(array(
-                'orderby'    => 'count',
-                'order'      => 'DESC',
-                'number'     => 8,
-                'hide_empty' => true,
-            ));
-            
-            if (!empty($categories)) : ?>
-                <div class="categories-grid">
-                    <?php foreach ($categories as $category) : ?>
-                        <a href="<?php echo esc_url(get_category_link($category)); ?>" 
-                           class="category-card">
-                            <h3><?php echo esc_html($category->name); ?></h3>
-                            <span class="count">
-                                <?php echo $category->count; ?> مطلب
-                            </span>
+<main class="site-main">
+    <?php if (have_posts()) : ?>
+        <?php while (have_posts()) : the_post(); ?>
+            <article <?php post_class(); ?>>
+                <header>
+                    <h2>
+                        <a href="<?php the_permalink(); ?>">
+                            <?php the_title(); ?>
                         </a>
-                    <?php endforeach; ?>
-                </div>
-            <?php endif; ?>
-        </div>
-    </section>
-
-</main>
-
-<?php 
-// فوتر
-get_footer();
-
-// ============================================
-// functions.php - ثبت و تنظیمات قالب
-// ============================================
-
-// تنظیمات اولیه قالب
-function mytheme_setup() {
-    // عنوان صفحه
-    add_theme_support('title-tag');
-    
-    // تصویر شاخص
-    add_theme_support('post-thumbnails');
-    add_image_size('card-thumb', 400, 250, true);
-    add_image_size('hero-bg', 1920, 600, true);
-    
-    // منوها
-    register_nav_menus(array(
-        'primary' => __('منوی اصلی', 'mytheme'),
-        'footer'  => __('منوی فوتر', 'mytheme'),
-    ));
-    
-    // HTML5
-    add_theme_support('html5', array(
-        'search-form', 'comment-form', 'comment-list', 'gallery', 'caption', 'style', 'script'
-    ));
-    
-    // Custom Logo
-    add_theme_support('custom-logo', array(
-        'height'      => 60,
-        'width'       => 200,
-        'flex-height' => true,
-        'flex-width'  => true,
-    ));
-    
-    // WooCommerce
-    add_theme_support('woocommerce');
-    
-    // Editor Styles
-    add_theme_support('editor-styles');
-    add_editor_style('assets/css/editor-style.css');
-    
-    // Block Editor Support
-    add_theme_support('wp-block-styles');
-    add_theme_support('align-wide');
-    add_theme_support('responsive-embeds');
-}
-add_action('after_setup_theme', 'mytheme_setup');
-
-// Enqueue Styles & Scripts
-function mytheme_scripts() {
-    $version = wp_get_theme()->get('Version');
-    
-    // Main stylesheet
-    wp_enqueue_style(
-        'mytheme-style',
-        get_stylesheet_uri(),
-        array(),
-        $version
-    );
-    
-    // Custom CSS
-    wp_enqueue_style(
-        'mytheme-custom',
-        get_template_directory_uri() . '/assets/css/custom.css',
-        array('mytheme-style'),
-        $version
-    );
-    
-    // Fonts
-    wp_enqueue_style(
-        'vazir-font',
-        'https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css',
-        array(),
-        '33.003'
-    );
-    
-    // Main JS
-    wp_enqueue_script(
-        'mytheme-main',
-        get_template_directory_uri() . '/assets/js/main.js',
-        array('jquery'),
-        $version,
-        true // in footer
-    );
-    
-    // Localize script (pass PHP data to JS)
-    wp_localize_script('mytheme-main', 'mythemeData', array(
-        'ajaxUrl'  => admin_url('admin-ajax.php'),
-        'nonce'    => wp_create_nonce('mytheme_nonce'),
-        'themeUrl' => get_template_directory_uri(),
-        'homeUrl'  => home_url('/'),
-    ));
-    
-    // Comment reply script
-    if (is_singular() && comments_open() && get_option('thread_comments')) {
-        wp_enqueue_script('comment-reply');
-    }
-}
-add_action('wp_enqueue_scripts', 'mytheme_scripts');`,
-        language: "php",
-        tips: [
-          "همیشه از توابع WordPress استفاده کنید - SQL مستقیم ناامن است",
-          "escaping را فراموش نکنید: esc_html, esc_attr, esc_url",
-          "از Child Theme برای تغییرات استفاده کنید",
-          "wp_reset_postdata() بعد از WP_Query سفارشی ضروری است"
-        ],
-        warnings: [
-          "هرگز فایل‌های هسته وردپرس را ویرایش نکنید",
-          "از eval() و توابع خطرناک استفاده نکنید",
-          "همیشه nonce‌ها را برای فرم‌ها و AJAX بررسی کنید",
-          "فایل wp-config.php را محافظت کنید"
-        ],
-        exercises: [
-          {
-            question: "یک Custom Post Type برای 'نمونه‌کار' بسازید با taxonomy دسته‌بندی و صفحه archive.",
-            answer: `<?php
-// functions.php
-
-// ثبت Custom Post Type: نمونه‌کار
-function register_portfolio_post_type() {
-    $labels = array(
-        'name'                  => __('نمونه‌کارها', 'mytheme'),
-        'singular_name'         => __('نمونه‌کار', 'mytheme'),
-        'menu_name'             => __('نمونه‌کارها', 'mytheme'),
-        'add_new'               => __('افزودن نمونه‌کار', 'mytheme'),
-        'add_new_item'          => __('افزودن نمونه‌کار جدید', 'mytheme'),
-        'edit_item'             => __('ویرایش نمونه‌کار', 'mytheme'),
-        'new_item'              => __('نمونه‌کار جدید', 'mytheme'),
-        'view_item'             => __('مشاهده نمونه‌کار', 'mytheme'),
-        'search_items'          => __('جستجوی نمونه‌کار', 'mytheme'),
-        'not_found'             => __('نمونه‌کاری یافت نشد', 'mytheme'),
-        'not_found_in_trash'    => __('نمونه‌کاری در زباله‌دان یافت نشد', 'mytheme'),
-        'all_items'             => __('همه نمونه‌کارها', 'mytheme'),
-    );
-
-    $args = array(
-        'labels'             => $labels,
-        'public'             => true,
-        'publicly_queryable' => true,
-        'show_ui'            => true,
-        'show_in_menu'       => true,
-        'show_in_rest'       => true, // Gutenberg support
-        'query_var'          => true,
-        'rewrite'            => array('slug' => 'portfolio'),
-        'capability_type'    => 'post',
-        'has_archive'        => true,
-        'hierarchical'       => false,
-        'menu_position'      => 5,
-        'menu_icon'          => 'dashicons-portfolio',
-        'supports'           => array(
-            'title',
-            'editor',
-            'thumbnail',
-            'excerpt',
-            'custom-fields',
-            'revisions',
-        ),
-    );
-
-    register_post_type('portfolio', $args);
-}
-add_action('init', 'register_portfolio_post_type');
-
-// ثبت Taxonomy: دسته‌بندی نمونه‌کار
-function register_portfolio_taxonomy() {
-    $labels = array(
-        'name'              => __('دسته‌بندی نمونه‌کارها', 'mytheme'),
-        'singular_name'     => __('دسته‌بندی', 'mytheme'),
-        'search_items'      => __('جستجوی دسته‌بندی', 'mytheme'),
-        'all_items'         => __('همه دسته‌بندی‌ها', 'mytheme'),
-        'parent_item'       => __('دسته‌بندی والد', 'mytheme'),
-        'edit_item'         => __('ویرایش دسته‌بندی', 'mytheme'),
-        'update_item'       => __('به‌روزرسانی دسته‌بندی', 'mytheme'),
-        'add_new_item'      => __('افزودن دسته‌بندی جدید', 'mytheme'),
-        'new_item_name'     => __('نام دسته‌بندی جدید', 'mytheme'),
-        'menu_name'         => __('دسته‌بندی‌ها', 'mytheme'),
-    );
-
-    register_taxonomy('portfolio_category', 'portfolio', array(
-        'labels'            => $labels,
-        'hierarchical'      => true,
-        'show_ui'           => true,
-        'show_in_rest'      => true,
-        'show_admin_column' => true,
-        'query_var'         => true,
-        'rewrite'           => array('slug' => 'portfolio-category'),
-    ));
-}
-add_action('init', 'register_portfolio_taxonomy');
-
-// Meta Boxes برای اطلاعات پروژه
-function add_portfolio_meta_boxes() {
-    add_meta_box(
-        'portfolio_details',
-        __('اطلاعات پروژه', 'mytheme'),
-        'render_portfolio_meta_box',
-        'portfolio',
-        'normal',
-        'high'
-    );
-}
-add_action('add_meta_boxes', 'add_portfolio_meta_boxes');
-
-function render_portfolio_meta_box($post) {
-    wp_nonce_field('portfolio_meta_box', 'portfolio_meta_nonce');
-    
-    $client_name = get_post_meta($post->ID, '_portfolio_client', true);
-    $project_url = get_post_meta($post->ID, '_portfolio_url', true);
-    $technologies = get_post_meta($post->ID, '_portfolio_technologies', true);
-    $completion_date = get_post_meta($post->ID, '_portfolio_date', true);
-    ?>
-    
-    <p>
-        <label for="portfolio_client"><strong>نام مشتری:</strong></label><br>
-        <input type="text" id="portfolio_client" name="portfolio_client" 
-               value="<?php echo esc_attr($client_name); ?>" class="widefat">
-    </p>
-    
-    <p>
-        <label for="portfolio_url"><strong>آدرس پروژه:</strong></label><br>
-        <input type="url" id="portfolio_url" name="portfolio_url" 
-               value="<?php echo esc_url($project_url); ?>" class="widefat">
-    </p>
-    
-    <p>
-        <label for="portfolio_technologies"><strong>تکنولوژی‌ها (با کاما جدا کنید):</strong></label><br>
-        <input type="text" id="portfolio_technologies" name="portfolio_technologies" 
-               value="<?php echo esc_attr($technologies); ?>" class="widefat"
-               placeholder="React, Node.js, MongoDB">
-    </p>
-    
-    <p>
-        <label for="portfolio_date"><strong>تاریخ اتمام:</strong></label><br>
-        <input type="date" id="portfolio_date" name="portfolio_date" 
-               value="<?php echo esc_attr($completion_date); ?>">
-    </p>
-    
-    <?php
-}
-
-function save_portfolio_meta_box($post_id) {
-    if (!isset($_POST['portfolio_meta_nonce']) || 
-        !wp_verify_nonce($_POST['portfolio_meta_nonce'], 'portfolio_meta_box')) {
-        return;
-    }
-    
-    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
-    if (!current_user_can('edit_post', $post_id)) return;
-    
-    $fields = array(
-        'portfolio_client'       => '_portfolio_client',
-        'portfolio_url'          => '_portfolio_url',
-        'portfolio_technologies' => '_portfolio_technologies',
-        'portfolio_date'         => '_portfolio_date',
-    );
-    
-    foreach ($fields as $field => $meta_key) {
-        if (isset($_POST[$field])) {
-            $value = sanitize_text_field($_POST[$field]);
-            update_post_meta($post_id, $meta_key, $value);
-        }
-    }
-}
-add_action('save_post_portfolio', 'save_portfolio_meta_box');
-
-// archive-portfolio.php
-/*
-<?php get_header(); ?>
-
-<main class="portfolio-archive">
-    <div class="container">
-        <h1 class="page-title">نمونه‌کارها</h1>
-        
-        <?php // فیلتر دسته‌بندی ?>
-        <?php
-        $categories = get_terms(array(
-            'taxonomy'   => 'portfolio_category',
-            'hide_empty' => true,
-        ));
-        ?>
-        
-        <div class="portfolio-filter">
-            <a href="<?php echo get_post_type_archive_link('portfolio'); ?>" 
-               class="filter-btn <?php echo !get_query_var('portfolio_category') ? 'active' : ''; ?>">
-                همه
-            </a>
-            <?php foreach ($categories as $cat) : ?>
-                <a href="<?php echo get_term_link($cat); ?>" 
-                   class="filter-btn">
-                    <?php echo esc_html($cat->name); ?>
-                </a>
-            <?php endforeach; ?>
-        </div>
-        
-        <?php // گرید نمونه‌کارها ?>
-        <div class="portfolio-grid">
-            <?php if (have_posts()) : ?>
-                <?php while (have_posts()) : the_post(); ?>
-                    <article class="portfolio-item">
-                        <?php if (has_post_thumbnail()) : ?>
-                            <div class="portfolio-image">
-                                <?php the_post_thumbnail('card-thumb'); ?>
-                            </div>
-                        <?php endif; ?>
-                        
-                        <div class="portfolio-info">
-                            <h3>
-                                <a href="<?php the_permalink(); ?>">
-                                    <?php the_title(); ?>
-                                </a>
-                            </h3>
-                            
-                            <p><?php echo wp_trim_words(get_the_excerpt(), 15); ?></p>
-                            
-                            <?php
-                            $tech = get_post_meta(get_the_ID(), '_portfolio_technologies', true);
-                            if ($tech) :
-                                $techs = explode(',', $tech);
-                            ?>
-                                <div class="tech-tags">
-                                    <?php foreach ($techs as $t) : ?>
-                                        <span class="tech-tag">
-                                            <?php echo esc_html(trim($t)); ?>
-                                        </span>
-                                    <?php endforeach; ?>
-                                </div>
-                            <?php endif; ?>
-                        </div>
-                    </article>
-                <?php endwhile; ?>
+                    </h2>
+                    <div class="meta">
+                        <time><?php echo get_the_date(); ?></time>
+                        <span><?php the_author(); ?></span>
+                    </div>
+                </header>
                 
-                <?php the_posts_pagination(); ?>
-            <?php else : ?>
-                <p>نمونه‌کاری یافت نشد.</p>
-            <?php endif; ?>
-        </div>
-    </div>
+                <?php if (has_post_thumbnail()) : ?>
+                    <div class="thumbnail">
+                        <?php the_post_thumbnail('medium'); ?>
+                    </div>
+                <?php endif; ?>
+                
+                <div class="excerpt">
+                    <?php the_excerpt(); ?>
+                </div>
+                
+                <footer>
+                    <a href="<?php the_permalink(); ?>">ادامه مطلب</a>
+                </footer>
+            </article>
+        <?php endwhile; ?>
+        
+        <?php the_posts_pagination(); ?>
+    <?php else : ?>
+        <p>مطلبی یافت نشد.</p>
+    <?php endif; ?>
 </main>
 
-<?php get_footer(); ?>
-*/`
+<?php get_footer(); ?>`,
+            language: "php",
+            tips: [
+              "از توابع WordPress استفاده کنید",
+              "escaping را فراموش نکنید",
+              "از Child Theme برای تغییرات استفاده کنید"
+            ]
           }
         ]
       }
     ]
   },
   {
-    id: "database-mastery",
-    title: "دیتابیس و MongoDB",
-    subtitle: "طراحی و مدیریت دیتابیس",
-    description: "آموزش کامل MongoDB، Mongoose، طراحی Schema و بهینه‌سازی کوئری‌ها",
-    color: "from-emerald-500 to-teal-600",
-    iconBg: "bg-emerald-500/10",
-    totalHours: 25,
-    prerequisites: ["Node.js و Express"],
-    outcomes: [
-      "طراحی Schema حرفه‌ای",
-      "نوشتن کوئری‌های پیچیده",
-      "Aggregation Pipeline",
-      "بهینه‌سازی Performance",
-      "مدیریت Index‌ها"
-    ],
-    lessons: [
-      {
-        id: "mongo-basics",
-        title: "MongoDB و Mongoose",
-        subtitle: "کار با دیتابیس NoSQL",
-        estimatedTime: 40,
-        difficulty: "متوسط",
-        content: `## MongoDB چیست؟
-
-MongoDB یک دیتابیس NoSQL مبتنی بر سند (Document) است. داده‌ها به صورت BSON (Binary JSON) ذخیره می‌شوند و ساختار انعطاف‌پذیری دارند.
-
-## مفاهیم کلیدی
-
-### Database:
-ظرف اصلی که Collection‌ها را نگه می‌دارد.
-
-### Collection:
-گروهی از Documents - معادل Table در SQL.
-
-### Document:
-یک رکورد JSON-like - معادل Row در SQL.
-
-### Field:
-یک خاصیت در Document - معادل Column در SQL.
-
-## Mongoose
-
-Mongoose یک ODM (Object Document Mapper) برای MongoDB در Node.js است که:
-- Schema-based modeling
-- Validation
-- Type casting
-- Middleware (hooks)
-- Query building
-- Population
-
-## Schema Types
-
-- String
-- Number
-- Date
-- Buffer
-- Boolean
-- Mixed
-- ObjectId
-- Array
-- Decimal128
-- Map
-
-## Validation
-
-Mongoose validation‌های built-in دارد:
-- required
-- min/max (Number)
-- minlength/maxlength (String)
-- enum
-- match (RegExp)
-- validate (custom)
-
-## Middleware (Hooks)
-
-### Pre hooks:
-قبل از عملیات اجرا می‌شوند.
-
-### Post hooks:
-بعد از عملیات اجرا می‌شوند.
-
-## Population
-
-جایگزینی ObjectId با document واقعی از collection دیگر.`,
-        code: `// ===== اتصال به MongoDB =====
-import mongoose from 'mongoose';
-
-const connectDB = async () => {
-    try {
-        const conn = await mongoose.connect(process.env.MONGODB_URI, {
-            maxPoolSize: 10,
-            serverSelectionTimeoutMS: 5000,
-            socketTimeoutMS: 45000,
-        });
-        console.log(\`MongoDB Connected: \${conn.connection.host}\`);
-    } catch (error) {
-        console.error('MongoDB Connection Error:', error.message);
-        process.exit(1);
-    }
-};
-
-export default connectDB;
-
-// ===== User Model =====
-import mongoose from 'mongoose';
-import bcrypt from 'bcryptjs';
-import validator from 'validator';
-
-const userSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: [true, 'نام الزامی است'],
-        trim: true,
-        minlength: [2, 'نام حداقل ۲ کاراکتر'],
-        maxlength: [50, 'نام حداکثر ۵۰ کاراکتر'],
-    },
-    email: {
-        type: String,
-        required: [true, 'ایمیل الزامی است'],
-        unique: true,
-        lowercase: true,
-        trim: true,
-        validate: {
-            validator: validator.isEmail,
-            message: 'ایمیل نامعتبر است',
-        },
-    },
-    password: {
-        type: String,
-        required: [true, 'رمز عبور الزامی است'],
-        minlength: [8, 'رمز عبور حداقل ۸ کاراکتر'],
-        select: false, // در query‌ها برنگردد
-    },
-    role: {
-        type: String,
-        enum: {
-            values: ['user', 'admin', 'editor'],
-            message: 'نقش نامعتبر است',
-        },
-        default: 'user',
-    },
-    avatar: {
-        type: String,
-        default: 'default-avatar.png',
-    },
-    isActive: {
-        type: Boolean,
-        default: true,
-    },
-    profile: {
-        bio: { type: String, maxlength: 500 },
-        website: { 
-            type: String,
-            validate: {
-                validator: (url) => url === '' || validator.isURL(url),
-                message: 'آدرس وب نامعتبر است',
-            }
-        },
-        location: String,
-        socialLinks: {
-            github: String,
-            linkedin: String,
-            twitter: String,
-        },
-    },
-    preferences: {
-        language: { type: String, default: 'fa' },
-        theme: { type: String, enum: ['light', 'dark'], default: 'dark' },
-        notifications: {
-            email: { type: Boolean, default: true },
-            push: { type: Boolean, default: true },
-        },
-    },
-    resetPasswordToken: String,
-    resetPasswordExpire: Date,
-    lastLogin: Date,
-    loginAttempts: {
-        type: Number,
-        default: 0,
-    },
-    lockUntil: Date,
-}, {
-    timestamps: true,
-    toJSON: { virtuals: true },
-    toObject: { virtuals: true },
-});
-
-// Index‌ها
-userSchema.index({ email: 1 });
-userSchema.index({ name: 'text', 'profile.bio': 'text' });
-userSchema.index({ createdAt: -1 });
-userSchema.index({ role: 1, isActive: 1 });
-
-// Virtual
-userSchema.virtual('isLocked').get(function() {
-    return !!(this.lockUntil && this.lockUntil > Date.now());
-});
-
-// Pre-save middleware
-userSchema.pre('save', async function(next) {
-    // هش رمز عبور
-    if (!this.isModified('password')) return next();
-    
-    if (this.password) {
-        const salt = await bcrypt.genSalt(12);
-        this.password = await bcrypt.hash(this.password, salt);
-    }
-    
-    next();
-});
-
-// Pre-find middleware - فقط کاربران فعال
-userSchema.pre('find', function() {
-    // this.where({ isActive: true }); // اختیاری
-});
-
-// Methods
-userSchema.methods.comparePassword = async function(candidatePassword) {
-    return await bcrypt.compare(candidatePassword, this.password);
-};
-
-userSchema.methods.incrementLoginAttempts = async function() {
-    if (this.lockUntil && this.lockUntil < Date.now()) {
-        return await this.updateOne({
-            $set: { loginAttempts: 1 },
-            $unset: { lockUntil: 1 },
-        });
-    }
-    
-    const updates = { $inc: { loginAttempts: 1 } };
-    
-    if (this.loginAttempts + 1 >= 5 && !this.isLocked) {
-        updates.$set = { lockUntil: Date.now() + 2 * 60 * 60 * 1000 }; // 2 hours
-    }
-    
-    return await this.updateOne(updates);
-};
-
-// Static methods
-userSchema.statics.findActiveUsers = function() {
-    return this.find({ isActive: true }).select('name email avatar');
-};
-
-userSchema.statics.findByEmail = function(email) {
-    return this.findOne({ email: email.toLowerCase() });
-};
-
-const User = mongoose.model('User', userSchema);
-export default User;
-
-// ===== Product Model =====
-const productSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: true,
-        trim: true,
-        index: true,
-    },
-    slug: {
-        type: String,
-        unique: true,
-        lowercase: true,
-    },
-    description: {
-        type: String,
-        required: true,
-        maxlength: 5000,
-    },
-    price: {
-        type: Number,
-        required: true,
-        min: [0, 'قیمت نمی‌تواند منفی باشد'],
-        index: true,
-    },
-    comparePrice: {
-        type: Number,
-        min: 0,
-    },
-    category: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Category',
-        required: true,
-        index: true,
-    },
-    tags: [{
-        type: String,
-        trim: true,
-    }],
-    images: [{
-        url: { type: String, required: true },
-        alt: String,
-        isPrimary: { type: Boolean, default: false },
-    }],
-    inventory: {
-        quantity: { type: Number, default: 0, min: 0 },
-        trackInventory: { type: Boolean, default: true },
-        lowStockThreshold: { type: Number, default: 5 },
-    },
-    variants: [{
-        name: String, // "Size", "Color"
-        options: [String], // ["S", "M", "L"]
-        priceModifier: { type: Number, default: 0 },
-    }],
-    specifications: [{
-        key: String,
-        value: String,
-    }],
-    status: {
-        type: String,
-        enum: ['draft', 'active', 'archived'],
-        default: 'draft',
-        index: true,
-    },
-    featured: {
-        type: Boolean,
-        default: false,
-        index: true,
-    },
-    createdBy: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-    },
-    ratings: {
-        average: { type: Number, default: 0, min: 0, max: 5 },
-        count: { type: Number, default: 0 },
-    },
-}, {
-    timestamps: true,
-    toJSON: { virtuals: true },
-    toObject: { virtuals: true },
-});
-
-// Index‌های مرکب
-productSchema.index({ category: 1, price: 1 });
-productSchema.index({ status: 1, featured: -1, createdAt: -1 });
-productSchema.index({ name: 'text', description: 'text', tags: 'text' });
-
-// Virtual - discount percentage
-productSchema.virtual('discountPercentage').get(function() {
-    if (!this.comparePrice || this.comparePrice <= this.price) return 0;
-    return Math.round(((this.comparePrice - this.price) / this.comparePrice) * 100);
-});
-
-// Virtual - inStock
-productSchema.virtual('inStock').get(function() {
-    return this.inventory.quantity > 0;
-});
-
-// Pre-save: generate slug
-productSchema.pre('save', function(next) {
-    if (this.isModified('name') && !this.slug) {
-        this.slug = this.name
-            .toLowerCase()
-            .replace(/[^\\w\\s-]/g, '')
-            .replace(/\\s+/g, '-')
-            .substring(0, 80);
-    }
-    next();
-});
-
-const Product = mongoose.model('Product', productSchema);
-export default Product;
-
-// ===== CRUD Operations =====
-
-// CREATE
-const newUser = await User.create({
-    name: 'Ali',
-    email: 'ali@example.com',
-    password: 'securePass123',
-});
-
-// READ - Find
-const users = await User.find({ role: 'user' })
-    .select('name email')
-    .sort({ createdAt: -1 })
-    .limit(10)
-    .skip(0)
-    .lean(); // Performance: plain JS objects
-
-// READ - FindOne
-const user = await User.findOne({ email: 'ali@example.com' });
-
-// READ - FindById
-const userById = await User.findById(id).populate('posts');
-
-// UPDATE
-const updated = await User.findByIdAndUpdate(
-    id,
-    { $set: { name: 'New Name' } },
-    { new: true, runValidators: true }
-);
-
-// DELETE
-await User.findByIdAndDelete(id);
-
-// Complex Query
-const results = await Product.find({
-    $and: [
-        { price: { $gte: 100000, $lte: 5000000 } },
-        { 'inventory.quantity': { $gt: 0 } },
-        { status: 'active' },
-        { tags: { $in: ['electronics', 'gadgets'] } },
-    ],
-    $or: [
-        { name: { $regex: /laptop/i } },
-        { description: { $regex: /laptop/i } },
-    ],
-})
-    .populate('category', 'name slug')
-    .sort({ 'ratings.average': -1, createdAt: -1 })
-    .limit(20);
-
-// Aggregation Pipeline
-const stats = await Product.aggregate([
-    { $match: { status: 'active' } },
-    {
-        $group: {
-            _id: '$category',
-            count: { $sum: 1 },
-            avgPrice: { $avg: '$price' },
-            minPrice: { $min: '$price' },
-            maxPrice: { $max: '$price' },
-            totalRevenue: { $sum: { $multiply: ['$price', '$sold'] } },
-        },
-    },
-    {
-        $lookup: {
-            from: 'categories',
-            localField: '_id',
-            foreignField: '_id',
-            as: 'categoryInfo',
-        },
-    },
-    { $unwind: '$categoryInfo' },
-    {
-        $project: {
-            categoryName: '$categoryInfo.name',
-            count: 1,
-            avgPrice: { $round: ['$avgPrice', 0] },
-            minPrice: 1,
-            maxPrice: 1,
-            totalRevenue: 1,
-        },
-    },
-    { $sort: { totalRevenue: -1 } },
-]);`,
-        language: "javascript",
-        tips: [
-          "از lean() برای query‌های فقط خواندنی استفاده کنید",
-          "Index‌ها برای فیلدهای پرکاربرد بسازید",
-          "Validation سمت سرور ضروری است",
-          "Population را محدود کنید - همه فیلدها را نگیرید"
-        ],
-        warnings: [
-          "هرگز رمز عبور را plain text ذخیره نکنید",
-          "از NoSQL Injection آگاه باشید",
-          "Index‌ها write performance را کاهش می‌دهند",
-          "Aggregation Pipeline می‌تواند resource-intensive باشد"
-        ],
-        exercises: [
-          {
-            question: "یک aggregation pipeline بنویسید که پرفروش‌ترین محصولات هر دسته‌بندی را با تعداد فروش و درآمد نشان دهد.",
-            answer: `const getTopProductsByCategory = async () => {
-    const result = await Order.aggregate([
-        // 1. فقط سفارش‌های تکمیل شده
-        { $match: { status: 'completed' } },
-        
-        // 2. باز کردن آیتم‌ها
-        { $unwind: '$items' },
-        
-        // 3. Lookup محصول
-        {
-            $lookup: {
-                from: 'products',
-                localField: 'items.product',
-                foreignField: '_id',
-                as: 'product'
-            }
-        },
-        { $unwind: '$product' },
-        
-        // 4. گروه‌بندی بر اساس محصول
-        {
-            $group: {
-                _id: '$items.product',
-                productName: { $first: '$product.name' },
-                category: { $first: '$product.category' },
-                totalSold: { $sum: '$items.quantity' },
-                totalRevenue: { 
-                    $sum: { $multiply: ['$items.price', '$items.quantity'] }
-                },
-                orders: { $addToSet: '$_id' },
-                avgRating: { $avg: '$product.ratings.average' }
-            }
-        },
-        
-        // 5. Lookup دسته‌بندی
-        {
-            $lookup: {
-                from: 'categories',
-                localField: 'category',
-                foreignField: '_id',
-                as: 'categoryInfo'
-            }
-        },
-        { $unwind: '$categoryInfo' },
-        
-        // 6. مرتب‌سازی
-        { $sort: { totalSold: -1 } },
-        
-        // 7. گروه‌بندی نهایی بر اساس دسته
-        {
-            $group: {
-                _id: '$categoryInfo.name',
-                categoryId: { $first: '$category' },
-                products: {
-                    $push: {
-                        id: '$_id',
-                        name: '$productName',
-                        totalSold: 1,
-                        totalRevenue: { $round: ['$totalRevenue', 0] },
-                        orderCount: { $size: '$orders' },
-                        avgRating: { $round: ['$avgRating', 1] }
-                    }
-                }
-            }
-        },
-        
-        // 8. فقط 5 تای برتر
-        {
-            $project: {
-                category: '$_id',
-                topProducts: { $slice: ['$products', 5] },
-                totalProducts: { $size: '$products' }
-            }
-        },
-        
-        // 9. مرتب‌سازی نهایی
-        { $sort: { totalProducts: -1 } }
-    ]);
-    
-    return result;
-};
-
-// استفاده:
-const topProducts = await getTopProductsByCategory();
-console.log(topProducts);
-// [
-//   {
-//     category: 'الکترونیک',
-//     topProducts: [
-//       { id: '...', name: 'لپ‌تاپ', totalSold: 150, totalRevenue: 6750000000, ... },
-//       ...
-//     ],
-//     totalProducts: 25
-//   },
-//   ...
-// ]`
-          }
-        ]
-      }
-    ]
-  },
-  {
-    id: "deployment-devops",
+    id: "devops",
     title: "استقرار و DevOps",
     subtitle: "Deploy و مدیریت سرور",
-    description: "آموزش Docker، CI/CD، مدیریت سرور و استقرار حرفه‌ای پروژه‌ها",
+    description: "آموزش Docker، CI/CD، مدیریت سرور و استقرار پروژه‌ها",
     color: "from-violet-500 to-purple-600",
-    iconBg: "bg-violet-500/10",
     totalHours: 20,
     prerequisites: ["آشنایی با Linux"],
     outcomes: [
-      "کار با Docker و Docker Compose",
-      "راه‌اندازی CI/CD Pipeline",
-      "مدیریت سرور Linux",
-      "تنظیم Nginx و SSL",
-      "مانیتورینگ و Logging"
+      "کار با Docker",
+      "CI/CD Pipeline",
+      "مدیریت سرور",
+      "Nginx و SSL",
+      "مانیتورینگ"
     ],
-    lessons: [
+    chapters: [
       {
-        id: "docker-basics",
-        title: "Docker - کانتینرسازی اپلیکیشن",
-        subtitle: "ساخت و مدیریت Container‌ها",
-        estimatedTime: 45,
-        difficulty: "پیشرفته",
-        content: `## Docker چیست؟
+        id: "devops-ch1",
+        title: "فصل ۱: Docker",
+        description: "کانتینرسازی اپلیکیشن",
+        lessons: [
+          {
+            id: "devops-l1-1",
+            title: "Docker چیست؟",
+            subtitle: "مفاهیم پایه Docker",
+            estimatedTime: 30,
+            difficulty: "پیشرفته",
+            content: `## Docker چیست؟
 
-Docker ابزاری برای ساخت، اجرا و مدیریت container‌ها است. Container یک واحد استاندارد نرم‌افزاری است که کد و تمام dependency‌هایش را بسته‌بندی می‌کند.
+Docker ابزاری برای ساخت و مدیریت container‌ها است.
 
-## مزایای Docker:
+### مزایا:
+- Consistency
+- Isolation
+- Portability
+- Scalability
 
-1. **Consistency**: محیط توسعه و production یکسان
-2. **Isolation**: هر اپلیکیشن در container جداگانه
-3. **Portability**: اجرا روی هر سیستمی
-4. **Scalability**: به راحتی قابل scale
-5. **Resource Efficiency**: سبک‌تر از VM
+### مفاهیم:
+- **Image**: Template فقط‌خواندنی
+- **Container**: Instance اجرایی
+- **Dockerfile**: دستورات ساخت Image
+- **Docker Compose**: اپلیکیشن‌های چند-container
 
-## مفاهیم کلیدی:
+### Dockerfile Instructions:
+- FROM: Base image
+- WORKDIR: Working directory
+- COPY: کپی فایل‌ها
+- RUN: اجرای دستور
+- CMD: دستور پیش‌فرض
+- EXPOSE: Port declaration`,
+            code: `# ===== Dockerfile =====
+FROM node:20-alpine
 
-### Image:
-Template فقط‌خواندنی برای ساخت container.
-
-### Container:
-Instance اجرایی یک Image.
-
-### Dockerfile:
-فایل متنی که دستورات ساخت Image را مشخص می‌کند.
-
-### Docker Compose:
-ابزاری برای تعریف و اجرای اپلیکیشن‌های چند-container.
-
-### Registry:
-مخزن Images (مثل Docker Hub).
-
-### Volume:
-ذخیره‌سازی persistent data.
-
-### Network:
-ارتباط بین container‌ها.
-
-## Dockerfile Instructions:
-
-- \`FROM\`: Base image
-- \`WORKDIR\`: Working directory
-- \`COPY\`: کپی فایل‌ها
-- \`RUN\`: اجرای دستور در build time
-- \`CMD\`: دستور پیش‌فرض در runtime
-- \`ENTRYPOINT\`: نقطه ورود
-- \`ENV\`: Environment variables
-- \`EXPOSE\`: Port declaration
-- \`ARG\`: Build-time variables
-
-## Multi-stage Build:
-برای کاهش حجم نهایی Image.`,
-        code: `# ============================================
-# Dockerfile - Multi-stage Build
-# ============================================
-
-# Stage 1: Dependencies
-FROM node:20-alpine AS deps
 WORKDIR /app
+
 COPY package*.json ./
-RUN npm ci --only=production && \\
-    cp -R node_modules /prod_modules && \\
-    npm ci
+RUN npm ci --only=production
 
-# Stage 2: Build
-FROM node:20-alpine AS builder
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN npm run build
-
-# Stage 3: Production
-FROM node:20-alpine AS runner
-WORKDIR /app
-
-ENV NODE_ENV=production
-
-# Create non-root user
-RUN addgroup --system --gid 1001 nodejs && \\
-    adduser --system --uid 1001 nextjs
-
-# Copy built assets
-COPY --from=builder /app/public ./public
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-
-USER nextjs
 
 EXPOSE 3000
 
-ENV PORT=3000
-ENV HOSTNAME="0.0.0.0"
+CMD ["npm", "start"]
 
-CMD ["node", "server.js"]
-
-# ============================================
-# docker-compose.yml - Full Stack App
-# ============================================
-
+# ===== docker-compose.yml =====
 # version: '3.8'
 #
 # services:
-#   # Frontend/Backend App
 #   app:
-#     build:
-#       context: .
-#       dockerfile: Dockerfile
-#     container_name: myapp
-#     restart: unless-stopped
+#     build: .
 #     ports:
 #       - "3000:3000"
 #     environment:
 #       - NODE_ENV=production
 #       - MONGODB_URI=mongodb://mongo:27017/myapp
-#       - REDIS_URL=redis://redis:6379
-#       - JWT_SECRET=\${JWT_SECRET}
-#     depends_on:
-#       mongo:
-#         condition: service_healthy
-#       redis:
-#         condition: service_healthy
-#     networks:
-#       - app-network
-#     healthcheck:
-#       test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
-#       interval: 30s
-#       timeout: 10s
-#       retries: 3
-#       start_period: 40s
-#
-#   # MongoDB
-#   mongo:
-#     image: mongo:7
-#     container_name: mongodb
-#     restart: unless-stopped
-#     ports:
-#       - "27017:27017"
-#     volumes:
-#       - mongo-data:/data/db
-#       - mongo-config:/data/configdb
-#       - ./mongo-init.js:/docker-entrypoint-initdb.d/init.js:ro
-#     environment:
-#       - MONGO_INITDB_DATABASE=myapp
-#     networks:
-#       - app-network
-#     healthcheck:
-#       test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
-#       interval: 10s
-#       timeout: 10s
-#       retries: 5
-#       start_period: 40s
-#
-#   # Redis
-#   redis:
-#     image: redis:7-alpine
-#     container_name: redis
-#     restart: unless-stopped
-#     ports:
-#       - "6379:6379"
-#     volumes:
-#       - redis-data:/data
-#     command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
-#     networks:
-#       - app-network
-#     healthcheck:
-#       test: ["CMD", "redis-cli", "ping"]
-#       interval: 10s
-#       timeout: 5s
-#       retries: 5
-#
-#   # Nginx Reverse Proxy
-#   nginx:
-#     image: nginx:alpine
-#     container_name: nginx
-#     restart: unless-stopped
-#     ports:
-#       - "80:80"
-#       - "443:443"
-#     volumes:
-#       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-#       - ./nginx/conf.d:/etc/nginx/conf.d:ro
-#       - ./ssl:/etc/nginx/ssl:ro
-#       - nginx-logs:/var/log/nginx
-#     depends_on:
-#       - app
-#     networks:
-#       - app-network
-#
-#   # MongoDB Express (Admin UI - dev only)
-#   mongo-express:
-#     image: mongo-express
-#     container_name: mongo-admin
-#     restart: unless-stopped
-#     ports:
-#       - "8081:8081"
-#     environment:
-#       - ME_CONFIG_MONGODB_URL=mongodb://mongo:27017/
-#       - ME_CONFIG_BASICAUTH_USERNAME=admin
-#       - ME_CONFIG_BASICAUTH_PASSWORD=\${MONGO_EXPRESS_PASSWORD}
 #     depends_on:
 #       - mongo
-#     networks:
-#       - app-network
-#     profiles:
-#       - tools  # Only starts with --profile tools
+#
+#   mongo:
+#     image: mongo:7
+#     volumes:
+#       - mongo-/data/db
+#     ports:
+#       - "27017:27017"
 #
 # volumes:
-#   mongo-data:
-#     driver: local
-#   mongo-config:
-#     driver: local
-#   redis-data:
-#     driver: local
-#   nginx-logs:
-#     driver: local
-#
-# networks:
-#   app-network:
-#     driver: bridge
-
-# ============================================
-# Nginx Configuration
-# ============================================
-# nginx/conf.d/default.conf
-
-# # Redirect HTTP to HTTPS
-# server {
-#     listen 80;
-#     server_name example.ir www.example.ir;
-#     
-#     # Let's Encrypt challenge
-#     location /.well-known/acme-challenge/ {
-#         root /var/www/certbot;
-#     }
-#     
-#     location / {
-#         return 301 https://$server_name$request_uri;
-#     }
-# }
-#
-# # HTTPS Server
-# server {
-#     listen 443 ssl http2;
-#     server_name example.ir www.example.ir;
-#
-#     # SSL
-#     ssl_certificate /etc/nginx/ssl/fullchain.pem;
-#     ssl_certificate_key /etc/nginx/ssl/privkey.pem;
-#     ssl_protocols TLSv1.2 TLSv1.3;
-#     ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256;
-#     ssl_prefer_server_ciphers off;
-#     ssl_session_cache shared:SSL:10m;
-#     ssl_session_timeout 1d;
-#
-#     # Security Headers
-#     add_header X-Frame-Options "SAMEORIGIN" always;
-#     add_header X-Content-Type-Options "nosniff" always;
-#     add_header X-XSS-Protection "1; mode=block" always;
-#     add_header Strict-Transport-Security "max-age=63072000" always;
-#     add_header Referrer-Policy "strict-origin-when-cross-origin" always;
-#
-#     # Gzip
-#     gzip on;
-#     gzip_vary on;
-#     gzip_min_length 1024;
-#     gzip_types text/plain text/css application/json application/javascript text/xml application/xml text/javascript image/svg+xml;
-#
-#     # Static files - long cache
-#     location /_next/static/ {
-#         proxy_pass http://app:3000;
-#         proxy_cache_valid 200 365d;
-#         add_header Cache-Control "public, max-age=31536000, immutable";
-#         access_log off;
-#     }
-#
-#     # Images
-#     location /images/ {
-#         proxy_pass http://app:3000;
-#         proxy_cache_valid 200 30d;
-#         add_header Cache-Control "public, max-age=2592000";
-#     }
-#
-#     # App
-#     location / {
-#         proxy_pass http://app:3000;
-#         proxy_http_version 1.1;
-#         proxy_set_header Upgrade $http_upgrade;
-#         proxy_set_header Connection 'upgrade';
-#         proxy_set_header Host $host;
-#         proxy_set_header X-Real-IP $remote_addr;
-#         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-#         proxy_set_header X-Forwarded-Proto $scheme;
-#         proxy_cache_bypass $http_upgrade;
-#         
-#         # Timeouts
-#         proxy_connect_timeout 60s;
-#         proxy_send_timeout 60s;
-#         proxy_read_timeout 60s;
-#     }
-#
-#     # Rate limiting
-#     location /api/ {
-#         limit_req zone=api burst=20 nodelay;
-#         proxy_pass http://app:3000;
-#         proxy_set_header Host $host;
-#         proxy_set_header X-Real-IP $remote_addr;
-#     }
-# }
-
-# ============================================
-# GitHub Actions CI/CD
-# ============================================
-# .github/workflows/deploy.yml
-
-# name: CI/CD Pipeline
-#
-# on:
-#   push:
-#     branches: [main]
-#   pull_request:
-#     branches: [main]
-#
-# jobs:
-#   test:
-#     runs-on: ubuntu-latest
-#     steps:
-#       - uses: actions/checkout@v4
-#       
-#       - name: Setup Node.js
-#         uses: actions/setup-node@v4
-#         with:
-#           node-version: '20'
-#           cache: 'npm'
-#       
-#       - name: Install dependencies
-#         run: npm ci
-#       
-#       - name: Run linter
-#         run: npm run lint
-#       
-#       - name: Run tests
-#         run: npm test
-#       
-#       - name: Build
-#         run: npm run build
-#
-#   deploy:
-#     needs: test
-#     runs-on: ubuntu-latest
-#     if: github.ref == 'refs/heads/main'
-#     
-#     steps:
-#       - uses: actions/checkout@v4
-#       
-#       - name: Deploy to server
-#         uses: appleboy/ssh-action@v1
-#         with:
-#           host: \${{ secrets.SERVER_HOST }}
-#           username: \${{ secrets.SERVER_USER }}
-#           key: \${{ secrets.SSH_PRIVATE_KEY }}
-#           script: |
-#             cd /var/www/myapp
-#             git pull origin main
-#             docker compose down
-#             docker compose up -d --build
-#             docker system prune -f
-#             echo "Deployment completed at $(date)"`,
-        language: "dockerfile",
-        tips: [
-          "از multi-stage builds برای کاهش حجم image استفاده کنید",
-          "از alpine base images استفاده کنید - سبک‌تر هستند",
-          ".dockerignore برای exclude فایل‌های غیرضروری",
-          "Healthcheck برای monitoring container‌ها"
-        ],
-        warnings: [
-          "هرگز secrets را در Dockerfile hardcode نکنید",
-          "از root user در container استفاده نکنید",
-          "Image‌ها را مرتب prune کنید",
-          "Volume‌ها را backup بگیرید"
-        ],
-        exercises: [
-          {
-            question: "یک docker-compose.yml بنویسید که شامل Next.js app، MongoDB، Redis و Nginx باشد. همه services باید healthcheck داشته باشند.",
-            answer: `version: '3.8'
-
-services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        - NODE_ENV=production
-    container_name: nextjs-app
-    restart: unless-stopped
-    environment:
-      - NODE_ENV=production
-      - MONGODB_URI=mongodb://mongo:27017/myapp
-      - REDIS_URL=redis://redis:6379
-    depends_on:
-      mongo:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    networks:
-      - backend
-    healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
-    deploy:
-      resources:
-        limits:
-          cpus: '1.0'
-          memory: 512M
-
-  mongo:
-    image: mongo:7-jammy
-    container_name: mongodb
-    restart: unless-stopped
-    volumes:
-      - mongo-data:/data/db
-    environment:
-      MONGO_INITDB_DATABASE: myapp
-    networks:
-      - backend
-    healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
-
-  redis:
-    image: redis:7-alpine
-    container_name: redis-cache
-    restart: unless-stopped
-    command: redis-server --appendonly yes --maxmemory 128mb --maxmemory-policy allkeys-lru
-    volumes:
-      - redis-data:/data
-    networks:
-      - backend
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  nginx:
-    image: nginx:alpine
-    container_name: nginx-proxy
-    restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx/conf.d:/etc/nginx/conf.d:ro
-      - ./ssl:/etc/nginx/ssl:ro
-    depends_on:
-      app:
-        condition: service_healthy
-    networks:
-      - backend
-
-volumes:
-  mongo-data:
-  redis-data:
-
-networks:
-  backend:
-    driver: bridge`
+#   mongo-`,
+            language: "dockerfile",
+            tips: [
+              "از multi-stage builds استفاده کنید",
+              "از alpine base images استفاده کنید",
+              ".dockerignore برای exclude فایل‌ها"
+            ]
           }
         ]
       }
     ]
   },
   {
-    id: "career-prep",
+    id: "career",
     title: "آمادگی بازار کار",
     subtitle: "ورود حرفه‌ای به صنعت وب",
-    description: "راهنمای جامع ورود به بازار کار، ساخت پورتفولیو، مصاحبه فنی و توسعه حرفه‌ای",
+    description: "راهنمای جامع ورود به بازار کار، پورتفولیو، مصاحبه و توسعه حرفه‌ای",
     color: "from-amber-500 to-orange-600",
-    iconBg: "bg-amber-500/10",
     totalHours: 10,
-    prerequisites: ["تسلط بر حداقل یک مسیر توسعه"],
+    prerequisites: ["تسلط بر حداقل یک مسیر"],
     outcomes: [
-      "ساخت پورتفولیوی حرفه‌ای",
-      "نوشتن رزومه مؤثر",
-      "آمادگی برای مصاحبه فنی",
-      "آشنایی با نرخ‌ها و قراردادها",
+      "ساخت پورتفولیو",
+      "نوشتن رزومه",
+      "آمادگی مصاحبه",
+      "آشنایی با نرخ‌ها",
       "توسعه برند شخصی"
     ],
-    lessons: [
+    chapters: [
       {
-        id: "career-roadmap",
-        title: "مسیرهای شغلی در توسعه وب",
-        subtitle: "کدام مسیر برای شما مناسب‌تر است؟",
-        estimatedTime: 30,
-        difficulty: "مبتدی",
-        content: `## مسیرهای شغلی در توسعه وب
+        id: "career-ch1",
+        title: "فصل ۱: مسیرهای شغلی",
+        description: "کدام مسیر برای شما مناسب‌تر است؟",
+        lessons: [
+          {
+            id: "career-l1-1",
+            title: "مسیرهای شغلی در وب",
+            subtitle: "Frontend, Backend, Full Stack و...",
+            estimatedTime: 30,
+            difficulty: "مبتدی",
+            content: `## مسیرهای شغلی
 
-صنعت وب فرصت‌های شغلی متنوعی ارائه می‌دهد. انتخاب مسیر مناسب به علاقه، استعداد و اهداف شما بستگی دارد.
-
-## ۱. Frontend Developer
-
-**تمرکز:** رابط کاربری و تجربه کاربری
+### ۱. Frontend Developer
+**تمرکز:** UI/UX
 
 **تکنولوژی‌ها:**
 - HTML, CSS, JavaScript
 - React/Vue/Angular
 - TypeScript
-- CSS Frameworks (Tailwind)
-- State Management (Redux, Zustand)
-- Testing (Jest, Cypress)
 
-**مناسب شماست اگر:**
-- به طراحی بصری علاقه دارید
-- از حل مسائل UI لذت می‌برید
-- به جزئیات بصری توجه دارید
-- ارتباط خوبی با طراحان دارید
-
-**میانگین حقوق (۱۴۰۳):**
-- جونیور: ۱۵-۲۵ میلیون
-- مید-لول: ۲۵-۴۵ میلیون
-- سنیور: ۴۵-۸۰ میلیون
-
-## ۲. Backend Developer
-
-**تمرکز:** سرور، دیتابیس، API
+### ۲. Backend Developer
+**تمرکز:** سرور، API
 
 **تکنولوژی‌ها:**
-- Node.js/Express یا Python/Django یا PHP/Laravel
-- MongoDB/PostgreSQL/MySQL
-- REST/GraphQL API
-- Authentication/Authorization
-- Caching (Redis)
-- Message Queues
+- Node.js/Express
+- MongoDB/PostgreSQL
+- REST/GraphQL
 
-**مناسب شماست اگر:**
-- به منطق و الگوریتم علاقه دارید
-- از کار با داده‌ها لذت می‌برید
-- به امنیت اهمیت می‌دهید
-- تفکر سیستمی دارید
-
-## ۳. Full Stack Developer
-
+### ۳. Full Stack Developer
 **تمرکز:** ترکیب Frontend و Backend
 
-**تکنولوژی‌ها:**
-- MERN Stack (MongoDB, Express, React, Node)
-- Next.js / Nuxt.js
-- TypeScript
-- DevOps basics
-- Database design
+### ۴. WordPress Developer
+**تمرکز:** قالب‌نویسی و افزونه‌نویسی
 
-**مناسب شماست اگر:**
-- دید کلی می‌خواهید
-- از تنوع کار لذت می‌برید
-- توانایی یادگیری مداوم دارید
-- می‌خواهید مستقل کار کنید
+### ۵. DevOps Engineer
+**تمرکز:** زیرساخت و اتوماسیون
 
-## ۴. WordPress Developer
-
-**تمرکز:** طراحی و توسعه سایت‌های وردپرسی
-
-**تکنولوژی‌ها:**
-- PHP
-- WordPress Core
-- Theme Development
-- Plugin Development
-- WooCommerce
-- Page Builders
-
-**مناسب شماست اگر:**
-- می‌خواهید سریع وارد بازار شوید
-- به فریلنسری علاقه دارید
-- مشتریان ایرانی هدف شما هستند
-- از تنوع پروژه‌ها لذت می‌برید
-
-## ۵. DevOps Engineer
-
-**تمرکز:** زیرساخت، استقرار، اتوماسیون
-
-**تکنولوژی‌ها:**
-- Linux
-- Docker & Kubernetes
-- CI/CD (GitHub Actions, Jenkins)
-- Cloud (AWS, DigitalOcean)
-- Monitoring (Prometheus, Grafana)
-- IaC (Terraform)
-
-## ۶. Freelancer
-
-**تمرکز:** کار مستقل و پروژه‌ای
-
-**مهارت‌های لازم:**
-- حداقل یک stack کامل
-- مدیریت پروژه
-- ارتباط با مشتری
-- قیمت‌گذاری
-- بازاریابی شخصی
-
-**پلتفرم‌ها:**
-- پونیشا، کارلنسر (ایران)
-- Upwork, Fiverr (بین‌المللی)
-
-## مهارت‌های نرم ضروری
-
-1. **حل مسئله**: توانایی تحلیل و حل مسائل پیچیده
-2. **یادگیری مداوم**: تکنولوژی دائماً تغییر می‌کند
-3. **کار تیمی**: اکثر پروژه‌ها تیمی هستند
-4. **ارتباط**: توانایی توضیح مفاهیم فنی
-5. **مدیریت زمان**: تحویل به موقع پروژه
-6. **توجه به جزئیات**: کیفیت کد مهم است
-7. **صبر و پشتکار**: مشکلات فنی زمان‌بر هستند`,
-        code: `// ============================================
-// چک‌لیست مهارت‌ها برای هر مسیر
-// ============================================
-
-// Frontend Developer Checklist
-const frontendSkills = {
-    essential: [
-        "HTML5 & Semantic Markup",
-        "CSS3 & Modern Layout (Flexbox, Grid)",
-        "JavaScript ES6+ & DOM",
-        "Responsive Design & Mobile First",
-        "Git & GitHub",
-        "React.js (or Vue/Angular)",
-        "REST API Integration",
-        "Browser DevTools",
-    ],
-    important: [
-        "TypeScript",
-        "State Management (Redux/Zustand)",
-        "Testing (Jest, RTL, Cypress)",
-        "Performance Optimization",
-        "Accessibility (WCAG)",
-        "SEO Fundamentals",
-        "CSS Architecture (BEM, ITCSS)",
-        "Build Tools (Vite, Webpack)",
-    ],
-    nice_to_have: [
-        "Next.js / Nuxt.js",
-        "GraphQL",
-        "Web Animations",
-        "PWA",
-        "Web Components",
-        "Micro Frontends",
-    ]
-};
-
-// Backend Developer Checklist
-const backendSkills = {
-    essential: [
-        "Node.js & Express",
-        "RESTful API Design",
-        "Database (MongoDB/PostgreSQL)",
-        "Authentication (JWT, OAuth)",
-        "Security Best Practices",
-        "Git & Version Control",
-        "Linux Basics",
-        "API Testing (Postman)",
-    ],
-    important: [
-        "TypeScript",
-        "Caching (Redis)",
-        "Message Queues (RabbitMQ)",
-        "Docker Basics",
-        "Unit & Integration Testing",
-        "CI/CD Basics",
-        "Performance Tuning",
-        "Logging & Monitoring",
-    ],
-    nice_to_have: [
-        "GraphQL",
-        "Microservices",
-        "Kubernetes",
-        "Cloud Services (AWS)",
-        "WebSocket",
-        "System Design",
-    ]
-};
-
-// WordPress Developer Checklist
-const wordpressSkills = {
-    essential: [
-        "PHP & MySQL",
-        "WordPress Theme Development",
-        "Template Hierarchy",
-        "Custom Post Types & Taxonomies",
-        "WordPress Hooks (Actions & Filters)",
-        "ACF (Advanced Custom Fields)",
-        "Responsive Design",
-        "SEO Basics",
-    ],
-    important: [
-        "Plugin Development",
-        "WooCommerce",
-        "Elementor/Gutenberg",
-        "Speed Optimization",
-        "Security Hardening",
-        "Migration & Backup",
-        "Child Themes",
-        "REST API",
-    ],
-    nice_to_have: [
-        "Headless WordPress",
-        "React + WordPress",
-        "Multisite",
-        "Custom Blocks",
-        "WP-CLI",
-        "Server Management",
-    ]
-};
-
-// ============================================
-// ساختار پورتفولیو
-// ============================================
-
-const portfolioStructure = {
-    // 1. Hero Section
-    hero: {
-        name: "نام شما",
-        title: "Full Stack Developer",
-        tagline: "ساخت وب‌اپلیکیشن‌های مدرن و مقیاس‌پذیر",
-        cta: "مشاهده پروژه‌ها",
-    },
-    
-    // 2. About Section
-    about: {
-        description: "توضیح مختصر درباره خودتان",
-        skills: ["React", "Node.js", "MongoDB", "TypeScript"],
-        experience: "۲+ سال تجربه",
-        education: "مهندسی کامپیوتر",
-    },
-    
-    // 3. Projects (3-5 پروژه برتر)
-    projects: [
-        {
-            title: "عنوان پروژه",
-            description: "توضیح کوتاه",
-            technologies: ["React", "Node.js", "MongoDB"],
-            liveUrl: "https://project.com",
-            githubUrl: "https://github.com/user/project",
-            image: "/project-screenshot.jpg",
-            highlights: [
-                "ویژگی کلیدی ۱",
-                "ویژگی کلیدی ۲",
-                "چالش فنی و نحوه حل آن",
-            ],
-        },
-    ],
-    
-    // 4. Experience
-    experience: [
-        {
-            company: "نام شرکت",
-            position: "Frontend Developer",
-            period: "۱۴۰۱ - اکنون",
-            achievements: [
-                "بازنویسی UI و بهبود ۴۰٪ performance",
-                "پیاده‌سازی design system",
-                "Mentoring ۲ جونیور developer",
-            ],
-        },
-    ],
-    
-    // 5. Contact
-    contact: {
-        email: "your@email.com",
-        linkedin: "linkedin.com/in/yourprofile",
-        github: "github.com/yourusername",
-        telegram: "@yourhandle",
-    },
-};
-
-// ============================================
-// قالب رزومه
-// ============================================
-
-const resumeTemplate = {
-    header: {
-        name: "نام کامل",
-        title: "Full Stack Web Developer",
-        contact: {
-            email: "email@example.com",
-            phone: "۰۹۱۲XXXXXXX",
-            location: "تهران، ایران",
-            linkedin: "linkedin.com/in/yourprofile",
-            github: "github.com/yourusername",
-            website: "yourwebsite.com",
-        },
-    },
-    
-    summary: "توسعه‌دهنده فول‌استک با X سال تجربه در ساخت وب‌اپلیکیشن‌های مقیاس‌پذیر. مسلط به React، Node.js و MongoDB با تجربه کار در تیم‌های Agile. علاقه‌مند به یادگیری مداوم و حل مسائل پیچیده.",
-    
-    skills: {
-        frontend: ["React", "TypeScript", "Next.js", "Tailwind CSS", "Redux"],
-        backend: ["Node.js", "Express", "MongoDB", "PostgreSQL", "Redis"],
-        tools: ["Git", "Docker", "AWS", "CI/CD", "Jest"],
-        soft: ["Problem Solving", "Team Leadership", "Communication"],
-    },
-    
-    experience: [
-        {
-            company: "نام شرکت",
-            position: "Senior Frontend Developer",
-            period: "فروردین ۱۴۰۲ - اکنون",
-            location: "تهران",
-            achievements: [
-                "رهبری تیم ۵ نفره فرانت‌اند و تحویل ۳ پروژه بزرگ",
-                "بهبود ۶۰٪ سرعت لود با بهینه‌سازی performance",
-                "پیاده‌سازی design system با Storybook",
-                "کاهش ۴۰٪ باگ‌ها با راه‌اندازی CI/CD و testing",
-            ],
-        },
-    ],
-    
-    projects: [
-        {
-            name: "نام پروژه",
-            role: "Full Stack Developer",
-            description: "پلتفرم فروشگاهی با ۱۰K+ کاربر فعال",
-            tech: "Next.js, Node.js, MongoDB, Redis",
-            link: "github.com/yourusername/project",
-        },
-    ],
-    
-    education: [
-        {
-            degree: "کارشناسی مهندسی کامپیوتر",
-            university: "دانشگاه تهران",
-            period: "۱۳۹۶ - ۱۴۰۰",
-        },
-    ],
-    
-    certifications: [
-        "Meta Frontend Developer Certificate",
-        "AWS Cloud Practitioner",
-    ],
-    
-    languages: [
-        { name: "فارسی", level: "زبان مادری" },
-        { name: "انگلیسی", level: "پیشرفته (IELTS 7.5)" },
-    ],
-};`,
-        language: "javascript",
-        tips: [
-          "پورتفولیو قوی‌تر از مدرک دانشگاهی است",
-          "پروژه‌های واقعی بسازید - نه tutorial",
-          "GitHub خود را فعال نگه دارید",
-          "در جامعه برنامه‌نویسان فعال باشید"
-        ],
-        warnings: [
-          "از دروغ گفتن در رزومه خودداری کنید",
-          "توقع حقوق غیرواقعی نداشته باشید",
-          "قرارداد را قبل از شروع کار امضا کنید",
-          "مهارت‌های نرم به اندازه فنی مهم هستند"
-        ],
-        exercises: [
-          {
-            question: "یک ساختار برای پورتفولیوی شخصی طراحی کنید که شامل ۳ پروژه نمونه با توضیحات فنی باشد.",
-            answer: `// portfolio-data.js
-
-export const portfolioData = {
-    personal: {
-        name: "علی محمدی",
-        title: "Full Stack Developer",
-        tagline: "ساخت وب‌اپلیکیشن‌های مدرن با تمرکز بر تجربه کاربری",
-        bio: "توسعه‌دهنده فول‌استک با ۳ سال تجربه در ساخت اپلیکیشن‌های وب مقیاس‌پذیر. علاقه‌مند به React، Node.js و معماری نرم‌افزار.",
-        avatar: "/avatar.jpg",
-        location: "تهران، ایران",
-        available: true,
-    },
-    
-    projects: [
-        {
-            id: 1,
-            title: "پلتفرم آموزش آنلاین",
-            subtitle: "سامانه LMS با قابلیت ویدیو استریمینگ",
-            description: "پلتفرمی برای برگزاری دوره‌های آنلاین با قابلیت پخش ویدیو، آزمون، صدور مدرک و پنل مدیریت پیشرفته. این پروژه با بیش از ۵۰۰۰ کاربر فعال، یکی از بزرگترین پروژه‌های من بوده.",
-            image: "/projects/lms.jpg",
-            liveUrl: "https://lms-example.com",
-            githubUrl: "https://github.com/username/lms-platform",
-            technologies: ["Next.js", "TypeScript", "Node.js", "MongoDB", "Redis", "AWS S3"],
-            category: "fullstack",
-            highlights: [
-                "پیاده‌سازی video streaming با adaptive bitrate",
-                "سیستم آزمون‌سازی پیشرفته با timer و auto-save",
-                "بهینه‌سازی performance و رسیدن به Lighthouse score ۹۵+",
-                "پیاده‌سازی real-time notifications با WebSocket",
-            ],
-            challenges: [
-                {
-                    problem: "مدیریت پخش ویدیو برای هزاران کاربر همزمان",
-                    solution: "استفاده از AWS CloudFront CDN و adaptive streaming با HLS"
-                },
-                {
-                    problem: "جلوگیری از تقلب در آزمون‌ها",
-                    solution: "پیاده‌سازی سیستم proctoring با detection تب جدید و copy/paste"
-                }
-            ],
-            metrics: {
-                users: "۵,۰۰۰+",
-                courses: "۱۲۰+",
-                uptime: "۹۹.۹%",
-                performance: "Lighthouse ۹۵",
-            }
-        },
-        {
-            id: 2,
-            title: "فروشگاه چندفروشنده",
-            subtitle: "مارکت‌پلیس با پنل فروشنده",
-            description: "مارکت‌پلیس مشابه دیجی‌کالا با قابلیت ثبت‌نام فروشنده، مدیریت محصولات، سفارش‌ها و پرداخت. سیستم commission خودکار و گزارش‌گیری پیشرفته.",
-            image: "/projects/marketplace.jpg",
-            liveUrl: "https://marketplace-example.com",
-            githubUrl: "https://github.com/username/multi-vendor",
-            technologies: ["React", "Express", "MongoDB", "Stripe", "Docker"],
-            category: "fullstack",
-            highlights: [
-                "سیستم چند فروشنده با commission خودکار",
-                "یکپارچه‌سازی درگاه پرداخت",
-                "پنل مدیریت پیشرفته با گزارش‌گیری",
-                "سیستم جستجوی پیشرفته با Elasticsearch",
-            ],
-            challenges: [
-                {
-                    problem: "محاسبه commission پیچیده برای هر فروشنده",
-                    solution: "طراحی سیستم rule-based با قابلیت تنظیم درصد و حداقل"
-                }
-            ],
-            metrics: {
-                vendors: "۲۰۰+",
-                products: "۱۰,۰۰۰+",
-                transactions: "۵۰,۰۰۰+",
-            }
-        },
-        {
-            id: 3,
-            title: "اپلیکیشن مدیریت پروژه",
-            subtitle: "مشابه Trello با قابلیت‌های پیشرفته",
-            description: "ابزار مدیریت پروژه با Kanban board، time tracking، team collaboration و reporting. قابلیت real-time sync بین کاربران.",
-            image: "/projects/pm-tool.jpg",
-            liveUrl: "https://pm-tool-example.com",
-            githubUrl: "https://github.com/username/pm-tool",
-            technologies: ["React", "TypeScript", "Socket.io", "PostgreSQL", "Redis"],
-            category: "frontend",
-            highlights: [
-                "Drag & drop پیشرفته با DnD Kit",
-                "Real-time collaboration با Socket.io",
-                "Time tracking با timer و گزارش",
-                "Export به PDF و Excel",
-            ],
-            challenges: [
-                {
-                    problem: "Sync کردن تغییرات real-time بین چندین کاربر",
-                    solution: "استفاده از Socket.io با conflict resolution strategy"
-                }
-            ],
-            metrics: {
-                teams: "۱۰۰+",
-                projects: "۵۰۰+",
-                tasks: "۲۵,۰۰۰+",
-            }
-        },
-    ],
-    
-    skills: {
-        frontend: {
-            name: "Frontend",
-            items: [
-                { name: "React", level: 95 },
-                { name: "TypeScript", level: 90 },
-                { name: "Next.js", level: 85 },
-                { name: "Tailwind CSS", level: 90 },
-                { name: "Redux/Zustand", level: 85 },
+## مهارت‌های نرم:
+- حل مسئله
+- یادگیری مداوم
+- کار تیمی
+- ارتباط مؤثر
+- مدیریت زمان`,
+            tips: [
+              "پورتفولیو قوی‌تر از مدرک است",
+              "پروژه‌های واقعی بسازید",
+              "GitHub خود را فعال نگه دارید"
             ]
-        },
-        backend: {
-            name: "Backend",
-            items: [
-                { name: "Node.js", level: 90 },
-                { name: "Express", level: 90 },
-                { name: "MongoDB", level: 85 },
-                { name: "PostgreSQL", level: 75 },
-                { name: "Redis", level: 70 },
-            ]
-        },
-        tools: {
-            name: "Tools & DevOps",
-            items: [
-                { name: "Git", level: 90 },
-                { name: "Docker", level: 80 },
-                { name: "CI/CD", level: 75 },
-                { name: "AWS", level: 70 },
-                { name: "Linux", level: 75 },
-            ]
-        }
-    },
-    
-    experience: [
-        {
-            company: "شرکت فناوری اطلاعات پارس",
-            position: "Senior Full Stack Developer",
-            period: "فروردین ۱۴۰۲ - اکنون",
-            description: "رهبری تیم فنی و توسعه پلتفرم‌های وب",
-            achievements: [
-                "رهبری تیم ۵ نفره و تحویل ۳ پروژه بزرگ",
-                "بهبود ۶۰٪ performance اپلیکیشن اصلی",
-                "پیاده‌سازی CI/CD و کاهش ۴۰٪ باگ‌ها",
-            ]
-        },
-        {
-            company: "استارتاپ نوآوری دیجیتال",
-            position: "Frontend Developer",
-            period: "مهر ۱۴۰۰ - اسفند ۱۴۰۱",
-            description: "توسعه رابط کاربری اپلیکیشن‌های وب",
-            achievements: [
-                "بازنویسی UI با React و TypeScript",
-                "افزایش ۴۰٪ سرعت لود صفحات",
-                "آموزش ۲ developer جونیور",
-            ]
-        },
-    ],
-    
-    contact: {
-        email: "ali@example.com",
-        phone: "۰۹۱۲۳۴۵۶۷۸۹",
-        linkedin: "linkedin.com/in/ali-mohammadi",
-        github: "github.com/ali-mohammadi",
-        telegram: "@ali_dev",
-        website: "ali-mohammadi.dev",
-    }
-};`
           }
         ]
       }

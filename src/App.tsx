@@ -1,38 +1,36 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { courses } from './data/courses';
-import type { Course, Lesson } from './data/courses';
+import type { Course, Chapter, Lesson } from './data/courses';
 
 // ============================================
-// SVG Icons
+// Icons
 // ============================================
-const Icons = {
-  menu: <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>,
-  close: <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"/></svg>,
-  arrowLeft: <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>,
-  arrowRight: <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"/></svg>,
-  chevronDown: <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>,
-  code: <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg>,
-  book: <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 016.5 17H20M4 19.5V5.5A2.5 2.5 0 016.5 3H20v14H6.5a2.5 2.5 0 000 5H20"/></svg>,
-  clock: <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>,
-  check: <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>,
-  lightbulb: <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M9 21h6M12 3a6 6 0 014 10.5V17H8v-3.5A6 6 0 0112 3z"/></svg>,
-  warning: <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>,
-  copy: <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>,
-  checkCircle: <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>,
-  eye: <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>,
-  lock: <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>,
-  play: <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>,
-  layers: <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>,
-  target: <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>,
-  zap: <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>,
+const Icon = {
+  menu: () => <svg width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>,
+  close: () => <svg width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"/></svg>,
+  back: () => <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>,
+  book: () => <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 016.5 17H20M4 19.5V5.5A2.5 2.5 0 016.5 3H20v14H6.5a2.5 2.5 0 000 5H20"/></svg>,
+  clock: () => <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>,
+  check: () => <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>,
+  list: () => <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>,
+  chevron: () => <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>,
+  code: () => <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg>,
+  copy: () => <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>,
+  checkCircle: () => <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>,
+  eye: () => <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>,
+  target: () => <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>,
+  lightbulb: () => <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M9 21h6M12 3a6 6 0 014 10.5V17H8v-3.5A6 6 0 0112 3z"/></svg>,
+  warning: () => <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>,
+  layers: () => <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>,
+  arrowLeft: () => <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>,
+  arrowRight: () => <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>,
 };
 
 // ============================================
-// Code Editor Component
+// Code Block
 // ============================================
 function CodeBlock({ code, language }: { code: string; language?: string }) {
   const [copied, setCopied] = useState(false);
-  const codeRef = useRef<HTMLPreElement>(null);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(code);
@@ -41,94 +39,20 @@ function CodeBlock({ code, language }: { code: string; language?: string }) {
   };
 
   return (
-    <div className="code-editor my-6 rounded-xl overflow-hidden">
-      <div className="code-header">
-        <div className="code-dot bg-red-500"></div>
-        <div className="code-dot bg-yellow-500"></div>
-        <div className="code-dot bg-green-500"></div>
-        <span className="text-xs text-slate-500 mr-3 font-mono">{language || 'code'}</span>
-        <button
-          onClick={handleCopy}
-          className="mr-auto flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors px-2 py-1 rounded hover:bg-white/5"
-        >
-          {copied ? (
-            <>
-              <span className="text-green-400">{Icons.checkCircle}</span>
-              <span className="text-green-400">Copied!</span>
-            </>
-          ) : (
-            <>
-              <span>{Icons.copy}</span>
-              <span>Copy</span>
-            </>
-          )}
+    <div className="rounded-xl overflow-hidden border border-slate-700/50 bg-[#0d1117] my-5">
+      <div className="flex items-center gap-2 px-4 py-2.5 bg-[#161b22] border-b border-slate-700/50">
+        <div className="w-3 h-3 rounded-full bg-red-500/80"></div>
+        <div className="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+        <div className="w-3 h-3 rounded-full bg-green-500/80"></div>
+        <span className="text-xs text-slate-500 mr-2 font-mono">{language || 'code'}</span>
+        <button onClick={handleCopy}
+          className="mr-auto flex items-center gap-1.5 text-xs text-slate-400 hover:text-white px-2 py-1 rounded hover:bg-white/5 transition-colors">
+          {copied ? <><Icon.checkCircle /><span className="text-emerald-400">Copied</span></> : <><Icon.copy /><span>Copy</span></>}
         </button>
       </div>
-      <pre ref={codeRef} className="p-5 overflow-x-auto text-sm leading-7">
-        <code className="text-slate-300">{code}</code>
+      <pre className="p-4 overflow-x-auto text-sm leading-7" dir="ltr">
+        <code className="text-slate-300 font-mono">{code}</code>
       </pre>
-    </div>
-  );
-}
-
-// ============================================
-// Interactive Demo Component
-// ============================================
-function InteractiveDemo({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <div className="interactive-demo my-8 relative">
-      <div className="relative z-10">
-        <div className="flex items-center gap-2 mb-4">
-          <span className="text-indigo-400">{Icons.play}</span>
-          <h4 className="text-sm font-bold text-indigo-300 uppercase tracking-wider">{title}</h4>
-        </div>
-        {children}
-      </div>
-    </div>
-  );
-}
-
-// ============================================
-// Diagram Component
-// ============================================
-function Diagram({ items }: { items: string[] }) {
-  return (
-    <div className="my-6 p-6 bg-slate-800/30 rounded-xl border border-slate-700/50">
-      <div className="flex flex-wrap items-center justify-center gap-3">
-        {items.map((item, i) => (
-          <div key={i} className="flex items-center gap-3">
-            <div className="diagram-box text-sm text-slate-200">{item}</div>
-            {i < items.length - 1 && (
-              <span className="diagram-arrow">
-                <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" className="rotate-180">
-                  <path d="M5 12h14M12 5l7 7-7 7"/>
-                </svg>
-              </span>
-            )}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-// ============================================
-// Note Box Component
-// ============================================
-function NoteBox({ type, children }: { type: 'info' | 'warning' | 'success' | 'danger'; children: React.ReactNode }) {
-  const icons = {
-    info: <span className="text-blue-400">{Icons.lightbulb}</span>,
-    warning: <span className="text-amber-400">{Icons.warning}</span>,
-    success: <span className="text-emerald-400">{Icons.checkCircle}</span>,
-    danger: <span className="text-red-400">{Icons.warning}</span>,
-  };
-
-  return (
-    <div className={`note-box note-${type} my-4`}>
-      <div className="flex items-start gap-3">
-        {icons[type]}
-        <div className="text-sm text-slate-300 leading-7">{children}</div>
-      </div>
     </div>
   );
 }
@@ -155,11 +79,11 @@ function Header({ activeSection, setActiveSection }: { activeSection: string; se
   ];
 
   return (
-    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'glass shadow-xl shadow-black/20' : 'bg-transparent'}`}>
+    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-[#0a0f1a]/95 backdrop-blur-xl shadow-xl shadow-black/20 border-b border-slate-800/50' : 'bg-transparent'}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 lg:h-18">
-          <button onClick={() => setActiveSection('home')} className="flex items-center gap-3 group">
-            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-indigo-500 to-cyan-500 flex items-center justify-center text-white font-black text-sm shadow-lg shadow-indigo-500/20 group-hover:shadow-indigo-500/40 transition-shadow">
+        <div className="flex items-center justify-between h-16">
+          <button onClick={() => { setActiveSection('home'); setMobileOpen(false); }} className="flex items-center gap-2.5 group">
+            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-indigo-500 to-cyan-500 flex items-center justify-center text-white font-black text-sm shadow-lg shadow-indigo-500/20">
               D
             </div>
             <span className="text-lg font-bold text-white hidden sm:block">
@@ -169,44 +93,34 @@ function Header({ activeSection, setActiveSection }: { activeSection: string; se
 
           <nav className="hidden lg:flex items-center gap-1">
             {nav.map(item => (
-              <button
-                key={item.id}
-                onClick={() => setActiveSection(item.id)}
+              <button key={item.id} onClick={() => setActiveSection(item.id)}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                  activeSection === item.id
-                    ? 'text-indigo-300 bg-indigo-500/10'
-                    : 'text-slate-400 hover:text-white hover:bg-white/5'
-                }`}
-              >
+                  activeSection === item.id ? 'text-indigo-300 bg-indigo-500/10' : 'text-slate-400 hover:text-white hover:bg-white/5'
+                }`}>
                 {item.label}
               </button>
             ))}
           </nav>
 
           <div className="flex items-center gap-3">
-            <button
-              onClick={() => setActiveSection('courses')}
-              className="hidden sm:flex px-5 py-2 bg-gradient-to-r from-indigo-500 to-cyan-500 text-white rounded-lg font-medium text-sm hover:shadow-lg hover:shadow-indigo-500/25 transition-all hover:-translate-y-0.5"
-            >
+            <button onClick={() => setActiveSection('courses')}
+              className="hidden sm:flex px-4 py-2 bg-gradient-to-r from-indigo-500 to-cyan-500 text-white rounded-lg font-medium text-sm hover:shadow-lg hover:shadow-indigo-500/25 transition-all">
               شروع یادگیری
             </button>
             <button className="lg:hidden p-2 text-slate-400 hover:text-white" onClick={() => setMobileOpen(!mobileOpen)}>
-              {mobileOpen ? Icons.close : Icons.menu}
+              {mobileOpen ? <Icon.close /> : <Icon.menu />}
             </button>
           </div>
         </div>
 
         {mobileOpen && (
-          <div className="lg:hidden pb-4 animate-in">
-            <div className="glass rounded-xl p-3 space-y-1">
+          <div className="lg:hidden pb-4">
+            <div className="bg-slate-900/95 backdrop-blur-xl rounded-xl p-3 space-y-1 border border-slate-800">
               {nav.map(item => (
-                <button
-                  key={item.id}
-                  onClick={() => { setActiveSection(item.id); setMobileOpen(false); }}
+                <button key={item.id} onClick={() => { setActiveSection(item.id); setMobileOpen(false); }}
                   className={`w-full text-right px-4 py-3 rounded-lg text-sm font-medium transition-all ${
                     activeSection === item.id ? 'bg-indigo-500/10 text-indigo-300' : 'text-slate-300 hover:bg-white/5'
-                  }`}
-                >
+                  }`}>
                   {item.label}
                 </button>
               ))}
@@ -224,115 +138,53 @@ function Header({ activeSection, setActiveSection }: { activeSection: string; se
 function HeroSection({ onStart }: { onStart: () => void }) {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
-      {/* Background */}
       <div className="absolute inset-0">
         <div className="absolute top-1/4 right-1/3 w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-[120px]"></div>
         <div className="absolute bottom-1/4 left-1/3 w-[400px] h-[400px] bg-cyan-500/10 rounded-full blur-[100px]"></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-500/5 rounded-full blur-[150px]"></div>
       </div>
-
-      {/* Grid */}
       <div className="absolute inset-0 opacity-[0.03]" style={{
         backgroundImage: 'linear-gradient(rgba(148,163,184,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(148,163,184,0.5) 1px, transparent 1px)',
         backgroundSize: '60px 60px'
       }}></div>
 
-      <div className="relative z-10 max-w-6xl mx-auto px-4 text-center">
-        <div className="animate-in">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-sm mb-8">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            کاملا رایگان - بدون ثبت‌نام - بدون محدودیت
-          </div>
+      <div className="relative z-10 max-w-5xl mx-auto px-4 text-center">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-sm mb-8">
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          کاملا رایگان - بدون ثبت‌نام
+        </div>
 
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black leading-[1.2] mb-6">
-            <span className="text-white">تسلط بر توسعه</span>
-            <br />
-            <span className="gradient-text">فول‌استک وب</span>
-          </h1>
+        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black leading-tight mb-6">
+          <span className="text-white">تسلط بر توسعه</span><br />
+          <span className="gradient-text">فول‌استک وب</span>
+        </h1>
 
-          <p className="text-base sm:text-lg text-slate-400 max-w-2xl mx-auto mb-10 leading-8">
-            مسیر کامل یادگیری از صفر تا حرفه‌ای. HTML, CSS, JavaScript, React, Node.js, MongoDB, WordPress و تمام ابزارهایی که برای ورود موفق به بازار کار ایران نیاز دارید.
-          </p>
+        <p className="text-base sm:text-lg text-slate-400 max-w-2xl mx-auto mb-10 leading-8">
+          مسیر کامل یادگیری از صفر تا حرفه‌ای. HTML, CSS, JavaScript, React, Node.js, MongoDB, WordPress و تمام ابزارهایی که برای ورود به بازار کار نیاز دارید.
+        </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
-            <button
-              onClick={onStart}
-              className="group px-8 py-3.5 bg-gradient-to-r from-indigo-500 to-cyan-500 text-white rounded-xl font-bold text-base hover:shadow-2xl hover:shadow-indigo-500/25 transition-all duration-300 hover:-translate-y-0.5 flex items-center gap-3"
-            >
-              شروع یادگیری رایگان
-              <span className="group-hover:-translate-x-1 transition-transform rotate-180">{Icons.arrowRight}</span>
-            </button>
-            <button
-              onClick={() => document.getElementById('courses-section')?.scrollIntoView({ behavior: 'smooth' })}
-              className="px-8 py-3.5 border border-slate-700 text-slate-300 rounded-xl font-medium text-base hover:border-indigo-500/50 hover:bg-indigo-500/5 transition-all"
-            >
-              مشاهده سرفصل‌ها
-            </button>
-          </div>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+          <button onClick={onStart}
+            className="group px-8 py-3.5 bg-gradient-to-r from-indigo-500 to-cyan-500 text-white rounded-xl font-bold hover:shadow-2xl hover:shadow-indigo-500/25 transition-all hover:-translate-y-0.5 flex items-center gap-3">
+            شروع یادگیری رایگان
+            <span className="group-hover:-translate-x-1 transition-transform rotate-180"><Icon.arrowRight /></span>
+          </button>
+        </div>
 
-          {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto">
-            {[
-              { value: '۸', label: 'دوره تخصصی' },
-              { value: '۲۰+', label: 'درس جامع' },
-              { value: '۲۰۰+', label: 'ساعت محتوا' },
-              { value: '۱۰۰%', label: 'رایگان' },
-            ].map((stat, i) => (
-              <div key={i} className="glass-light rounded-xl p-4 text-center card-hover">
-                <div className="text-2xl font-black text-white mb-1">{stat.value}</div>
-                <div className="text-xs text-slate-400">{stat.label}</div>
-              </div>
-            ))}
-          </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto">
+          {[
+            { value: '۸', label: 'دوره تخصصی' },
+            { value: '۴۰+', label: 'فصل آموزشی' },
+            { value: '۱۰۰+', label: 'درس جامع' },
+            { value: '۱۰۰%', label: 'رایگان' },
+          ].map((stat, i) => (
+            <div key={i} className="bg-slate-900/50 backdrop-blur border border-slate-800 rounded-xl p-4 text-center hover:border-indigo-500/30 transition-all">
+              <div className="text-2xl font-black text-white mb-1">{stat.value}</div>
+              <div className="text-xs text-slate-400">{stat.label}</div>
+            </div>
+          ))}
         </div>
       </div>
     </section>
-  );
-}
-
-// ============================================
-// Course Card
-// ============================================
-function CourseCard({ course, index, onClick }: { course: Course; index: number; onClick: () => void }) {
-  return (
-    <button
-      onClick={onClick}
-      className={`group glass-light rounded-2xl p-6 text-right card-hover animate-in`}
-      style={{ animationDelay: `${index * 80}ms` }}
-    >
-      {/* Header */}
-      <div className="flex items-start justify-between mb-4">
-        <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${course.color} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-          <span className="text-white">{Icons.layers}</span>
-        </div>
-        <span className="text-xs text-slate-500 bg-slate-800/50 px-2.5 py-1 rounded-full">
-          {course.lessons.length} درس
-        </span>
-      </div>
-
-      {/* Title */}
-      <h3 className="text-lg font-bold text-white mb-1.5 group-hover:text-indigo-300 transition-colors">
-        {course.title}
-      </h3>
-      <p className="text-xs text-indigo-400/80 mb-3">{course.subtitle}</p>
-
-      {/* Description */}
-      <p className="text-sm text-slate-400 leading-6 mb-4 line-clamp-2">
-        {course.description}
-      </p>
-
-      {/* Meta */}
-      <div className="flex items-center justify-between pt-4 border-t border-slate-700/50">
-        <div className="flex items-center gap-1.5 text-xs text-slate-500">
-          <span>{Icons.clock}</span>
-          <span>{course.totalHours} ساعت</span>
-        </div>
-        <span className="text-xs text-indigo-400 font-medium group-hover:translate-x-[-4px] transition-transform flex items-center gap-1">
-          مشاهده دوره
-          <span className="rotate-180">{Icons.arrowLeft}</span>
-        </span>
-      </div>
-    </button>
   );
 }
 
@@ -341,19 +193,40 @@ function CourseCard({ course, index, onClick }: { course: Course; index: number;
 // ============================================
 function CoursesSection({ onSelectCourse }: { onSelectCourse: (c: Course) => void }) {
   return (
-    <section id="courses-section" className="py-20 relative">
+    <section className="py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-14">
           <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">دوره‌های آموزشی</h2>
-          <p className="text-slate-400 text-base max-w-xl mx-auto leading-7">
-            مسیر یادگیری کامل از مبتدی تا حرفه‌ای. هر دوره شامل توضیحات جامع، کد عملی و تمرینات با پاسخ است.
-          </p>
+          <p className="text-slate-400 max-w-xl mx-auto">هر دوره یک کتاب کامل با ده‌ها فصل و درس است</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-          {courses.map((course, i) => (
-            <CourseCard key={course.id} course={course} index={i} onClick={() => onSelectCourse(course)} />
-          ))}
+          {courses.map((course, i) => {
+            const totalLessons = course.chapters.reduce((acc, ch) => acc + ch.lessons.length, 0);
+            return (
+              <button key={course.id} onClick={() => onSelectCourse(course)}
+                className="group bg-slate-900/50 backdrop-blur border border-slate-800 rounded-2xl p-6 text-right hover:border-indigo-500/30 hover:shadow-xl hover:shadow-indigo-500/5 transition-all hover:-translate-y-1"
+                style={{ animationDelay: `${i * 60}ms` }}>
+                <div className="flex items-start justify-between mb-4">
+                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${course.color} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform`}>
+                    <span className="text-white"><Icon.layers /></span>
+                  </div>
+                  <span className="text-xs text-slate-500 bg-slate-800 px-2.5 py-1 rounded-full">
+                    {course.chapters.length} فصل
+                  </span>
+                </div>
+                <h3 className="text-lg font-bold text-white mb-1 group-hover:text-indigo-300 transition-colors">{course.title}</h3>
+                <p className="text-xs text-slate-500 mb-3">{course.subtitle}</p>
+                <p className="text-sm text-slate-400 leading-6 mb-4 line-clamp-2">{course.description}</p>
+                <div className="flex items-center justify-between pt-4 border-t border-slate-800">
+                  <span className="text-xs text-slate-500">{totalLessons} درس</span>
+                  <span className="text-xs text-indigo-400 font-medium flex items-center gap-1 group-hover:-translate-x-1 transition-transform">
+                    مشاهده <span className="rotate-180"><Icon.arrowRight /></span>
+                  </span>
+                </div>
+              </button>
+            );
+          })}
         </div>
       </div>
     </section>
@@ -361,59 +234,60 @@ function CoursesSection({ onSelectCourse }: { onSelectCourse: (c: Course) => voi
 }
 
 // ============================================
-// Course Detail View
+// Course Detail with TOC
 // ============================================
-function CourseDetail({ course, onBack, onSelectLesson }: { course: Course; onBack: () => void; onSelectLesson: (l: Lesson) => void }) {
+function CourseDetail({ course, onBack, onSelectLesson }: { course: Course; onBack: () => void; onSelectLesson: (l: Lesson, chId: string) => void }) {
+  const [activeChapter, setActiveChapter] = useState<string | null>(course.chapters[0]?.id || null);
+
+  const totalLessons = course.chapters.reduce((acc, ch) => acc + ch.lessons.length, 0);
+
   return (
-    <div className="min-h-screen pt-20 pb-16">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Back */}
-        <button onClick={onBack} className="flex items-center gap-2 text-slate-400 hover:text-indigo-300 transition-colors mb-6 group">
-          <span className="group-hover:translate-x-1 transition-transform">{Icons.arrowRight}</span>
-          <span className="text-sm">بازگشت به دوره‌ها</span>
-        </button>
+    <div className="min-h-screen pt-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Breadcrumb */}
+        <div className="flex items-center gap-2 text-sm text-slate-500 mb-6">
+          <button onClick={onBack} className="hover:text-indigo-300 transition-colors">دوره‌ها</button>
+          <span>/</span>
+          <span className="text-slate-300">{course.title}</span>
+        </div>
 
         {/* Course Header */}
-        <div className="glass-light rounded-2xl p-8 mb-8">
+        <div className="bg-slate-900/50 backdrop-blur border border-slate-800 rounded-2xl p-6 sm:p-8 mb-8">
           <div className="flex flex-col md:flex-row items-start gap-6">
             <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${course.color} flex items-center justify-center shadow-xl flex-shrink-0`}>
-              <span className="text-white scale-150">{Icons.layers}</span>
+              <span className="text-white scale-150"><Icon.layers /></span>
             </div>
             <div className="flex-1">
               <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">{course.title}</h1>
               <p className="text-indigo-300 text-sm mb-3">{course.subtitle}</p>
               <p className="text-slate-400 leading-7 mb-4">{course.description}</p>
-              
               <div className="flex flex-wrap items-center gap-3">
                 <span className="text-xs text-slate-400 bg-slate-800 px-3 py-1.5 rounded-full flex items-center gap-1.5">
-                  <span>{Icons.book}</span>
-                  {course.lessons.length} درس
+                  <Icon.list /> {course.chapters.length} فصل
                 </span>
                 <span className="text-xs text-slate-400 bg-slate-800 px-3 py-1.5 rounded-full flex items-center gap-1.5">
-                  <span>{Icons.clock}</span>
-                  {course.totalHours} ساعت
+                  <Icon.book /> {totalLessons} درس
                 </span>
-                {course.lessons[0]?.difficulty && (
-                  <span className="text-xs text-slate-400 bg-slate-800 px-3 py-1.5 rounded-full">
-                    سطح: {course.lessons[0].difficulty}
+                {course.totalHours && (
+                  <span className="text-xs text-slate-400 bg-slate-800 px-3 py-1.5 rounded-full flex items-center gap-1.5">
+                    <Icon.clock /> {course.totalHours} ساعت
                   </span>
                 )}
               </div>
             </div>
           </div>
 
-          {/* Outcomes */}
           {course.outcomes && (
-            <div className="mt-6 pt-6 border-t border-slate-700/50">
+            <div className="mt-6 pt-6 border-t border-slate-800">
               <h3 className="text-sm font-bold text-white mb-3 flex items-center gap-2">
-                <span className="text-emerald-400">{Icons.target}</span>
+                <span className="text-emerald-400"><Icon.target /></span>
                 پس از اتمام این دوره:
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {course.outcomes.map((outcome, i) => (
+                {course.outcomes.map((o, i) => (
                   <div key={i} className="flex items-center gap-2 text-sm text-slate-300">
-                    <span className="text-emerald-400 flex-shrink-0">{Icons.check}</span>
-                    <span>{outcome}</span>
+                    <span className="text-emerald-400"><Icon.check /></span>
+                    <span>{o}</span>
                   </div>
                 ))}
               </div>
@@ -421,52 +295,97 @@ function CourseDetail({ course, onBack, onSelectLesson }: { course: Course; onBa
           )}
         </div>
 
-        {/* Lessons List */}
-        <div className="space-y-3">
-          <h2 className="text-lg font-bold text-white mb-4">سرفصل‌های دوره</h2>
-          {course.lessons.map((lesson, index) => (
-            <button
-              key={lesson.id}
-              onClick={() => onSelectLesson(lesson)}
-              className="group w-full glass-light rounded-xl p-5 text-right card-hover flex items-center gap-4"
-            >
-              <div className="w-10 h-10 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-300 font-bold text-sm flex-shrink-0">
-                {index + 1}
-              </div>
-              <div className="flex-1 min-w-0">
-                <h3 className="text-base font-bold text-white group-hover:text-indigo-300 transition-colors truncate">
-                  {lesson.title}
-                </h3>
-                <p className="text-xs text-slate-500 mt-1">{lesson.subtitle}</p>
-                <div className="flex items-center gap-3 mt-2">
-                  {lesson.estimatedTime && (
-                    <span className="text-xs text-slate-500 flex items-center gap-1">
-                      <span>{Icons.clock}</span>
-                      {lesson.estimatedTime} دقیقه
-                    </span>
-                  )}
-                  {lesson.difficulty && (
-                    <span className={`text-xs px-2 py-0.5 rounded-full ${
-                      lesson.difficulty === 'مبتدی' ? 'bg-emerald-500/10 text-emerald-400' :
-                      lesson.difficulty === 'متوسط' ? 'bg-amber-500/10 text-amber-400' :
-                      'bg-red-500/10 text-red-400'
-                    }`}>
-                      {lesson.difficulty}
-                    </span>
-                  )}
-                  {lesson.code && (
-                    <span className="text-xs text-slate-500 flex items-center gap-1">
-                      <span>{Icons.code}</span>
-                      کد عملی
-                    </span>
-                  )}
+        {/* TOC Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-8">
+          {/* Sidebar TOC */}
+          <aside className="lg:sticky lg:top-20 lg:self-start">
+            <div className="bg-slate-900/50 backdrop-blur border border-slate-800 rounded-xl p-4">
+              <h3 className="text-sm font-bold text-white mb-4 flex items-center gap-2 px-2">
+                <Icon.list /> فهرست مطالب
+              </h3>
+              <nav className="space-y-1 max-h-[calc(100vh-200px)] overflow-y-auto">
+                {course.chapters.map((chapter, ci) => (
+                  <div key={chapter.id}>
+                    <button
+                      onClick={() => setActiveChapter(activeChapter === chapter.id ? null : chapter.id)}
+                      className={`w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium text-right transition-all ${
+                        activeChapter === chapter.id ? 'bg-indigo-500/10 text-indigo-300' : 'text-slate-300 hover:bg-white/5'
+                      }`}>
+                      <span className="w-6 h-6 rounded-md bg-slate-800 flex items-center justify-center text-xs text-slate-400 flex-shrink-0">
+                        {ci + 1}
+                      </span>
+                      <span className="flex-1 truncate">{chapter.title.replace(/^فصل \d+:\s*/, '')}</span>
+                      <span className={`transition-transform ${activeChapter === chapter.id ? 'rotate-180' : ''}`}>
+                        <Icon.chevron />
+                      </span>
+                    </button>
+                    {activeChapter === chapter.id && (
+                      <div className="mr-4 mt-1 mb-2 space-y-0.5 border-r border-slate-800 pr-3">
+                        {chapter.lessons.map((lesson, li) => (
+                          <button key={lesson.id} onClick={() => onSelectLesson(lesson, chapter.id)}
+                            className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-slate-400 hover:text-indigo-300 hover:bg-indigo-500/5 transition-all text-right">
+                            <span className="text-slate-600">{ci + 1}.{li + 1}</span>
+                            <span className="flex-1 truncate">{lesson.title}</span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </nav>
+            </div>
+          </aside>
+
+          {/* Main Content - Chapters */}
+          <main>
+            <div className="space-y-6">
+              {course.chapters.map((chapter, ci) => (
+                <div key={chapter.id} className="bg-slate-900/50 backdrop-blur border border-slate-800 rounded-xl p-5 sm:p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-500/20 to-cyan-500/20 border border-indigo-500/20 flex items-center justify-center text-indigo-300 font-bold text-sm">
+                      {ci + 1}
+                    </div>
+                    <div>
+                      <h2 className="text-lg font-bold text-white">{chapter.title}</h2>
+                      <p className="text-xs text-slate-500">{chapter.description}</p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    {chapter.lessons.map((lesson, li) => (
+                      <button key={lesson.id} onClick={() => onSelectLesson(lesson, chapter.id)}
+                        className="group w-full flex items-center gap-4 p-3 rounded-lg hover:bg-white/5 transition-all text-right">
+                        <span className="text-xs text-slate-600 font-mono w-10 flex-shrink-0">{ci + 1}.{li + 1}</span>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="text-sm font-medium text-slate-200 group-hover:text-indigo-300 transition-colors truncate">
+                            {lesson.title}
+                          </h4>
+                          <p className="text-xs text-slate-500 mt-0.5 truncate">{lesson.subtitle}</p>
+                        </div>
+                        <div className="flex items-center gap-3 flex-shrink-0">
+                          {lesson.estimatedTime && (
+                            <span className="text-xs text-slate-600 flex items-center gap-1">
+                              <Icon.clock /> {lesson.estimatedTime}د
+                            </span>
+                          )}
+                          {lesson.difficulty && (
+                            <span className={`text-xs px-2 py-0.5 rounded-full ${
+                              lesson.difficulty === 'مبتدی' ? 'bg-emerald-500/10 text-emerald-400' :
+                              lesson.difficulty === 'متوسط' ? 'bg-amber-500/10 text-amber-400' :
+                              'bg-red-500/10 text-red-400'
+                            }`}>{lesson.difficulty}</span>
+                          )}
+                          <span className="text-slate-700 group-hover:text-indigo-400 group-hover:-translate-x-1 transition-all rotate-180">
+                            <Icon.arrowRight />
+                          </span>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
-              <span className="text-slate-600 group-hover:text-indigo-400 group-hover:-translate-x-1 transition-all rotate-180 flex-shrink-0">
-                {Icons.arrowLeft}
-              </span>
-            </button>
-          ))}
+              ))}
+            </div>
+          </main>
         </div>
       </div>
     </div>
@@ -474,42 +393,48 @@ function CourseDetail({ course, onBack, onSelectLesson }: { course: Course; onBa
 }
 
 // ============================================
-// Lesson Viewer
+// Lesson Viewer with TOC
 // ============================================
-function LessonViewer({ lesson, onBack }: { lesson: Lesson; onBack: () => void }) {
-  const [showExercises, setShowExercises] = useState<Set<number>>(new Set());
+function LessonViewer({ 
+  course, 
+  chapter, 
+  lesson, 
+  onBack, 
+  onNavigate 
+}: { 
+  course: Course; 
+  chapter: Chapter; 
+  lesson: Lesson; 
+  onBack: () => void;
+  onNavigate: (lesson: Lesson, chapter: Chapter) => void;
+}) {
+  const [tocOpen, setTocOpen] = useState(false);
 
-  const toggleExercise = (i: number) => {
-    setShowExercises(prev => {
-      const next = new Set(prev);
-      if (next.has(i)) next.delete(i); else next.add(i);
-      return next;
+  // Flatten all lessons for prev/next navigation
+  const allLessons = useMemo(() => {
+    const list: { lesson: Lesson; chapter: Chapter }[] = [];
+    course.chapters.forEach(ch => {
+      ch.lessons.forEach(l => list.push({ lesson: l, chapter: ch }));
     });
-  };
+    return list;
+  }, [course]);
+
+  const currentIndex = allLessons.findIndex(l => l.lesson.id === lesson.id);
+  const prevLesson = currentIndex > 0 ? allLessons[currentIndex - 1] : null;
+  const nextLesson = currentIndex < allLessons.length - 1 ? allLessons[currentIndex + 1] : null;
 
   const renderContent = (content: string) => {
-    const lines = content.split('\n');
-    return lines.map((line, i) => {
-      if (line.startsWith('## ')) {
-        return <h2 key={i} className="text-xl font-bold text-white mt-8 mb-4 pb-2 border-b border-slate-700/50">{line.replace('## ', '')}</h2>;
-      }
-      if (line.startsWith('### ')) {
-        return <h3 key={i} className="text-lg font-bold text-indigo-300 mt-6 mb-3">{line.replace('### ', '')}</h3>;
+    return content.split('\n').map((line, i) => {
+      if (line.startsWith('## ')) return <h2 key={i} className="text-xl font-bold text-white mt-8 mb-4 pb-2 border-b border-slate-800">{line.replace('## ', '')}</h2>;
+      if (line.startsWith('### ')) return <h3 key={i} className="text-lg font-bold text-indigo-300 mt-6 mb-3">{line.replace('### ', '')}</h3>;
+      if (line.startsWith('- ') || line.startsWith('• ')) {
+        return <li key={i} className="text-slate-300 mr-4 mb-1.5 list-none flex items-start gap-2">
+          <span className="text-indigo-400 mt-2 flex-shrink-0">-</span>
+          <span className="leading-7">{line.substring(2)}</span>
+        </li>;
       }
       if (line.startsWith('**') && line.includes('**')) {
-        const text = line.replace(/\*\*/g, '');
-        return <p key={i} className="text-base font-bold text-cyan-300 mt-4 mb-2">{text}</p>;
-      }
-      if (line.startsWith('- ') || line.startsWith('• ')) {
-        return (
-          <li key={i} className="text-slate-300 mr-4 mb-1.5 list-none flex items-start gap-2">
-            <span className="text-indigo-400 mt-2 flex-shrink-0">-</span>
-            <span className="leading-7">{line.substring(2)}</span>
-          </li>
-        );
-      }
-      if (line.match(/^\|.*\|/)) {
-        return null; // Skip table rows for simplicity
+        return <p key={i} className="text-base font-bold text-cyan-300 mt-4 mb-2">{line.replace(/\*\*/g, '')}</p>;
       }
       if (line.trim() === '') return <div key={i} className="h-3"></div>;
       if (line.startsWith('```')) return null;
@@ -518,151 +443,158 @@ function LessonViewer({ lesson, onBack }: { lesson: Lesson; onBack: () => void }
   };
 
   return (
-    <div className="min-h-screen pt-20 pb-16">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Back */}
-        <button onClick={onBack} className="flex items-center gap-2 text-slate-400 hover:text-indigo-300 transition-colors mb-6 group">
-          <span className="group-hover:translate-x-1 transition-transform">{Icons.arrowRight}</span>
-          <span className="text-sm">بازگشت</span>
-        </button>
-
-        {/* Lesson Header */}
-        <div className="glass-light rounded-2xl p-6 sm:p-8 mb-8">
-          <div className="flex items-center gap-2 text-xs text-slate-500 mb-3">
-            {lesson.estimatedTime && (
-              <span className="flex items-center gap-1"><span>{Icons.clock}</span>{lesson.estimatedTime} دقیقه مطالعه</span>
-            )}
-            {lesson.difficulty && (
-              <span className={`px-2 py-0.5 rounded-full ${
-                lesson.difficulty === 'مبتدی' ? 'bg-emerald-500/10 text-emerald-400' :
-                lesson.difficulty === 'متوسط' ? 'bg-amber-500/10 text-amber-400' :
-                'bg-red-500/10 text-red-400'
-              }`}>{lesson.difficulty}</span>
-            )}
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">{lesson.title}</h1>
-          <p className="text-slate-400">{lesson.subtitle}</p>
+    <div className="min-h-screen pt-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        {/* Breadcrumb */}
+        <div className="flex items-center gap-2 text-sm text-slate-500 mb-6 flex-wrap">
+          <button onClick={onBack} className="hover:text-indigo-300 transition-colors">{course.title}</button>
+          <span>/</span>
+          <span className="text-slate-400">{chapter.title}</span>
+          <span>/</span>
+          <span className="text-slate-300 truncate max-w-[200px]">{lesson.title}</span>
         </div>
 
-        {/* Content */}
-        <div className="glass-light rounded-2xl p-6 sm:p-8 mb-8">
-          <div className="prose prose-invert max-w-none">
-            {renderContent(lesson.content)}
-          </div>
-        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-6">
+          {/* Sidebar TOC */}
+          <aside className={`${tocOpen ? 'block' : 'hidden'} lg:block`}>
+            <div className="lg:sticky lg:top-20 bg-slate-900/50 backdrop-blur border border-slate-800 rounded-xl p-4 max-h-[calc(100vh-120px)] overflow-y-auto">
+              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 px-2 flex items-center gap-2">
+                <Icon.list /> فهرست این کتاب
+              </h3>
+              <nav className="space-y-1">
+                {course.chapters.map((ch, ci) => (
+                  <div key={ch.id}>
+                    <div className={`px-3 py-2 rounded-lg text-xs font-bold ${ch.id === chapter.id ? 'text-indigo-300 bg-indigo-500/10' : 'text-slate-400'}`}>
+                      {ch.title}
+                    </div>
+                    <div className="mr-3 space-y-0.5 border-r border-slate-800 pr-2 mb-2">
+                      {ch.lessons.map((l, li) => (
+                        <button key={l.id} onClick={() => onNavigate(l, ch)}
+                          className={`w-full flex items-center gap-2 px-2 py-1.5 rounded text-xs text-right transition-all ${
+                            l.id === lesson.id ? 'text-indigo-300 bg-indigo-500/10 font-medium' : 'text-slate-500 hover:text-slate-300'
+                          }`}>
+                          <span className="font-mono text-[10px]">{ci+1}.{li+1}</span>
+                          <span className="flex-1 truncate">{l.title}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </nav>
+            </div>
+          </aside>
 
-        {/* Diagrams */}
-        {lesson.diagrams && lesson.diagrams.length > 0 && (
-          <div className="mb-8">
-            <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-              <span className="text-indigo-400">{Icons.layers}</span>
-              ساختار و دیاگرام
-            </h3>
-            {lesson.diagrams.map((diagram, i) => (
-              <Diagram key={i} items={diagram.split(' → ')} />
-            ))}
-          </div>
-        )}
+          {/* Main Content */}
+          <main>
+            {/* Mobile TOC Toggle */}
+            <button onClick={() => setTocOpen(!tocOpen)}
+              className="lg:hidden mb-4 flex items-center gap-2 px-4 py-2 bg-slate-800 text-slate-300 rounded-lg text-sm">
+              <Icon.list /> فهرست مطالب
+            </button>
 
-        {/* Code */}
-        {lesson.code && (
-          <div className="mb-8">
-            <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-              <span className="text-cyan-400">{Icons.code}</span>
-              کد عملی
-            </h3>
-            {lesson.outputPreview && (
-              <NoteBox type="info">
-                <strong>خروجی:</strong> {lesson.outputPreview}
-              </NoteBox>
+            {/* Lesson Header */}
+            <div className="bg-slate-900/50 backdrop-blur border border-slate-800 rounded-xl p-5 sm:p-6 mb-6">
+              <div className="flex items-center gap-2 text-xs text-slate-500 mb-3">
+                {lesson.estimatedTime && (
+                  <span className="flex items-center gap-1"><Icon.clock /> {lesson.estimatedTime} دقیقه</span>
+                )}
+                {lesson.difficulty && (
+                  <span className={`px-2 py-0.5 rounded-full ${
+                    lesson.difficulty === 'مبتدی' ? 'bg-emerald-500/10 text-emerald-400' :
+                    lesson.difficulty === 'متوسط' ? 'bg-amber-500/10 text-amber-400' :
+                    'bg-red-500/10 text-red-400'
+                  }`}>{lesson.difficulty}</span>
+                )}
+              </div>
+              <h1 className="text-xl sm:text-2xl font-bold text-white mb-2">{lesson.title}</h1>
+              <p className="text-slate-400 text-sm">{lesson.subtitle}</p>
+            </div>
+
+            {/* Content */}
+            <div className="bg-slate-900/50 backdrop-blur border border-slate-800 rounded-xl p-5 sm:p-8 mb-6">
+              <div className="prose prose-invert max-w-none">{renderContent(lesson.content)}</div>
+            </div>
+
+            {/* Code */}
+            {lesson.code && (
+              <div className="mb-6">
+                <h3 className="text-lg font-bold text-white mb-3 flex items-center gap-2">
+                  <span className="text-cyan-400"><Icon.code /></span> کد عملی
+                </h3>
+                <CodeBlock code={lesson.code} language={lesson.language} />
+              </div>
             )}
-            <CodeBlock code={lesson.code} language={lesson.language} />
-          </div>
-        )}
 
-        {/* Tips */}
-        {lesson.tips && lesson.tips.length > 0 && (
-          <div className="mb-8">
-            <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-              <span className="text-amber-400">{Icons.lightbulb}</span>
-              نکات کلیدی
-            </h3>
-            <div className="space-y-3">
-              {lesson.tips.map((tip, i) => (
-                <div key={i} className="note-box note-info">
-                  <div className="flex items-start gap-3">
-                    <span className="text-amber-400 flex-shrink-0 mt-0.5">{Icons.lightbulb}</span>
-                    <p className="text-sm text-slate-300 leading-7">{tip}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Warnings */}
-        {lesson.warnings && lesson.warnings.length > 0 && (
-          <div className="mb-8">
-            <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-              <span className="text-red-400">{Icons.warning}</span>
-              هشدارها
-            </h3>
-            <div className="space-y-3">
-              {lesson.warnings.map((warning, i) => (
-                <div key={i} className="note-box note-warning">
-                  <div className="flex items-start gap-3">
-                    <span className="text-amber-400 flex-shrink-0 mt-0.5">{Icons.warning}</span>
-                    <p className="text-sm text-slate-300 leading-7">{warning}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Exercises */}
-        {lesson.exercises && lesson.exercises.length > 0 && (
-          <div className="mb-8">
-            <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-              <span className="text-emerald-400">{Icons.target}</span>
-              تمرینات عملی
-            </h3>
-            <div className="space-y-4">
-              {lesson.exercises.map((ex, i) => (
-                <div key={i} className="glass-light rounded-xl p-5">
-                  <div className="flex items-start gap-3 mb-4">
-                    <div className="step-indicator step-active flex-shrink-0">{i + 1}</div>
-                    <div>
-                      <p className="text-white font-medium leading-7">{ex.question}</p>
+            {/* Tips */}
+            {lesson.tips && lesson.tips.length > 0 && (
+              <div className="mb-6">
+                <h3 className="text-lg font-bold text-white mb-3 flex items-center gap-2">
+                  <span className="text-amber-400"><Icon.lightbulb /></span> نکات کلیدی
+                </h3>
+                <div className="space-y-2">
+                  {lesson.tips.map((tip, i) => (
+                    <div key={i} className="bg-amber-500/5 border border-amber-500/20 rounded-lg p-4 flex items-start gap-3">
+                      <span className="text-amber-400 flex-shrink-0 mt-0.5"><Icon.lightbulb /></span>
+                      <p className="text-sm text-slate-300 leading-7">{tip}</p>
                     </div>
-                  </div>
-                  <button
-                    onClick={() => toggleExercise(i)}
-                    className="flex items-center gap-2 px-4 py-2 bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 rounded-lg text-sm font-medium hover:bg-indigo-500/20 transition-colors"
-                  >
-                    {showExercises.has(i) ? (
-                      <><span>{Icons.lock}</span> مخفی کردن پاسخ</>
-                    ) : (
-                      <><span>{Icons.eye}</span> نمایش پاسخ</>
-                    )}
-                  </button>
-                  {showExercises.has(i) && (
-                    <div className="mt-4 animate-in">
-                      <CodeBlock code={ex.answer} language={lesson.language} />
-                    </div>
-                  )}
+                  ))}
                 </div>
-              ))}
+              </div>
+            )}
+
+            {/* Warnings */}
+            {lesson.warnings && lesson.warnings.length > 0 && (
+              <div className="mb-6">
+                <h3 className="text-lg font-bold text-white mb-3 flex items-center gap-2">
+                  <span className="text-red-400"><Icon.warning /></span> هشدارها
+                </h3>
+                <div className="space-y-2">
+                  {lesson.warnings.map((w, i) => (
+                    <div key={i} className="bg-red-500/5 border border-red-500/20 rounded-lg p-4 flex items-start gap-3">
+                      <span className="text-red-400 flex-shrink-0 mt-0.5"><Icon.warning /></span>
+                      <p className="text-sm text-slate-300 leading-7">{w}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Prev/Next Navigation */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8">
+              {prevLesson && (
+                <button onClick={() => onNavigate(prevLesson.lesson, prevLesson.chapter)}
+                  className="group flex items-center gap-3 p-4 bg-slate-900/50 border border-slate-800 rounded-xl hover:border-indigo-500/30 transition-all text-right">
+                  <span className="text-slate-500 group-hover:text-indigo-400 transition-colors rotate-180"><Icon.arrowRight /></span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs text-slate-500 mb-0.5">درس قبلی</p>
+                    <p className="text-sm font-medium text-slate-200 truncate group-hover:text-indigo-300 transition-colors">
+                      {prevLesson.lesson.title}
+                    </p>
+                  </div>
+                </button>
+              )}
+              {nextLesson && (
+                <button onClick={() => onNavigate(nextLesson.lesson, nextLesson.chapter)}
+                  className="group flex items-center gap-3 p-4 bg-slate-900/50 border border-slate-800 rounded-xl hover:border-indigo-500/30 transition-all text-right mr-0 sm:mr-auto">
+                  <div className="flex-1 min-w-0 text-right">
+                    <p className="text-xs text-slate-500 mb-0.5">درس بعدی</p>
+                    <p className="text-sm font-medium text-slate-200 truncate group-hover:text-indigo-300 transition-colors">
+                      {nextLesson.lesson.title}
+                    </p>
+                  </div>
+                  <span className="text-slate-500 group-hover:text-indigo-400 transition-colors rotate-180"><Icon.arrowLeft /></span>
+                </button>
+              )}
             </div>
-          </div>
-        )}
+          </main>
+        </div>
       </div>
     </div>
   );
 }
 
 // ============================================
-// Tools Section - Interactive
+// Tools Section
 // ============================================
 function ToolsSection() {
   const [shadow, setShadow] = useState({ x: 0, y: 10, blur: 30, spread: 0, color: '#6366f1', opacity: 0.3 });
@@ -683,25 +615,22 @@ function ToolsSection() {
   };
 
   return (
-    <section className="py-20 relative">
+    <section className="py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-14">
           <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">ابزارهای تعاملی</h2>
-          <p className="text-slate-400 text-base max-w-xl mx-auto">
-            ابزارهای عملی برای درک بهتر مفاهیم CSS و تولید کد
-          </p>
+          <p className="text-slate-400">ابزارهای عملی برای درک بهتر مفاهیم CSS</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Box Shadow */}
-          <div className="glass-light rounded-2xl p-6">
+          <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-6">
             <h3 className="text-lg font-bold text-white mb-5">Box Shadow Generator</h3>
-            <div className="flex items-center justify-center h-44 rounded-xl bg-slate-800/50 mb-5">
+            <div className="flex items-center justify-center h-40 rounded-xl bg-slate-800/50 mb-5">
               <div className="w-28 h-28 rounded-2xl bg-white transition-all duration-300"
-                style={{ boxShadow: `${shadow.x}px ${shadow.y}px ${shadow.blur}px ${shadow.spread}px ${hexToRgba(shadow.color, shadow.opacity)}` }}
-              />
+                style={{ boxShadow: `${shadow.x}px ${shadow.y}px ${shadow.blur}px ${shadow.spread}px ${hexToRgba(shadow.color, shadow.opacity)}` }} />
             </div>
-            <div className="grid grid-cols-2 gap-4 mb-4">
+            <div className="grid grid-cols-2 gap-3 mb-4">
               {[
                 { label: 'X', key: 'x', min: -50, max: 50 },
                 { label: 'Y', key: 'y', min: -50, max: 50 },
@@ -710,28 +639,13 @@ function ToolsSection() {
               ].map(item => (
                 <label key={item.key} className="text-xs text-slate-400">
                   {item.label}: {(shadow as any)[item.key]}px
-                  <input type="range" min={item.min} max={item.max}
-                    value={(shadow as any)[item.key]}
+                  <input type="range" min={item.min} max={item.max} value={(shadow as any)[item.key]}
                     onChange={e => setShadow({ ...shadow, [item.key]: Number(e.target.value) })}
                     className="w-full mt-1 accent-indigo-500" />
                 </label>
               ))}
             </div>
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              <label className="text-xs text-slate-400">
-                Opacity: {shadow.opacity}
-                <input type="range" min="0" max="1" step="0.05" value={shadow.opacity}
-                  onChange={e => setShadow({ ...shadow, opacity: Number(e.target.value) })}
-                  className="w-full mt-1 accent-indigo-500" />
-              </label>
-              <label className="text-xs text-slate-400">
-                Color
-                <input type="color" value={shadow.color}
-                  onChange={e => setShadow({ ...shadow, color: e.target.value })}
-                  className="w-full h-8 mt-1 rounded cursor-pointer" />
-              </label>
-            </div>
-            <div className="code-editor p-3 text-xs mb-3">
+            <div className="bg-[#0d1117] border border-slate-700 rounded-lg p-3 text-xs mb-3" dir="ltr">
               <code className="text-emerald-400">
                 box-shadow: {shadow.x}px {shadow.y}px {shadow.blur}px {shadow.spread}px {hexToRgba(shadow.color, shadow.opacity)};
               </code>
@@ -743,32 +657,29 @@ function ToolsSection() {
           </div>
 
           {/* Gradient */}
-          <div className="glass-light rounded-2xl p-6">
+          <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-6">
             <h3 className="text-lg font-bold text-white mb-5">Gradient Generator</h3>
-            <div className="h-44 rounded-xl mb-5 transition-all duration-300"
-              style={{ background: `linear-gradient(${gradient.angle}deg, ${gradient.from}, ${gradient.to})` }}
-            />
+            <div className="h-40 rounded-xl mb-5 transition-all duration-300"
+              style={{ background: `linear-gradient(${gradient.angle}deg, ${gradient.from}, ${gradient.to})` }} />
             <label className="text-xs text-slate-400 mb-4 block">
               Angle: {gradient.angle}deg
               <input type="range" min="0" max="360" value={gradient.angle}
                 onChange={e => setGradient({ ...gradient, angle: Number(e.target.value) })}
                 className="w-full mt-1 accent-indigo-500" />
             </label>
-            <div className="grid grid-cols-2 gap-4 mb-4">
+            <div className="grid grid-cols-2 gap-3 mb-4">
               <label className="text-xs text-slate-400">
                 From
-                <input type="color" value={gradient.from}
-                  onChange={e => setGradient({ ...gradient, from: e.target.value })}
+                <input type="color" value={gradient.from} onChange={e => setGradient({ ...gradient, from: e.target.value })}
                   className="w-full h-10 mt-1 rounded cursor-pointer" />
               </label>
               <label className="text-xs text-slate-400">
                 To
-                <input type="color" value={gradient.to}
-                  onChange={e => setGradient({ ...gradient, to: e.target.value })}
+                <input type="color" value={gradient.to} onChange={e => setGradient({ ...gradient, to: e.target.value })}
                   className="w-full h-10 mt-1 rounded cursor-pointer" />
               </label>
             </div>
-            <div className="code-editor p-3 text-xs mb-3">
+            <div className="bg-[#0d1117] border border-slate-700 rounded-lg p-3 text-xs mb-3" dir="ltr">
               <code className="text-emerald-400">
                 background: linear-gradient({gradient.angle}deg, {gradient.from}, {gradient.to});
               </code>
@@ -777,50 +688,6 @@ function ToolsSection() {
               className="px-4 py-2 bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 rounded-lg text-sm hover:bg-indigo-500/20 transition-colors">
               {copied === 'gradient' ? 'Copied!' : 'Copy Code'}
             </button>
-          </div>
-
-          {/* CSS Spacing Reference */}
-          <div className="glass-light rounded-2xl p-6 lg:col-span-2">
-            <h3 className="text-lg font-bold text-white mb-5">CSS Spacing & Typography Reference</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div>
-                <h4 className="text-sm font-bold text-slate-300 mb-3">Spacing Scale</h4>
-                <div className="space-y-2">
-                  {[4, 8, 12, 16, 24, 32, 48, 64].map(size => (
-                    <div key={size} className="flex items-center gap-3">
-                      <span className="text-xs text-slate-500 w-16 font-mono">{size}px</span>
-                      <div className="flex-1 h-5 bg-slate-800/50 rounded overflow-hidden">
-                        <div className="h-full bg-gradient-to-l from-indigo-500 to-cyan-500 rounded"
-                          style={{ width: `${(size / 64) * 100}%` }} />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <h4 className="text-sm font-bold text-slate-300 mb-3">Font Size Scale</h4>
-                <div className="space-y-3">
-                  {[
-                    { size: '12px', name: 'xs' },
-                    { size: '14px', name: 'sm' },
-                    { size: '16px', name: 'base' },
-                    { size: '18px', name: 'lg' },
-                    { size: '20px', name: 'xl' },
-                    { size: '24px', name: '2xl' },
-                    { size: '30px', name: '3xl' },
-                    { size: '36px', name: '4xl' },
-                  ].map(item => (
-                    <div key={item.name} className="flex items-center gap-3">
-                      <span className="text-xs text-slate-500 w-16 font-mono">{item.name}</span>
-                      <span style={{ fontSize: item.size }} className="text-white truncate">
-                        Aa
-                      </span>
-                      <span className="text-xs text-slate-500 mr-auto">{item.size}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
@@ -833,58 +700,47 @@ function ToolsSection() {
 // ============================================
 function RoadmapSection() {
   const steps = [
-    { phase: 'فاز ۱', title: 'مبانی وب', duration: '۱-۲ ماه', items: ['HTML5', 'CSS3', 'Responsive Design', 'Git'], color: 'from-emerald-500 to-green-500' },
-    { phase: 'فاز ۲', title: 'جاوااسکریپت', duration: '۲-۳ ماه', items: ['ES6+', 'DOM', 'Async/Await', 'API'], color: 'from-yellow-500 to-amber-500' },
-    { phase: 'فاز ۳', title: 'Frontend Framework', duration: '۲-۳ ماه', items: ['React.js', 'State Management', 'Router', 'TypeScript'], color: 'from-cyan-500 to-blue-500' },
+    { phase: 'فاز ۱', title: 'مبانی وب', duration: '۱-۲ ماه', items: ['HTML5', 'CSS3', 'Responsive', 'Git'], color: 'from-emerald-500 to-green-500' },
+    { phase: 'فاز ۲', title: 'جاوااسکریپت', duration: '۲-۳ ماه', items: ['ES6+', 'DOM', 'Async', 'API'], color: 'from-yellow-500 to-amber-500' },
+    { phase: 'فاز ۳', title: 'Frontend Framework', duration: '۲-۳ ماه', items: ['React', 'State', 'Router', 'TypeScript'], color: 'from-cyan-500 to-blue-500' },
     { phase: 'فاز ۴', title: 'Backend', duration: '۲-۳ ماه', items: ['Node.js', 'MongoDB', 'REST API', 'Auth'], color: 'from-purple-500 to-pink-500' },
-    { phase: 'فاز ۵', title: 'WordPress', duration: '۱-۲ ماه', items: ['قالب‌نویسی', 'افزونه', 'WooCommerce', 'SEO'], color: 'from-indigo-500 to-violet-500' },
+    { phase: 'فاز ۵', title: 'WordPress', duration: '۱-۲ ماه', items: ['قالب', 'افزونه', 'WooCommerce', 'SEO'], color: 'from-indigo-500 to-violet-500' },
     { phase: 'فاز ۶', title: 'DevOps', duration: '۱ ماه', items: ['Docker', 'CI/CD', 'Linux', 'SSL'], color: 'from-teal-500 to-cyan-500' },
     { phase: 'فاز ۷', title: 'بازار کار', duration: 'مستمر', items: ['پورتفولیو', 'رزومه', 'مصاحبه', 'فریلنسری'], color: 'from-amber-500 to-orange-500' },
   ];
 
   return (
-    <section className="py-20 relative">
+    <section className="py-20">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-14">
           <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">نقشه راه یادگیری</h2>
-          <p className="text-slate-400 text-base max-w-xl mx-auto">
-            مسیر گام به گام از مبتدی تا حرفه‌ای
-          </p>
+          <p className="text-slate-400">مسیر گام به گام از مبتدی تا حرفه‌ای</p>
         </div>
 
         <div className="relative">
           <div className="absolute right-5 top-0 bottom-0 w-0.5 bg-gradient-to-b from-indigo-500 via-purple-500 to-amber-500 hidden md:block opacity-30"></div>
-          
-          <div className="space-y-5">
+          <div className="space-y-4">
             {steps.map((step, i) => (
-              <div key={i} className="relative flex gap-5 md:gap-6 animate-in" style={{ animationDelay: `${i * 100}ms` }}>
+              <div key={i} className="relative flex gap-5 md:gap-6">
                 <div className="hidden md:flex flex-col items-center">
                   <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${step.color} flex items-center justify-center text-white font-bold text-xs shadow-lg z-10`}>
                     {i + 1}
                   </div>
                 </div>
-                <div className="glass-light rounded-xl p-5 flex-1 card-hover">
+                <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-5 flex-1 hover:border-indigo-500/30 transition-all">
                   <div className="flex items-center gap-3 mb-3">
-                    <span className="md:hidden text-xs text-indigo-400 font-bold">{step.phase}</span>
                     <h3 className="text-base font-bold text-white">{step.title}</h3>
                     <span className="mr-auto text-xs text-slate-500 bg-slate-800 px-2.5 py-1 rounded-full">{step.duration}</span>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {step.items.map((item, j) => (
-                      <span key={j} className="text-xs text-slate-300 bg-slate-800/50 px-2.5 py-1 rounded-md border border-slate-700/50">
-                        {item}
-                      </span>
+                      <span key={j} className="text-xs text-slate-300 bg-slate-800/50 px-2.5 py-1 rounded-md border border-slate-700/50">{item}</span>
                     ))}
                   </div>
                 </div>
               </div>
             ))}
           </div>
-        </div>
-
-        <div className="mt-10 glass-light rounded-xl p-6 text-center pulse-glow">
-          <h3 className="text-lg font-bold text-white mb-2">زمان تقریبی: ۱۰ تا ۱۴ ماه</h3>
-          <p className="text-sm text-slate-400">با روزی ۳-۴ ساعت مطالعه و تمرین عملی</p>
         </div>
       </div>
     </section>
@@ -896,53 +752,28 @@ function RoadmapSection() {
 // ============================================
 function ResourcesSection() {
   const groups = [
-    { title: 'مستندات رسمی', items: [
-      { name: 'MDN Web Docs', desc: 'مرجع کامل HTML, CSS, JS' },
-      { name: 'React Documentation', desc: 'مستندات رسمی React' },
-      { name: 'Node.js Docs', desc: 'مستندات Node.js' },
-      { name: 'MongoDB Docs', desc: 'مستندات MongoDB' },
-    ]},
-    { title: 'ابزارهای توسعه', items: [
-      { name: 'VS Code', desc: 'بهترین Code Editor' },
-      { name: 'Figma', desc: 'طراحی UI/UX' },
-      { name: 'Postman', desc: 'تست API' },
-      { name: 'Chrome DevTools', desc: 'دیباگ و بررسی' },
-    ]},
-    { title: 'سایت‌های تمرین', items: [
-      { name: 'Frontend Mentor', desc: 'پروژه‌های واقعی' },
-      { name: 'Codewars', desc: 'تمرین الگوریتم' },
-      { name: 'CSS Battle', desc: 'چالش‌های CSS' },
-      { name: 'LeetCode', desc: 'سوالات مصاحبه' },
-    ]},
-    { title: 'منابع ویدیویی', items: [
-      { name: 'Traversy Media', desc: 'آموزش پروژه‌محور' },
-      { name: 'Fireship', desc: 'توضیحات سریع' },
-      { name: 'Net Ninja', desc: 'سری‌های آموزشی' },
-      { name: 'Web Dev Simplified', desc: 'مفاهیم پیچیده ساده' },
-    ]},
+    { title: 'مستندات رسمی', items: ['MDN Web Docs', 'React Docs', 'Node.js Docs', 'MongoDB Docs'] },
+    { title: 'ابزارهای توسعه', items: ['VS Code', 'Figma', 'Postman', 'Chrome DevTools'] },
+    { title: 'سایت‌های تمرین', items: ['Frontend Mentor', 'Codewars', 'CSS Battle', 'LeetCode'] },
+    { title: 'منابع ویدیویی', items: ['Traversy Media', 'Fireship', 'Net Ninja', 'Web Dev Simplified'] },
   ];
 
   return (
-    <section className="py-20 relative">
+    <section className="py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-14">
           <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">منابع و ابزارها</h2>
-          <p className="text-slate-400 text-base max-w-xl mx-auto">بهترین منابع برای یادگیری و تمرین</p>
+          <p className="text-slate-400">بهترین منابع برای یادگیری و تمرین</p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
           {groups.map((group, i) => (
-            <div key={i} className="glass-light rounded-xl p-6">
-              <h3 className="text-lg font-bold text-white mb-4">{group.title}</h3>
+            <div key={i} className="bg-slate-900/50 border border-slate-800 rounded-xl p-5">
+              <h3 className="text-base font-bold text-white mb-4">{group.title}</h3>
               <div className="space-y-2">
                 {group.items.map((item, j) => (
-                  <div key={j} className="flex items-center gap-3 p-3 rounded-lg bg-slate-800/30 hover:bg-slate-800/60 transition-colors">
-                    <div className="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-400 flex-shrink-0">
-                      {Icons.zap}
-                    </div>
-                    <div>
-                      <p className="text-sm text-white font-medium">{item.name}</p>
-                      <p className="text-xs text-slate-500">{item.desc}</p>
-                    </div>
+                  <div key={j} className="flex items-center gap-2 p-2.5 rounded-lg bg-slate-800/30 hover:bg-slate-800/60 transition-colors cursor-pointer">
+                    <span className="text-indigo-400"><Icon.check /></span>
+                    <span className="text-sm text-slate-300">{item}</span>
                   </div>
                 ))}
               </div>
@@ -961,34 +792,11 @@ function Footer() {
   return (
     <footer className="border-t border-slate-800/50 py-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-          <div>
-            <div className="flex items-center gap-2 mb-3">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-cyan-500 flex items-center justify-center text-white font-bold text-xs">D</div>
-              <span className="text-lg font-bold text-white">دِو<span className="text-indigo-400">مستر</span></span>
-            </div>
-            <p className="text-sm text-slate-400 leading-7">
-              آکادمی تخصصی توسعه فول‌استک وب. یادگیری رایگان و حرفه‌ای برای ورود به بازار کار.
-            </p>
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-cyan-500 flex items-center justify-center text-white font-bold text-xs">D</div>
+            <span className="text-base font-bold text-white">دِو<span className="text-indigo-400">مستر</span></span>
           </div>
-          <div>
-            <h4 className="text-sm font-bold text-white mb-3">دسترسی سریع</h4>
-            <div className="space-y-1.5">
-              {courses.slice(0, 5).map(c => (
-                <p key={c.id} className="text-xs text-slate-400 hover:text-indigo-300 cursor-pointer transition-colors">{c.title}</p>
-              ))}
-            </div>
-          </div>
-          <div>
-            <h4 className="text-sm font-bold text-white mb-3">ارتباط</h4>
-            <div className="space-y-1.5 text-xs text-slate-400">
-              <p>info@devmaster.ir</p>
-              <p>github.com/devmaster</p>
-              <p>telegram: @DevMasterIR</p>
-            </div>
-          </div>
-        </div>
-        <div className="border-t border-slate-800/50 pt-6 text-center">
           <p className="text-xs text-slate-500">ساخته شده با عشق برای جامعه توسعه‌دهندگان ایران | ۱۴۰۳</p>
         </div>
       </div>
@@ -999,65 +807,103 @@ function Footer() {
 // ============================================
 // Main App
 // ============================================
+type ViewState = 
+  | { type: 'home' | 'courses' | 'tools' | 'roadmap' | 'resources' }
+  | { type: 'course'; course: Course }
+  | { type: 'lesson'; course: Course; chapter: Chapter; lesson: Lesson };
+
 export default function App() {
+  const [view, setView] = useState<ViewState>({ type: 'home' });
   const [activeSection, setActiveSection] = useState('home');
-  const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
-  const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
+
+  const handleSetSection = (s: string) => {
+    setActiveSection(s);
+    setView({ type: s as any });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const handleSelectCourse = (course: Course) => {
-    setSelectedCourse(course);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setView({ type: 'course', course });
+    window.scrollTo({ top: 0 });
   };
 
-  const handleSelectLesson = (lesson: Lesson) => {
-    setSelectedLesson(lesson);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  if (selectedLesson) {
-    return (
-      <div className="min-h-screen bg-[#0a0f1a]">
-        <Header activeSection={activeSection} setActiveSection={setActiveSection} />
-        <LessonViewer lesson={selectedLesson} onBack={() => { setSelectedLesson(null); window.scrollTo({ top: 0 }); }} />
-        <Footer />
-      </div>
-    );
-  }
-
-  if (selectedCourse) {
-    return (
-      <div className="min-h-screen bg-[#0a0f1a]">
-        <Header activeSection={activeSection} setActiveSection={setActiveSection} />
-        <CourseDetail course={selectedCourse} onBack={() => { setSelectedCourse(null); window.scrollTo({ top: 0 }); }} onSelectLesson={handleSelectLesson} />
-        <Footer />
-      </div>
-    );
-  }
-
-  const renderSection = () => {
-    switch (activeSection) {
-      case 'home':
-        return (<>
-          <HeroSection onStart={() => setActiveSection('courses')} />
-          <CoursesSection onSelectCourse={handleSelectCourse} />
-          <RoadmapSection />
-        </>);
-      case 'courses':
-        return <div className="pt-20"><CoursesSection onSelectCourse={handleSelectCourse} /></div>;
-      case 'tools':
-        return <div className="pt-20"><ToolsSection /></div>;
-      case 'roadmap':
-        return <div className="pt-20"><RoadmapSection /></div>;
-      case 'resources':
-        return <div className="pt-20"><ResourcesSection /></div>;
-      default: return null;
+  const handleSelectLesson = (lesson: Lesson, chapterId: string) => {
+    if (view.type === 'course') {
+      const chapter = view.course.chapters.find(c => c.id === chapterId);
+      if (chapter) {
+        setView({ type: 'lesson', course: view.course, chapter, lesson });
+        window.scrollTo({ top: 0 });
+      }
     }
   };
 
+  const handleNavigateLesson = (lesson: Lesson, chapter: Chapter) => {
+    if (view.type === 'lesson') {
+      setView({ type: 'lesson', course: view.course, chapter, lesson });
+      window.scrollTo({ top: 0 });
+    }
+  };
+
+  const handleBackToCourse = () => {
+    if (view.type === 'course') {
+      setView({ type: 'courses' });
+      setActiveSection('courses');
+    } else if (view.type === 'lesson') {
+      setView({ type: 'course', course: view.course });
+    }
+    window.scrollTo({ top: 0 });
+  };
+
+  // Determine active section for header
+  const currentSection = view.type === 'home' || view.type === 'courses' || view.type === 'tools' || view.type === 'roadmap' || view.type === 'resources'
+    ? view.type
+    : 'courses';
+
+  // Render based on view state
+  if (view.type === 'lesson') {
+    return (
+      <div className="min-h-screen bg-[#0a0f1a]">
+        <Header activeSection={currentSection} setActiveSection={handleSetSection} />
+        <LessonViewer
+          course={view.course}
+          chapter={view.chapter}
+          lesson={view.lesson}
+          onBack={handleBackToCourse}
+          onNavigate={handleNavigateLesson}
+        />
+        <Footer />
+      </div>
+    );
+  }
+
+  if (view.type === 'course') {
+    return (
+      <div className="min-h-screen bg-[#0a0f1a]">
+        <Header activeSection={currentSection} setActiveSection={handleSetSection} />
+        <CourseDetail
+          course={view.course}
+          onBack={handleBackToCourse}
+          onSelectLesson={handleSelectLesson}
+        />
+        <Footer />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#0a0f1a]">
-      <Header activeSection={activeSection} setActiveSection={setActiveSection} />
-      {renderSection()}
+      <Header activeSection={currentSection} setActiveSection={handleSetSection} />
+      {view.type === 'home' && (
+        <>
+          <HeroSection onStart={() => handleSetSection('courses')} />
+          <CoursesSection onSelectCourse={handleSelectCourse} />
+          <RoadmapSection />
+        </>
+      )}
+      {view.type === 'courses' && <div className="pt-20"><CoursesSection onSelectCourse={handleSelectCourse} /></div>}
+      {view.type === 'tools' && <div className="pt-20"><ToolsSection /></div>}
+      {view.type === 'roadmap' && <div className="pt-20"><RoadmapSection /></div>}
+      {view.type === 'resources' && <div className="pt-20"><ResourcesSection /></div>}
       <Footer />
     </div>
   );
