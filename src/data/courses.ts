@@ -37,7 +37,7 @@ export const courses: Course[] = [
     id: "html-css",
     title: "HTML و CSS جامع",
     subtitle: "از صفر تا طراحی حرفه‌ای",
-    description: "کتاب کامل HTML و CSS شامل ۷ فصل و بیش از ۲۰ درس",
+    description: "کتاب کامل HTML و CSS شامل ۷ فصل و بیش از ۲۰ درس. از مفاهیم پایه تا تکنیک‌های پیشرفته.",
     color: "from-orange-500 to-red-500",
     totalHours: 80,
     prerequisites: ["آشنایی با کامپیوتر"],
@@ -45,13 +45,15 @@ export const courses: Course[] = [
       "تسلط بر HTML5 و عناصر معنایی",
       "طراحی ریسپانسیو با Flexbox و Grid",
       "ایجاد انیمیشن‌های حرفه‌ای",
-      "نوشتن کد تمیز و قابل نگهداری"
+      "نوشتن کد تمیز و قابل نگهداری",
+      "آشنایی با CSS Architecture و BEM",
+      "بهینه‌سازی Performance صفحات"
     ],
     chapters: [
       {
         id: "html-ch1",
         title: "فصل ۱: مقدمه‌ای بر وب و HTML",
-        description: "آشنایی با اینترنت و ساختار HTML",
+        description: "آشنایی با اینترنت، مرورگرها و ساختار صفحات HTML",
         lessons: [
           {
             id: "html-l1-1",
@@ -61,219 +63,110 @@ export const courses: Course[] = [
             difficulty: "مبتدی",
             content: `## اینترنت و World Wide Web
 
-اینترنت یک شبکه جهانی عظیم از شبکه‌های کامپیوتری است که با استفاده از پروتکل TCP/IP به یکدیگر متصل شده‌اند. این زیرساخت فیزیکی و منطقی، امکان انتقال داده‌ها بین میلیاردها دستگاه در سراسر جهان را فراهم می‌کند. اینترنت شامل سرورها، روترها، کابل‌های زیردریایی، ماهواره‌ها و تجهیزات شبکه‌ای مختلفی است.
+اینترنت یک شبکه جهانی از شبکه‌های کامپیوتری است که با پروتکل TCP/IP به هم متصل شده‌اند. وب تنها یکی از سرویس‌های اینترنت است که با HTTP/HTTPS کار می‌کند.
 
-وب (World Wide Web) تنها یکی از سرویس‌هایی است که روی اینترنت اجرا می‌شود. وب مجموعه‌ای از اسناد و منابع interconnected است که با URL شناسایی می‌شوند و از طریق پروتکل HTTP/HTTPS قابل دسترسی هستند. این اسناد معمولاً با HTML نوشته می‌شوند.
+### پروتکل HTTP/HTTPS
 
-## پروتکل HTTP/HTTPS
+HTTP (HyperText Transfer Protocol) پروتکل اصلی وب است. بر اساس مدل request/response کار می‌کند.
 
-HTTP (HyperText Transfer Protocol) پروتکل اصلی انتقال داده در وب است. این پروتکل بر اساس مدل request/response کار می‌کند.
+**HTTP Methods:**
+- GET: دریافت منبع
+- POST: ایجاد منبع
+- PUT: به‌روزرسانی کامل
+- PATCH: به‌روزرسانی جزئی
+- DELETE: حذف منبع
 
-### HTTP Methods
+**Status Codes:**
+- 2xx: موفق (200 OK, 201 Created)
+- 3xx: ریدایرکت (301, 302)
+- 4xx: خطای کلاینت (400, 401, 404)
+- 5xx: خطای سرور (500, 502, 503)
 
-- **GET**: دریافت منبع (بدون تغییر)
-- **POST**: ایجاد منبع جدید
-- **PUT**: به‌روزرسانی کامل منبع
-- **PATCH**: به‌روزرسانی جزئی منبع
-- **DELETE**: حذف منبع
+HTTPS نسخه امن HTTP است که با SSL/TLS رمزنگاری می‌شود.
 
-### Status Codes
+### DNS
 
-- **2xx**: موفق (200 OK, 201 Created, 204 No Content)
-- **3xx**: ریدایرکت (301 Moved, 302 Found, 304 Not Modified)
-- **4xx**: خطای کلاینت (400 Bad Request, 401 Unauthorized, 403 Forbidden, 404 Not Found)
-- **5xx**: خطای سرور (500 Internal Server Error, 502 Bad Gateway, 503 Service Unavailable)
+DNS نام دامنه را به IP تبدیل می‌کند. مراحل:
+1. Cache محلی
+2. DNS resolver
+3. Root server
+4. TLD server
+5. Authoritative server
 
-HTTPS نسخه امن HTTP است که با SSL/TLS رمزنگاری می‌شود و از حملات man-in-the-middle جلوگیری می‌کند.
+### مراحل بارگذاری صفحه
 
-## DNS (Domain Name System)
+1. URL parse می‌شود
+2. DNS lookup
+3. TCP connection
+4. TLS handshake (HTTPS)
+5. HTTP request
+6. Server processing
+7. HTTP response
+8. HTML parsing
+9. DOM Tree construction
+10. CSS parsing
+11. Render Tree
+12. Layout
+13. Paint
+14. Composite
 
-DNS مانند دفترچه تلفن اینترنت عمل می‌کند و نام دامنه‌های خوانا (مثل google.com) را به آدرس‌های IP عددی (مثل 142.250.185.78) تبدیل می‌کند.
+### مرورگرها و موتورهای رندر
 
-### مراحل Resolution
-
-1. مرورگر cache محلی را بررسی می‌کند
-2. سیستم عامل cache را بررسی می‌کند
-3. DNS resolver محلی پرس‌وجو می‌شود
-4. Root server پرس‌وجو می‌شود
-5. TLD server پرس‌وجو می‌شود
-6. Authoritative server پرس‌وجو می‌شود
-7. IP دریافت و cache می‌شود
-
-## مراحل بارگذاری یک صفحه وب
-
-وقتی کاربر URL را وارد می‌کند:
-
-1. مرورگر URL را parse می‌کند
-2. DNS lookup انجام می‌شود
-3. TCP connection برقرار می‌شود (Three-way handshake)
-4. TLS handshake (در HTTPS)
-5. درخواست HTTP ارسال می‌شود
-6. سرور درخواست را پردازش می‌کند
-7. پاسخ HTTP ارسال می‌شود
-8. مرورگر HTML را parse می‌کند و DOM Tree می‌سازد
-9. CSS parse می‌شود و CSSOM Tree ساخته می‌شود
-10. DOM و CSSOM ترکیب شده و Render Tree ساخته می‌شود
-11. Layout محاسبه می‌شود
-12. صفحه Paint می‌شود
-13. Compositing انجام می‌شود
-
-## مرورگرها و موتورهای رندر
-
-هر مرورگر از موتورهای مختلفی استفاده می‌کند:
-
-- **Chrome/Edge**: Blink (rendering) + V8 (JavaScript)
-- **Firefox**: Gecko (rendering) + SpiderMonkey (JavaScript)
-- **Safari**: WebKit (rendering) + JavaScriptCore
-
-این موتورها مسئول parse کردن HTML/CSS، ساخت DOM/CSSOM، محاسبه layout، paint و compositing هستند.`,
+- **Chrome/Edge**: Blink + V8
+- **Firefox**: Gecko + SpiderMonkey
+- **Safari**: WebKit + JavaScriptCore`,
             tips: [
               "همیشه از HTTPS استفاده کنید",
-              "Status codes را بشناسید برای debugging بهتر",
-              "HTTP/2 و HTTP/3 performance بهتری دارند",
-              "DNS cache می‌تواند performance را بهبود دهد"
-            ],
-            warnings: [
-              "هرگز اطلاعات حساس را با HTTP ارسال نکنید",
-              "Status code‌ها را درست استفاده کنید",
-              "CORS را درست پیکربندی کنید"
+              "Status codes را بشناسید",
+              "HTTP/2 و HTTP/3 سریع‌ترند"
             ]
           },
           {
             id: "html-l1-2",
-            title: "ساختار یک سند HTML",
-            subtitle: "DOCTYPE، html، head و body",
+            title: "ساختار سند HTML",
+            subtitle: "DOCTYPE, html, head, body",
             estimatedTime: 30,
             difficulty: "مبتدی",
-            content: `## ساختار پایه یک سند HTML
+            content: `## ساختار HTML
 
-هر سند HTML از یک ساختار مشخص و استاندارد پیروی می‌کند. درک این ساختار برای نوشتن کد معتبر و قابل فهم ضروری است.
+هر سند HTML از بخش‌های مشخصی تشکیل شده:
 
-### DOCTYPE Declaration
+### DOCTYPE
+\`<!DOCTYPE html>\` به مرورگر می‌گوید HTML5 است.
 
-خط اول هر سند HTML باید DOCTYPE declaration باشد:
+### html
+عنصر ریشه با attribute‌های lang و dir.
 
-\`<!DOCTYPE html>\`
+### head
+شامل meta، title، link و script.
 
-این declaration به مرورگر می‌گوید که سند از HTML5 استفاده می‌کند. DOCTYPE یک تگ نیست، بلکه یک دستورالعمل برای مرورگر است.
+### body
+محتوای قابل مشاهده صفحه.
 
-**اهمیت DOCTYPE:**
-- حالت Standards Mode را فعال می‌کند
-- از Quirks Mode جلوگیری می‌کند
-- رندر سازگار بین مرورگرها را تضمین می‌کند
+### Meta Tags مهم
 
-### عنصر html
+**Viewport:**
+\`<meta name="viewport" content="width=device-width, initial-scale=1.0">\`
 
-\`<html>\` عنصر ریشه سند است که تمام محتوای صفحه را در بر می‌گیرد.
+**SEO:**
+\`<meta name="description" content="توضیحات">\`
 
-**Attribute‌های مهم:**
-- \`lang="fa"\` - زبان اصلی صفحه (ISO 639-1)
-- \`dir="rtl"\` - جهت متن (rtl برای فارسی/عربی)
+**Open Graph:**
+برای اشتراک‌گذاری در شبکه‌های اجتماعی.
 
-**اهمیت lang:**
-- صفحه‌خوان‌ها تلفظ درست را انتخاب می‌کنند
-- موتورهای جستجو زبان را تشخیص می‌دهند
-- مرورگرها ترجمه خودکار را پیشنهاد می‌دهند
+### ترتیب اسکریپت‌ها
 
-### بخش head
-
-\`<head>\` شامل metadata و منابع صفحه است. این بخش برای کاربر قابل مشاهده نیست ولی برای مرورگر و موتورهای جستجو بسیار مهم است.
-
-**عناصر مهم در head:**
-
-**Meta Tags:**
-\`\`\`html
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="توضیحات صفحه">
-<meta name="keywords" content="کلمات کلیدی">
-<meta name="author" content="نام نویسنده">
-\`\`\`
-
-**Viewport Meta Tag:**
-این تگ برای طراحی ریسپانسیو ضروری است:
-- \`width=device-width\`: عرض صفحه را با عرض دستگاه تنظیم می‌کند
-- \`initial-scale=1.0\`: zoom اولیه را تنظیم می‌کند
-
-**Title:**
-\`<title>\` عنوان صفحه است که در تب مرورگر، نتایج جستجو و بوکمارک‌ها نمایش داده می‌شود. برای SEO بسیار مهم است.
-
-**Link Tags:**
-\`\`\`html
-<link rel="stylesheet" href="styles.css">
-<link rel="icon" href="favicon.ico">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-\`\`\`
-
-**Open Graph Tags:**
-برای اشتراک‌گذاری در شبکه‌های اجتماعی:
-\`\`\`html
-<meta property="og:title" content="عنوان">
-<meta property="og:description" content="توضیحات">
-<meta property="og:image" content="image.jpg">
-<meta property="og:url" content="https://example.com">
-\`\`\`
-
-### بخش body
-
-\`<body>\` شامل محتوای قابل مشاهده صفحه است. تمام عناصری که کاربر می‌بیند در body قرار می‌گیرند.
-
-**ساختار معمول body:**
-\`\`\`html
-<body>
-    <header>...</header>
-    <nav>...</nav>
-    <main>
-        <article>...</article>
-    </main>
-    <aside>...</aside>
-    <footer>...</footer>
-</body>
-\`\`\`
-
-### ترتیب بهینه اسکریپت‌ها
-
-برای performance بهتر:
-1. CSS در head (برای جلوگیری از FOUC)
+1. CSS در head
 2. JavaScript در انتهای body
-3. یا از \`defer\` و \`async\` استفاده کنید:
-   - \`defer\`: بعد از parse HTML اجرا می‌شود
-   - \`async\`: به محض دانلود اجرا می‌شود
-
-### اعتبارسنجی HTML
-
-برای اطمینان از معتبر بودن HTML:
-- از W3C Validator استفاده کنید
-- ساختار تگ‌ها را درست ببندید
-- Attribute‌ها را درست بنویسید
-- از عناصر معنایی استفاده کنید`,
+3. یا از defer/async استفاده کنید`,
             code: `<!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-    <!-- Meta Tags -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="توضیحات صفحه برای SEO">
-    <meta name="keywords" content="HTML, CSS, Web Development">
-    <meta name="author" content="نام شما">
-    
-    <!-- Open Graph -->
-    <meta property="og:title" content="عنوان صفحه">
-    <meta property="og:description" content="توضیحات صفحه">
-    <meta property="og:image" content="https://example.com/image.jpg">
-    
-    <!-- Title -->
-    <title>عنوان صفحه - نام سایت</title>
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="/favicon.png">
-    
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn&display=swap" rel="stylesheet">
-    
-    <!-- Stylesheets -->
-    <link rel="stylesheet" href="css/main.css">
+    <meta name="description" content="توضیحات صفحه">
+    <title>عنوان صفحه</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <header>
@@ -289,35 +182,29 @@ DNS مانند دفترچه تلفن اینترنت عمل می‌کند و نا
     <main>
         <article>
             <h2>عنوان مقاله</h2>
-            <p>محتوای مقاله...</p>
+            <p>محتوا...</p>
         </article>
     </main>
     
     <footer>
-        <p>&copy; ۱۴۰۳ نام سایت</p>
+        <p>&copy; ۱۴۰۳</p>
     </footer>
     
-    <script src="js/main.js" defer></script>
+    <script src="app.js" defer></script>
 </body>
 </html>`,
             language: "html",
             tips: [
-              "DOCTYPE را همیشه در خط اول قرار دهید",
-              "meta viewport برای ریسپانسیو ضروری است",
-              "title برای SEO بسیار مهم است",
-              "Open Graph tags برای اشتراک‌گذاری در شبکه‌های اجتماعی"
-            ],
-            warnings: [
-              "هرگز DOCTYPE را فراموش نکنید",
-              "charset را در ۱۰۲۴ بایت اول قرار دهید",
-              "viewport meta tag را حذف نکنید"
+              "DOCTYPE در خط اول",
+              "viewport برای ریسپانسیو",
+              "title برای SEO"
             ]
           }
         ]
       },
       {
         id: "html-ch2",
-        title: "فصل ۲: عناصر معنایی HTML5",
+        title: "فصل ۲: عناصر معنایی",
         description: "ساختاردهی هوشمند محتوا",
         lessons: [
           {
@@ -326,69 +213,51 @@ DNS مانند دفترچه تلفن اینترنت عمل می‌کند و نا
             subtitle: "header, nav, main, footer",
             estimatedTime: 35,
             difficulty: "مبتدی",
-            content: `## عناصر معنایی ساختاری
+            content: `## عناصر معنایی
 
-عناصر معنایی تگ‌هایی هستند که معنای محتوای خود را به طور واضح بیان می‌کنند. استفاده از این عناصر به جای \`<div>\` مزایای زیادی دارد.
+عناصر معنایی معنای محتوا را بیان می‌کنند.
 
-### چرا عناصر معنایی مهم هستند؟
+### اهمیت
 
-**۱. دسترسی‌پذیری (Accessibility):**
-صفحه‌خوان‌ها و ابزارهای کمکی می‌توانند ساختار صفحه را بهتر درک کنند و برای کاربران نابینا تجربه بهتری فراهم کنند.
+**۱. Accessibility:**
+صفحه‌خوان‌ها ساختار را بهتر درک می‌کنند.
 
-**۲. سئو (SEO):**
-موتورهای جستجو مانند گوگل، ساختار معنایی صفحه را بهتر درک می‌کنند و رتبه بهتری به صفحات معنایی می‌دهند.
+**۲. SEO:**
+موتورهای جستجو محتوا را بهتر می‌فهمند.
 
-**۳. خوانایی کد:**
-کد HTML معنایی برای توسعه‌دهندگان دیگر قابل فهم‌تر است و نگهداری آن آسان‌تر است.
+**۳. خوانایی:**
+کد قابل فهم‌تر است.
 
 ### عناصر اصلی
 
-**header:** سربرگ صفحه یا بخش. معمولاً شامل لوگو، عنوان و navigation است.
+**header:** سربرگ صفحه/بخش
 
-**nav:** بخش ناوبری. لینک‌های اصلی سایت را شامل می‌شود.
+**nav:** ناوبری
 
-**main:** محتوای اصلی صفحه. فقط یکبار در هر صفحه استفاده می‌شود.
+**main:** محتوای اصلی (فقط یکبار)
 
-**article:** محتوای مستقل و کامل مثل یک پست بلاگ، یک کامنت یا یک محصول.
+**article:** محتوای مستقل
 
-**section:** بخش‌بندی موضوعی محتوا. معمولاً یک عنوان دارد.
+**section:** بخش‌بندی موضوعی
 
-**aside:** محتوای جانبی مثل sidebar، تبلیغات یا لینک‌های مرتبط.
+**aside:** محتوای جانبی
 
-**footer:** پاورقی صفحه یا بخش. شامل اطلاعات تماس، کپی‌رایت و لینک‌های مفید است.
+**footer:** پاورقی
 
-### تفاوت‌های مهم
+### تفاوت‌ها
 
 **article vs section:**
-- **article**: محتوایی که به تنهایی معنادار است و می‌تواند مستقل توزیع شود
-- **section**: بخش‌بندی موضوعی محتوا که معمولاً یک عنوان دارد
+- article: مستقل و معنادار
+- section: بخش‌بندی با عنوان
 
 **div vs section:**
-- **div**: بدون معنای خاص، فقط برای grouping و استایل‌دهی
-- **section**: بخش معنایی از محتوا با موضوع مشخص
-
-### عناصر معنایی دیگر
-
-- **figure**: محتوای تصویری
-- **figcaption**: توضیح تصویر
-- **details/summary**: محتوای قابل باز/بسته شدن
-- **time**: تاریخ و زمان
-- **address**: اطلاعات تماس
-- **mark**: متن هایلایت شده
-- **blockquote**: نقل قول بلند
-
-### Best Practices
-
-1. از عناصر معنایی به جای div استفاده کنید
-2. فقط یک main در هر صفحه داشته باشید
-3. سلسله‌مراتب عناوین را رعایت کنید (h1 تا h6)
-4. از aria-label برای توضیح نقش عناصر استفاده کنید
-5. هر article باید به تنهایی معنادار باشد`,
+- div: بدون معنا
+- section: معنادار`,
             code: `<!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>وبلاگ تکنولوژی</title>
+    <title>وبلاگ</title>
 </head>
 <body>
     <header>
@@ -397,75 +266,568 @@ DNS مانند دفترچه تلفن اینترنت عمل می‌کند و نا
             <ul>
                 <li><a href="/">خانه</a></li>
                 <li><a href="/articles">مقالات</a></li>
-                <li><a href="/tutorials">آموزش‌ها</a></li>
             </ul>
         </nav>
     </header>
     
     <main>
-        <section aria-labelledby="latest-heading">
-            <h2 id="latest-heading">آخرین مقالات</h2>
+        <article>
+            <header>
+                <h2>معرفی React 19</h2>
+                <time datetime="2024-03-15">۲۵ اسفند</time>
+            </header>
             
-            <article>
-                <header>
-                    <h3>
-                        <a href="/articles/react-19">معرفی React 19</a>
-                    </h3>
-                    <div class="meta">
-                        <time datetime="2024-03-15">۲۵ اسفند ۱۴۰۲</time>
-                        <address>نوشته <a href="/author/ali">علی</a></address>
-                    </div>
-                </header>
-                
-                <p>React 19 با قابلیت‌های جدید منتشر شده...</p>
-                
-                <section>
-                    <h4>ویژگی‌های جدید</h4>
-                    <ul>
-                        <li>Server Components</li>
-                        <li>Actions</li>
-                    </ul>
-                </section>
-                
-                <footer>
-                    <p>برچسب‌ها: <a href="/tag/react">React</a></p>
-                </footer>
-            </article>
-        </section>
+            <p>محتوای مقاله...</p>
+            
+            <section>
+                <h3>ویژگی‌های جدید</h3>
+                <ul>
+                    <li>Server Components</li>
+                    <li>Actions</li>
+                </ul>
+            </section>
+        </article>
     </main>
     
-    <aside aria-label="سایدبار">
-        <section>
-            <h2>دسته‌بندی‌ها</h2>
-            <nav aria-label="دسته‌بندی مقالات">
-                <ul>
-                    <li><a href="/cat/frontend">فرانت‌اند (۲۵)</a></li>
-                    <li><a href="/cat/backend">بک‌اند (۱۸)</a></li>
-                </ul>
-            </nav>
-        </section>
+    <aside>
+        <h2>دسته‌بندی‌ها</h2>
+        <nav>
+            <ul>
+                <li><a href="/frontend">فرانت‌اند</a></li>
+                <li><a href="/backend">بک‌اند</a></li>
+            </ul>
+        </nav>
     </aside>
     
     <footer>
-        <address>
-            <p>تهران، ایران</p>
-            <p>ایمیل: <a href="mailto:info@example.com">info@example.com</a></p>
-        </address>
-        <p>&copy; ۱۴۰۳ وبلاگ تکنولوژی</p>
+        <p>&copy; ۱۴۰۳</p>
     </footer>
 </body>
 </html>`,
             language: "html",
             tips: [
-              "فقط یک <main> در هر صفحه داشته باشید",
-              "هر <article> باید به تنهایی معنادار باشد",
-              "از aria-label برای توضیح نقش عناصر استفاده کنید",
-              "سلسله‌مراتب عناوین را رعایت کنید"
-            ],
-            warnings: [
-              "از div به جای عناصر معنایی استفاده نکنید",
-              "چندین main در یک صفحه نداشته باشید",
-              "عناوین را بدون ترتیب استفاده نکنید"
+              "فقط یک main",
+              "article باید مستقل باشد",
+              "از aria-label استفاده کنید"
+            ]
+          }
+        ]
+      },
+      {
+        id: "css-ch3",
+        title: "فصل ۳: مبانی CSS",
+        description: "انتخابگرها و Box Model",
+        lessons: [
+          {
+            id: "css-l3-1",
+            title: "مقدمه‌ای بر CSS",
+            subtitle: "CSS چیست؟",
+            estimatedTime: 30,
+            difficulty: "مبتدی",
+            content: `## CSS چیست؟
+
+CSS (Cascading Style Sheets) زبان استایل‌دهی برای HTML است.
+
+### روش‌های اعمال
+
+**۱. Inline:**
+\`<p style="color: blue;">\`
+
+**۲. Internal:**
+\`<style>p { color: blue; }</style>\`
+
+**۳. External (توصیه شده):**
+\`<link rel="stylesheet" href="styles.css">\`
+
+### انتخابگرها
+
+**Type:** \`p { }\`
+
+**Class:** \`.highlight { }\`
+
+**ID:** \`#header { }\`
+
+**Attribute:** \`[type="email"] { }\`
+
+### Specificity
+
+- Inline: 1000
+- ID: 100
+- Class: 10
+- Type: 1
+
+### Box Model
+
+هر عنصر شامل:
+- Content
+- Padding
+- Border
+- Margin
+
+با \`box-sizing: border-box\`، padding و border در width محاسبه می‌شوند.`,
+            code: `/* Reset */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* Base */
+body {
+    font-family: 'Vazirmatn', sans-serif;
+    line-height: 1.6;
+}
+
+/* Selectors */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Pseudo-classes */
+a:hover {
+    color: #4f46e5;
+}
+
+/* Box Model */
+.card {
+    width: 300px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    margin: 10px;
+}`,
+            language: "css",
+            tips: [
+              "box-sizing: border-box",
+              "External CSS بهترین است",
+              "از ID کمتر استفاده کنید"
+            ]
+          }
+        ]
+      },
+      {
+        id: "css-ch4",
+        title: "فصل ۴: Flexbox",
+        description: "چیدمان انعطاف‌پذیر",
+        lessons: [
+          {
+            id: "css-l4-1",
+            title: "مبانی Flexbox",
+            subtitle: "Container و Items",
+            estimatedTime: 40,
+            difficulty: "متوسط",
+            content: `## Flexbox
+
+مدل چیدمان یک‌بعدی برای UI انعطاف‌پذیر.
+
+### مفاهیم
+
+**Flex Container:** \`display: flex\`
+
+**Flex Items:** فرزندان
+
+**محورها:**
+- Main Axis (افقی پیش‌فرض)
+- Cross Axis (عمود)
+
+### خواص Container
+
+**flex-direction:**
+- row (پیش‌فرض)
+- column
+- row-reverse
+- column-reverse
+
+**justify-content:**
+- flex-start
+- flex-end
+- center
+- space-between
+- space-around
+- space-evenly
+
+**align-items:**
+- stretch (پیش‌فرض)
+- flex-start
+- flex-end
+- center
+- baseline
+
+**flex-wrap:**
+- nowrap
+- wrap
+
+**gap:** فاصله بین items
+
+### خواص Items
+
+**flex:** \`grow shrink basis\`
+
+**align-self:** تراز شخصی
+
+**order:** ترتیب`,
+            code: `/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+}
+
+/* Center */
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* Grid */
+.grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+}
+
+.grid > * {
+    flex: 1 1 300px;
+}
+
+/* Layout */
+.page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.header { flex: 0 0 auto; }
+
+.body {
+    display: flex;
+    flex: 1;
+}
+
+.sidebar { flex: 0 0 250px; }
+.main { flex: 1; min-width: 0; }
+.footer { flex: 0 0 auto; }`,
+            language: "css",
+            tips: [
+              "flex: 1 1 0% بهتر از flex: 1",
+              "gap استفاده کنید",
+              "min-width: 0 برای overflow"
+            ]
+          }
+        ]
+      },
+      {
+        id: "css-ch5",
+        title: "فصل ۵: CSS Grid",
+        description: "چیدمان شبکه‌ای",
+        lessons: [
+          {
+            id: "css-l5-1",
+            title: "مبانی Grid",
+            subtitle: "Layout‌های پیچیده",
+            estimatedTime: 45,
+            difficulty: "متوسط",
+            content: `## CSS Grid
+
+قدرتمندترین سیستم چیدمان. دوبعدی کار می‌کند.
+
+### مفاهیم
+
+**Grid Container:** \`display: grid\`
+
+**Grid Items:** فرزندان
+
+**Grid Lines:** خطوط
+
+**Grid Tracks:** فاصله بین خطوط
+
+**Grid Cell:** کوچکترین واحد
+
+### تعریف ستون‌ها
+
+\`\`\`css
+.container {
+    display: grid;
+    grid-template-columns: 200px 1fr 300px;
+    grid-template-rows: auto 1fr auto;
+    gap: 24px;
+}
+\`\`\`
+
+### واحد fr
+
+بخشی از فضای خالی.
+
+### minmax()
+
+\`minmax(200px, 1fr)\`
+
+### auto-fit vs auto-fill
+
+- auto-fill: ستون‌های خالی ایجاد می‌کند
+- auto-fit: ستون‌های خالی را حذف می‌کند
+
+### قرار دادن Items
+
+\`\`\`css
+.item {
+    grid-column: 1 / 3;
+    grid-row: 2 / 4;
+}
+\`\`\`
+
+### Grid Template Areas
+
+\`\`\`css
+.container {
+    grid-template-areas:
+        "header header"
+        "sidebar main"
+        "footer footer";
+}
+\`\`\``,
+            code: `/* Basic Grid */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+/* Responsive */
+.responsive {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+/* Dashboard */
+.dashboard {
+    display: grid;
+    grid-template-columns: 250px 1fr 300px;
+    grid-template-rows: 64px 1fr 48px;
+    grid-template-areas:
+        "header header header"
+        "sidebar main aside"
+        "footer footer footer";
+    min-height: 100vh;
+}
+
+.header { grid-area: header; }
+.sidebar { grid-area: sidebar; }
+.main { grid-area: main; }
+.aside { grid-area: aside; }
+.footer { grid-area: footer; }
+
+/* Spanning */
+.featured {
+    grid-column: span 2;
+    grid-row: span 2;
+}
+
+.full-width {
+    grid-column: 1 / -1;
+}
+
+/* Center */
+.center {
+    display: grid;
+    place-items: center;
+}`,
+            language: "css",
+            tips: [
+              "auto-fit + minmax برای responsive",
+              "grid-template-areas برای پیچیده",
+              "gap استفاده کنید"
+            ]
+          }
+        ]
+      },
+      {
+        id: "css-ch6",
+        title: "فصل ۶: انیمیشن‌ها",
+        description: "Transitions و Animations",
+        lessons: [
+          {
+            id: "css-l6-1",
+            title: "CSS Transitions",
+            subtitle: "انتقال‌های نرم",
+            estimatedTime: 35,
+            difficulty: "متوسط",
+            content: `## CSS Transitions
+
+Transition‌ها تغییرات بین دو حالت را نرم می‌کنند.
+
+### خواص transition:
+
+**transition-property:** خاصیت مورد نظر
+
+**transition-duration:** مدت زمان
+
+**transition-timing-function:** تابع زمان‌بندی
+- ease, linear, ease-in, ease-out
+- cubic-bezier()
+
+**transition-delay:** تأخیر
+
+### مثال:
+\`\`\`css
+.button {
+    transition: all 0.3s ease;
+}
+
+.button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+\`\`\`
+
+### نکات مهم:
+- فقط transform و opacity را انیمیت کنید
+- از cubic-bezier برای انیمیشن‌های طبیعی استفاده کنید`,
+            code: `/* Basic Transition */
+.button {
+    background: #4f46e5;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.button:hover {
+    background: #6366f1;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(79, 70, 229, 0.3);
+}
+
+/* Multiple Properties */
+.card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+}
+
+/* Timing Functions */
+.cubic-example {
+    transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}`,
+            language: "css",
+            tips: [
+              "فقط transform و opacity را انیمیت کنید",
+              "از cubic-bezier استفاده کنید",
+              "transition را بهینه کنید"
+            ]
+          }
+        ]
+      },
+      {
+        id: "css-ch7",
+        title: "فصل ۷: طراحی ریسپانسیو",
+        description: "ساخت صفحات واکنش‌گرا",
+        lessons: [
+          {
+            id: "css-l7-1",
+            title: "Media Queries",
+            subtitle: "سازگاری با اندازه‌های مختلف",
+            estimatedTime: 40,
+            difficulty: "متوسط",
+            content: `## طراحی ریسپانسیو
+
+ساخت صفحاتی که در اندازه‌های مختلف به خوبی کار کنند.
+
+## رویکردها
+
+**Mobile First:** اول برای موبایل، سپس با media query برای صفحات بزرگتر
+
+**Desktop First:** اول برای دسکتاپ، سپس برای موبایل
+
+توصیه: Mobile First
+
+## Media Queries
+
+\`\`\`css
+/* Mobile First */
+.container { width: 100%; }
+
+@media (min-width: 768px) {
+    .container { max-width: 720px; }
+}
+
+@media (min-width: 1024px) {
+    .container { max-width: 960px; }
+}
+\`\`\`
+
+## Breakpoints معمول:
+- 640px: موبایل بزرگ
+- 768px: تبلت
+- 1024px: لپ‌تاپ
+- 1280px: دسکتاپ
+
+## Units ریسپانسیو:
+- %: درصدی از والد
+- vw/vh: درصدی از viewport
+- rem/em: نسبی به font-size
+- clamp(): حداقل، ترجیحی، حداکثر`,
+            code: `/* Mobile First */
+
+/* Base (Mobile) */
+.container {
+    width: 100%;
+    padding: 0 16px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+}
+
+/* Tablet (768px+) */
+@media (min-width: 768px) {
+    .container {
+        max-width: 720px;
+        margin: 0 auto;
+    }
+    
+    .grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 24px;
+    }
+}
+
+/* Desktop (1024px+) */
+@media (min-width: 1024px) {
+    .container { max-width: 960px; }
+    
+    .grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Responsive Typography */
+h1 {
+    font-size: clamp(24px, 5vw, 48px);
+}
+
+p {
+    font-size: clamp(14px, 2vw, 16px);
+}
+
+/* Responsive Images */
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}`,
+            language: "css",
+            tips: [
+              "Mobile First را رعایت کنید",
+              "از clamp() برای typography استفاده کنید",
+              "تصاویر را ریسپانسیو کنید"
             ]
           }
         ]
@@ -476,15 +838,16 @@ DNS مانند دفترچه تلفن اینترنت عمل می‌کند و نا
     id: "javascript",
     title: "جاوااسکریپت کامل",
     subtitle: "از مبتدی تا پیشرفته",
-    description: "تسلط بر JavaScript مدرن",
+    description: "تسلط بر JavaScript مدرن شامل ES6+، async programming، DOM و الگوهای طراحی",
     color: "from-yellow-500 to-amber-500",
     totalHours: 100,
     prerequisites: ["HTML و CSS"],
     outcomes: [
-      "تسلط بر ES6+",
-      "درک async programming",
-      "کار با DOM",
-      "الگوهای طراحی"
+      "تسلط بر ES6+ features",
+      "درک عمیق async programming",
+      "کار حرفه‌ای با DOM",
+      "آشنایی با الگوهای طراحی",
+      "نوشتن کد تمیز و maintainable"
     ],
     chapters: [
       {
@@ -495,200 +858,609 @@ DNS مانند دفترچه تلفن اینترنت عمل می‌کند و نا
           {
             id: "js-l1-1",
             title: "متغیرها و انواع داده",
-            subtitle: "let، const و انواع داده در JavaScript",
+            subtitle: "let، const و انواع داده",
             estimatedTime: 35,
             difficulty: "مبتدی",
+            interactiveType: 'playground',
+            interactiveData: { expectedOutput: "string\nnumber\nboolean\nobject" },
             content: `## متغیرها در JavaScript
 
 JavaScript سه کلمه کلیدی برای تعریف متغیر دارد:
 
 ### var (منسوخ شده)
-- function-scoped (نه block-scoped)
-- hoisted (به بالای scope منتقل می‌شود)
-- قابل redeclare و reassign
+- function-scoped
+- hoisted
+- قابل redeclare
 
 ### let (مدرن)
 - block-scoped
-- hoisted ولی در Temporal Dead Zone
-- قابل reassign ولی نه redeclare
+- قابل reassign
+- نه redeclare
 
 ### const (مدرن)
 - block-scoped
-- باید هنگام تعریف مقداردهی شود
-- قابل reassign نیست (ولی mutable است!)
+- غیرقابل reassign
+- باید مقداردهی شود
 
-## انواع داده (Data Types)
+## انواع داده
 
-### Primitive Types (غیرقابل تغییر):
+### Primitive Types:
+- String
+- Number
+- Boolean
+- undefined
+- null
+- Symbol
+- BigInt
 
-**1. String:**
-\`\`\`js
-const str1 = "Hello";
-const str2 = 'World';
-const str3 = \`Hello \${name}\`; // template literal
-\`\`\`
+### Reference Types:
+- Object
+- Array
+- Function
 
-**2. Number:**
-\`\`\`js
-const int = 42;
-const float = 3.14;
-const negative = -10;
-const infinity = Infinity;
-const notNumber = NaN;
-\`\`\`
+### Type Checking
+\`typeof\` برای primitive‌ها.
+\`Array.isArray()\` برای آرایه‌ها.
 
-**3. Boolean:**
-\`\`\`js
-const isActive = true;
-const isDeleted = false;
-\`\`\`
+**نکته:** \`typeof null\` برابر \`"object"\` است (bug تاریخی).`,
+            code: `// ===== let vs const =====
 
-**4. undefined:**
-متغیر تعریف شده ولی بدون مقدار
+let count = 0;
+count = 1; // OK
 
-**5. null:**
-مقدار خالی (عمداً)
-
-**6. Symbol:**
-\`\`\`js
-const id = Symbol('description');
-\`\`\`
-
-### Reference Types (قابل تغییر):
-
-**Object:**
-\`\`\`js
-const user = { name: "Ali", age: 25 };
-\`\`\`
-
-**Array:**
-\`\`\`js
-const fruits = ["apple", "banana", "cherry"];
-\`\`\`
-
-**Function:**
-\`\`\`js
-const greet = function(name) { return \`Hello \${name}\`; };
-\`\`\`
-
-## Type Checking
-
-\`typeof\` برای بررسی نوع primitive‌ها:
-- \`typeof "hello"\` → "string"
-- \`typeof 42\` → "number"
-- \`typeof true\` → "boolean"
-- \`typeof undefined\` → "undefined"
-- \`typeof null\` → "object" (bug تاریخی!)
-- \`typeof {}\` → "object"
-- \`typeof []\` → "object"
-- \`typeof function(){}\` → "function"
-
-برای بررسی آرایه:
-\`Array.isArray([1, 2, 3])\` → true
-
-## Truthy و Falsy Values
-
-**Falsy** (همه اینها false هستند):
-- \`false\`
-- \`0\`
-- \`""\` (empty string)
-- \`null\`
-- \`undefined\`
-- \`NaN\`
-
-**Truthy** (همه مقادیر دیگر true هستند)`,
-            code: `// ===== var vs let vs const =====
-
-// var - function scoped
-function exampleVar() {
-    if (true) {
-        var x = 10;
-    }
-    console.log(x); // 10 - بیرون از if هم قابل دسترسی!
-}
-
-// let - block scoped
-function exampleLet() {
-    if (true) {
-        let y = 10;
-    }
-    console.log(y); // ReferenceError!
-}
-
-// const - block scoped + immutable binding
-const PI = 3.14159;
-// PI = 3; // TypeError!
-
-// ولی objects mutable هستند:
-const user = { name: "Ali" };
-user.name = "Reza"; // OK! - خود object تغییر می‌کند
-// user = {}; // TypeError! - reference نمی‌تواند تغییر کند
+const PI = 3.14;
+// PI = 3; // Error!
 
 // ===== انواع داده =====
 
-// String methods
-const str = "Hello, World!";
-str.length;           // 13
-str.toUpperCase();    // "HELLO, WORLD!"
-str.includes("World"); // true
-str.slice(0, 5);      // "Hello"
-str.split(", ");      // ["Hello", "World!"]
-
-// Template Literals
+// String
 const name = "Ali";
+const greeting = \`Hello \${name}\`;
+
+// Number
 const age = 25;
-const message = \`
-    Name: \${name}
-    Age: \${age}
-    Born: \${2024 - age}
-\`;
+const price = 99.99;
 
-// Number methods
-const num = 42.567;
-num.toFixed(2);       // "42.57"
-Number.isInteger(42); // true
-Number.isNaN(NaN);    // true
+// Boolean
+const isActive = true;
 
-// Boolean coercion
-Boolean(0);         // false
-Boolean("");        // false
-Boolean(null);      // false
-Boolean("hello");   // true
-Boolean(42);        // true
-Boolean([]);        // true (even empty array!)
+// undefined
+let x; // undefined
 
-// Nullish Coalescing (??)
-const value1 = null ?? "default";    // "default"
-const value2 = 0 ?? "default";       // 0 (not "default"!)
+// null
+const empty = null;
 
-// Optional Chaining (?.)
-const data = { user: { profile: { name: "Ali" } } };
-data.user?.profile?.name;    // "Ali"
-data.user?.settings?.theme;  // undefined (no error!)
+// Array
+const fruits = ["apple", "banana"];
 
-// typeof operator
-typeof "hello"     // "string"
-typeof 42          // "number"
-typeof true        // "boolean"
-typeof undefined   // "undefined"
-typeof null        // "object" (bug تاریخی!)
-typeof {}          // "object"
-typeof []          // "object"
+// Object
+const user = {
+    name: "Ali",
+    age: 25
+};
 
-// Array.isArray
-Array.isArray([1, 2, 3]);  // true
-Array.isArray("hello");    // false`,
+// ===== Type Checking =====
+
+typeof "hello"    // "string"
+typeof 42         // "number"
+typeof true       // "boolean"
+typeof undefined  // "undefined"
+typeof null       // "object" (bug!)
+typeof {}         // "object"
+typeof []         // "object"
+
+// Array check
+Array.isArray([1, 2, 3]); // true`,
             language: "javascript",
             tips: [
-              "همیشه از === به جای == استفاده کنید",
-              "const را پیش‌فرض قرار دهید",
-              "Optional chaining (?.) از خطاهای undefined جلوگیری می‌کند",
-              "Nullish coalescing (??) فقط null و undefined را handle می‌کند"
-            ],
-            warnings: [
-              "typeof null برابر 'object' است - این یک bug تاریخی است",
-              "const جلوی تغییر object/array را نمی‌گیرد",
-              "NaN === NaN همیشه false است!"
+              "همیشه const را پیش‌فرض استفاده کنید",
+              "از === به جای == استفاده کنید",
+              "typeof null برابر object است (bug تاریخی)"
+            ]
+          },
+          {
+            id: "js-l1-2",
+            title: "عملگرها و عبارات شرطی",
+            subtitle: "if, switch, ternary",
+            estimatedTime: 30,
+            difficulty: "مبتدی",
+            interactiveType: 'quiz',
+            interactiveData: {
+              question: "خروجی کد زیر چیست؟\n\nconsole.log(5 == '5');\nconsole.log(5 === '5');",
+              options: ["true, true", "true, false", "false, true", "false, false"],
+              correctIndex: 1,
+              explanation: "عملگر == (loose equality) نوع‌ها را coerce می‌کند پس '5' به 5 تبدیل شده و برابر می‌شوند (true). ولی === (strict equality) نوع را هم چک می‌کند و چون string و number متفاوت هستند، false برمی‌گرداند."
+            },
+            content: `## عملگرها در JavaScript
+
+### عملگرهای مقایسه‌ای:
+- \`==\` : برابری (با type coercion)
+- \`===\` : برابری سخت‌گیرانه
+- \`!=\`, \`!==\` : نابرابری
+- \`>\`, \`<\`, \`>=\`, \`<=\`
+
+### عملگرهای منطقی:
+- \`&&\` : AND
+- \`||\` : OR
+- \`!\` : NOT
+- \`??\` : Nullish Coalescing
+
+### Ternary Operator:
+\`\`\`js
+const result = condition ? valueIfTrue : valueIfFalse;
+\`\`\`
+
+## عبارات شرطی
+
+### if/else:
+\`\`\`js
+if (condition) {
+    // code
+} else if (otherCondition) {
+    // code
+} else {
+    // code
+}
+\`\`\`
+
+### switch:
+\`\`\`js
+switch (expression) {
+    case value1:
+        // code
+        break;
+    default:
+        // code
+}
+\`\`\``,
+            code: `// ===== عملگرهای مقایسه =====
+
+console.log(5 == "5");    // true
+console.log(5 === "5");   // false
+
+// ===== عملگرهای منطقی =====
+
+const a = true;
+const b = false;
+
+console.log(a && b);  // false
+console.log(a || b);  // true
+console.log(!a);      // false
+
+// Nullish Coalescing
+const value1 = 0 ?? "default";     // 0
+const value2 = null ?? "default";  // "default"
+
+// ===== Ternary =====
+
+const age = 20;
+const status = age >= 18 ? "adult" : "minor";
+
+// ===== if/else =====
+
+const temperature = 25;
+
+if (temperature > 30) {
+    console.log("Hot!");
+} else if (temperature > 20) {
+    console.log("Warm");
+} else {
+    console.log("Cool");
+}
+
+// ===== switch =====
+
+const day = "Monday";
+
+switch (day) {
+    case "Saturday":
+    case "Friday":
+        console.log("Weekend!");
+        break;
+    case "Monday":
+        console.log("Weekday");
+        break;
+    default:
+        console.log("Other day");
+}`,
+            language: "javascript",
+            tips: [
+              "همیشه از === استفاده کنید",
+              "?? فقط null و undefined را handle می‌کند",
+              "از ternary تو در تو پرهیز کنید"
+            ]
+          }
+        ]
+      },
+      {
+        id: "js-ch2",
+        title: "فصل ۲: توابع و Scope",
+        description: "انواع توابع، closures و scope",
+        lessons: [
+          {
+            id: "js-l2-1",
+            title: "توابع در JavaScript",
+            subtitle: "Function Declaration، Expression و Arrow",
+            estimatedTime: 40,
+            difficulty: "متوسط",
+            interactiveType: 'comparison',
+            interactiveData: {
+              headers: ["ویژگی", "Declaration", "Expression", "Arrow"],
+              rows: [
+                ["Hoisting", "بله", "خیر", "خیر"],
+                ["this binding", "Dynamic", "Dynamic", "Lexical"],
+                ["arguments", "دارد", "دارد", "ندارد"],
+                ["سینتکس", "function name()", "const fn = function()", "const fn = () =>"],
+                ["مناسب برای", "توابع اصلی", "Callbackها", "توابع کوتاه"]
+              ]
+            },
+            content: `## انواع توابع
+
+### Function Declaration:
+\`\`\`js
+function greet(name) {
+    return \`Hello \${name}\`;
+}
+\`\`\`
+- Hoisted
+
+### Function Expression:
+\`\`\`js
+const greet = function(name) {
+    return \`Hello \${name}\`;
+};
+\`\`\`
+- Not hoisted
+
+### Arrow Function:
+\`\`\`js
+const greet = (name) => \`Hello \${name}\`;
+\`\`\`
+- Shorter syntax
+- Lexical this
+
+## Parameters
+
+### Default Parameters:
+\`\`\`js
+function greet(name = "Guest") {
+    return \`Hello \${name}\`;
+}
+\`\`\`
+
+### Rest Parameters:
+\`\`\`js
+function sum(...numbers) {
+    return numbers.reduce((a, b) => a + b, 0);
+}
+\`\`\`
+
+## Closures
+
+وقتی یک تابع به متغیرهای scope بیرونی دسترسی دارد حتی بعد از اتمام آن scope.
+
+## Higher-Order Functions
+
+توابعی که تابع دیگری می‌گیرند یا برمی‌گردانند.`,
+            code: `// ===== Function Declaration =====
+function add(a, b) {
+    return a + b;
+}
+
+// ===== Arrow Functions =====
+const multiply = (a, b) => a * b;
+const double = x => x * 2;
+const getRandom = () => Math.random();
+
+// ===== Default Parameters =====
+function greet(name = "Guest", greeting = "Hello") {
+    return \`\${greeting}, \${name}!\`;
+}
+
+// ===== Rest Parameters =====
+function sum(...numbers) {
+    return numbers.reduce((total, num) => total + num, 0);
+}
+
+console.log(sum(1, 2, 3, 4, 5));  // 15
+
+// ===== Closures =====
+function createCounter() {
+    let count = 0;
+    
+    return {
+        increment: () => ++count,
+        decrement: () => --count,
+        getCount: () => count
+    };
+}
+
+const counter = createCounter();
+counter.increment();  // 1
+counter.increment();  // 2
+counter.getCount();   // 2
+
+// ===== Higher-Order Functions =====
+function createMultiplier(factor) {
+    return (number) => number * factor;
+}
+
+const triple = createMultiplier(3);
+console.log(triple(5));  // 15`,
+            language: "javascript",
+            tips: [
+              "Arrow functions برای callback‌ها عالی هستند",
+              "از closure برای encapsulation استفاده کنید",
+              "Default parameters از || بهترند"
+            ]
+          }
+        ]
+      },
+      {
+        id: "js-ch3",
+        title: "فصل ۳: آرایه‌ها و اشیاء",
+        description: "کار با داده‌های ساختاریافته",
+        lessons: [
+          {
+            id: "js-l3-1",
+            title: "آرایه‌ها و متدهای آن‌ها",
+            subtitle: "map, filter, reduce و سایر متدها",
+            estimatedTime: 45,
+            difficulty: "متوسط",
+            interactiveType: 'playground',
+            interactiveData: { expectedOutput: "[2, 4, 6, 8, 10]" },
+            content: `## آرایه‌ها در JavaScript
+
+آرایه‌ها لیست‌های مرتب از مقادیر هستند.
+
+### ایجاد آرایه:
+\`\`\`js
+const fruits = ["apple", "banana", "cherry"];
+const numbers = [1, 2, 3, 4, 5];
+\`\`\`
+
+### متدهای مهم:
+
+**map:** تبدیل هر عنصر
+\`\`\`js
+const doubled = numbers.map(n => n * 2);
+\`\`\`
+
+**filter:** فیلتر کردن عناصر
+\`\`\`js
+const evens = numbers.filter(n => n % 2 === 0);
+\`\`\`
+
+**reduce:** کاهش به یک مقدار
+\`\`\`js
+const sum = numbers.reduce((acc, n) => acc + n, 0);
+\`\`\`
+
+**find:** پیدا کردن اولین عنصر مطابق
+\`\`\`js
+const found = fruits.find(f => f.startsWith("b"));
+\`\`\`
+
+**forEach:** اجرای تابع برای هر عنصر
+\`\`\`js
+fruits.forEach(f => console.log(f));
+\`\`\``,
+            code: `// ===== آرایه‌ها =====
+
+const fruits = ["apple", "banana", "cherry"];
+const numbers = [1, 2, 3, 4, 5];
+
+// ===== map =====
+const doubled = numbers.map(n => n * 2);
+// [2, 4, 6, 8, 10]
+
+const fruitNames = fruits.map(f => f.toUpperCase());
+// ["APPLE", "BANANA", "CHERRY"]
+
+// ===== filter =====
+const evens = numbers.filter(n => n % 2 === 0);
+// [2, 4]
+
+const longFruits = fruits.filter(f => f.length > 5);
+// ["banana", "cherry"]
+
+// ===== reduce =====
+const sum = numbers.reduce((acc, n) => acc + n, 0);
+// 15
+
+const product = numbers.reduce((acc, n) => acc * n, 1);
+// 120
+
+// ===== find =====
+const found = fruits.find(f => f.startsWith("b"));
+// "banana"
+
+// ===== forEach =====
+fruits.forEach(f => console.log(f));
+
+// ===== Chaining =====
+const result = numbers
+    .filter(n => n > 2)
+    .map(n => n * 10)
+    .reduce((acc, n) => acc + n, 0);
+// 120 (3*10 + 4*10 + 5*10)
+
+// ===== Spread Operator =====
+const arr1 = [1, 2, 3];
+const arr2 = [4, 5, 6];
+const combined = [...arr1, ...arr2];
+// [1, 2, 3, 4, 5, 6]
+
+// ===== Destructuring =====
+const [first, second, ...rest] = numbers;
+// first = 1, second = 2, rest = [3, 4, 5]`,
+            language: "javascript",
+            tips: [
+              "map, filter, reduce را خوب یاد بگیرید",
+              "از chaining برای عملیات‌های پیچیده استفاده کنید",
+              "Spread operator برای copy و merge عالی است"
+            ]
+          }
+        ]
+      },
+      {
+        id: "js-ch4",
+        title: "فصل ۴: برنامه‌نویسی ناهمگام",
+        description: "Promises، Async/Await و Fetch API",
+        lessons: [
+          {
+            id: "js-l4-1",
+            title: "Promises و Async/Await",
+            subtitle: "مدیریت عملیات ناهمگام",
+            estimatedTime: 50,
+            difficulty: "پیشرفته",
+            interactiveType: 'tabs',
+            interactiveData: {
+              tabs: [
+                {
+                  label: "Callbacks",
+                  content: "روش قدیمی با توابع callback که منجر به Callback Hell می‌شود. کد تو در تو و سخت خوانا."
+                },
+                {
+                  label: "Promises",
+                  content: "روش مدرن‌تر با .then() و .catch(). کد تخت‌تر و خواناتر. سه حالت: pending, fulfilled, rejected."
+                },
+                {
+                  label: "Async/Await",
+                  content: "روش پیشنهادی. کد ناهمگام را مثل کد همگام می‌نویسد. خوانایی بالا و مدیریت خطا با try/catch."
+                }
+              ]
+            },
+            content: `## برنامه‌نویسی ناهمگام
+
+JavaScript single-threaded است ولی با Event Loop می‌تواند عملیات ناهمگام را مدیریت کند.
+
+### Callbacks (قدیمی):
+\`\`\`js
+setTimeout(() => {
+    console.log("Done!");
+}, 1000);
+\`\`\`
+
+### Promises:
+\`\`\`js
+const promise = new Promise((resolve, reject) => {
+    // عملیات ناهمگام
+    if (success) resolve(result);
+    else reject(error);
+});
+
+promise
+    .then(result => console.log(result))
+    .catch(error => console.error(error));
+\`\`\`
+
+### Async/Await:
+\`\`\`js
+async function fetchData() {
+    try {
+        const result = await someAsyncOperation();
+        return result;
+    } catch (error) {
+        console.error(error);
+    }
+}
+\`\`\`
+
+### Fetch API:
+\`\`\`js
+async function getData() {
+    const response = await fetch('/api/data');
+    const data = await response.json();
+    return data;
+}
+\`\`\``,
+            code: `// ===== Promises =====
+
+const promise = new Promise((resolve, reject) => {
+    setTimeout(() => {
+        const success = true;
+        if (success) {
+            resolve("Data loaded!");
+        } else {
+            reject("Error occurred!");
+        }
+    }, 1000);
+});
+
+promise
+    .then(result => console.log(result))
+    .catch(error => console.error(error))
+    .finally(() => console.log("Done!"));
+
+// ===== Async/Await =====
+
+async function fetchData() {
+    try {
+        const result = await someAsyncOperation();
+        console.log(result);
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+// ===== Fetch API =====
+
+async function getUsers() {
+    try {
+        const response = await fetch('https://api.example.com/users');
+        
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        
+        const users = await response.json();
+        return users;
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+// ===== Promise.all =====
+
+async function getAllData() {
+    try {
+        const [users, posts, comments] = await Promise.all([
+            fetch('/api/users').then(r => r.json()),
+            fetch('/api/posts').then(r => r.json()),
+            fetch('/api/comments').then(r => r.json())
+        ]);
+        
+        return { users, posts, comments };
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+// ===== Promise.allSettled =====
+
+async function fetchAllData() {
+    const results = await Promise.allSettled([
+        fetch('/api/users'),
+        fetch('/api/posts'),
+        fetch('/api/comments')
+    ]);
+    
+    const fulfilled = results
+        .filter(r => r.status === 'fulfilled')
+        .map(r => r.value);
+    
+    const rejected = results
+        .filter(r => r.status === 'rejected')
+        .map(r => r.reason);
+    
+    return { fulfilled, rejected };
+}`,
+            language: "javascript",
+            tips: [
+              "همیشه از async/await استفاده کنید",
+              "try/catch را فراموش نکنید",
+              "Promise.all برای درخواست‌های مستقل عالی است"
             ]
           }
         ]
@@ -699,15 +1471,16 @@ Array.isArray("hello");    // false`,
     id: "react",
     title: "React.js حرفه‌ای",
     subtitle: "ساخت وب اپلیکیشن‌های مدرن",
-    description: "آموزش جامع React",
+    description: "آموزش جامع React شامل Components، Hooks، State Management و Routing",
     color: "from-cyan-500 to-blue-600",
     totalHours: 60,
     prerequisites: ["JavaScript ES6+"],
     outcomes: [
-      "ساخت کامپوننت‌ها",
+      "ساخت کامپوننت‌های React",
       "تسلط بر Hooks",
       "State Management",
-      "Routing"
+      "React Router",
+      "اتصال به API"
     ],
     chapters: [
       {
@@ -718,192 +1491,493 @@ Array.isArray("hello");    // false`,
           {
             id: "react-l1-1",
             title: "React چیست؟",
-            subtitle: "آشنایی با مفاهیم پایه React",
+            subtitle: "آشنایی با مفاهیم پایه",
             estimatedTime: 30,
             difficulty: "متوسط",
+            interactiveType: 'comparison',
+            interactiveData: {
+              headers: ["ویژگی", "React", "Vue", "Angular"],
+              rows: [
+                ["یادگیری", "متوسط", "آسان", "سخت"],
+                ["اندازه", "کوچک", "کوچک", "بزرگ"],
+                ["زبان", "JavaScript", "JavaScript", "TypeScript"],
+                ["Rendering", "Virtual DOM", "Virtual DOM", "Real DOM"],
+                ["مناسب برای", "همه پروژه‌ها", "پروژه‌های کوچک", "پروژه‌های بزرگ"]
+              ]
+            },
             content: `## React چیست؟
 
-React یک کتابخانه JavaScript برای ساخت رابط‌های کاربری (UI) است که توسط Meta (Facebook) توسعه داده شده و در سال 2013 منتشر شد. React بر اساس چند مفهوم کلیدی ساخته شده:
+React یک کتابخانه JavaScript برای ساخت UI است که توسط Meta توسعه داده شده.
 
-### ۱. Component-Based Architecture:
-UI به کامپوننت‌های مستقل و قابل استفاده مجدد تقسیم می‌شود. هر کامپوننت منطق، استایل و ساختار خود را دارد.
+### مفاهیم کلیدی:
 
-### ۲. Virtual DOM:
-React یک کپی مجازی از DOM واقعی می‌سازد. وقتی state تغییر می‌کند، React تغییرات را در Virtual DOM اعمال کرده و سپس حداقل تغییرات لازم را به DOM واقعی اعمال می‌کند.
+**۱. Component-Based:**
+UI به کامپوننت‌های مستقل تقسیم می‌شود.
 
-### ۳. Unidirectional Data Flow:
-داده‌ها فقط از بالا به پایین (parent to child) جریان دارند. این پیش‌بینی‌پذیری برنامه را بالا می‌برد.
+**۲. Virtual DOM:**
+React یک کپی مجازی از DOM می‌سازد.
 
-### ۴. Declarative Programming:
-شما توصیف می‌کنید UI باید چه شکلی باشد، React خودش بهترین روش برای رسیدن به آن حالت را پیدا می‌کند.
+**۳. Unidirectional Data Flow:**
+داده‌ها فقط از parent به child جریان دارند.
+
+**۴. Declarative:**
+شما توصیف می‌کنید UI چه شکلی باشد.
 
 ## JSX
 
-JSX (JavaScript XML) سینتکسی است که اجازه می‌دهد HTML-like code در JavaScript بنویسید. JSX در نهایت به JavaScript تبدیل می‌شود.
+JSX اجازه می‌دهد HTML-like code در JavaScript بنویسید.
 
 ### قوانین JSX:
-1. باید یک عنصر ریشه داشته باشد (یا Fragment)
-2. تگ‌ها باید بسته شوند
-3. className به جای class
-4. htmlFor به جای for
-5. {} برای JavaScript expressions
-6. style به صورت object
+- یک عنصر ریشه
+- تگ‌های بسته
+- className به جای class
+- {} برای expressions`,
+            code: `import React from 'react';
 
-## Components
-
-### Function Components (توصیه شده):
-توابعی که props می‌گیرند و JSX برمی‌گردانند.
-
-### Props:
-داده‌هایی که از parent به child پاس داده می‌شوند. Props فقط خواندنی (read-only) هستند.
-
-### State:
-داده‌های داخلی کامپوننت که با تغییر آن، کامپوننت re-render می‌شود. با useState hook مدیریت می‌شود.
-
-### Children:
-محتوایی که بین تگ‌های باز و بسته کامپوننت قرار می‌گیرد.`,
-            code: `// ===== اولین کامپوننت React =====
-import React from 'react';
-
-// Function Component ساده
+// ===== اولین کامپوننت =====
 function Welcome({ name }) {
     return <h1>Hello, {name}!</h1>;
 }
 
-// استفاده
-function App() {
-    return (
-        <div>
-            <Welcome name="Ali" />
-            <Welcome name="Sara" />
-        </div>
-    );
-}
-
 // ===== JSX Rules =====
-function JsxExamples() {
+function Example() {
     const name = "Ali";
     const isLoggedIn = true;
-    const items = ['HTML', 'CSS', 'JavaScript'];
-    const style = { color: 'blue', fontSize: '18px' };
+    const items = ['HTML', 'CSS', 'JS'];
     
     return (
         <div className="container">
-            {/* 1. Fragment برای بدون wrapper */}
+            {/* Fragment */}
             <>
                 <h1>Title</h1>
                 <p>Subtitle</p>
             </>
             
-            {/* 2. JavaScript expressions با {} */}
+            {/* Expressions */}
             <p>Hello, {name.toUpperCase()}!</p>
-            <p>2 + 2 = {2 + 2}</p>
             
-            {/* 3. Conditional rendering */}
+            {/* Conditional */}
             {isLoggedIn ? (
                 <p>Welcome back!</p>
             ) : (
                 <p>Please login</p>
             )}
             
-            {/* 4. Short-circuit */}
-            {isLoggedIn && <p>You are logged in</p>}
-            
-            {/* 5. List rendering */}
+            {/* List */}
             <ul>
-                {items.map((item, index) => (
-                    <li key={index}>{item}</li>
+                {items.map((item, i) => (
+                    <li key={i}>{item}</li>
                 ))}
             </ul>
-            
-            {/* 6. Inline styles (object) */}
-            <div style={style}>Styled text</div>
-            <div style={{ padding: '20px', background: '#f0f0f0' }}>
-                Direct style
-            </div>
-            
-            {/* 7. Dynamic className */}
-            <div className={\`card \${isLoggedIn ? 'active' : 'inactive'}\`}>
-                Card content
-            </div>
-            
-            {/* 8. htmlFor instead of for */}
-            <label htmlFor="email">Email:</label>
-            <input id="email" type="email" />
-            
-            {/* 9. Self-closing tags */}
-            <img src="photo.jpg" alt="Photo" />
-            <input type="text" placeholder="Enter text" />
         </div>
     );
 }
 
 // ===== Props =====
-function Button({ 
-    children, 
-    variant = 'primary', 
-    size = 'md', 
-    disabled = false, 
-    onClick 
-}) {
-    const baseStyles = 'rounded-lg font-medium transition-colors';
-    const variants = {
-        primary: 'bg-indigo-600 text-white hover:bg-indigo-700',
-        secondary: 'bg-gray-200 text-gray-800 hover:bg-gray-300',
-        danger: 'bg-red-600 text-white hover:bg-red-700',
-    };
-    const sizes = {
-        sm: 'px-3 py-1.5 text-sm',
-        md: 'px-4 py-2 text-base',
-        lg: 'px-6 py-3 text-lg',
-    };
-    
+function Button({ children, variant = 'primary', onClick }) {
     return (
-        <button
-            className={\`\${baseStyles} \${variants[variant]} \${sizes[size]}\`}
-            disabled={disabled}
-            onClick={onClick}
-        >
+        <button className={\`btn btn-\${variant}\`} onClick={onClick}>
             {children}
         </button>
     );
-}
-
-// استفاده:
-<Button variant="primary" size="lg" onClick={() => alert('Clicked!')}>
-    Submit
-</Button>
-
-// ===== Children =====
-function Card({ title, children, footer }) {
-    return (
-        <div className="card">
-            {title && <div className="card-header"><h3>{title}</h3></div>}
-            <div className="card-body">{children}</div>
-            {footer && <div className="card-footer">{footer}</div>}
-        </div>
-    );
-}
-
-// استفاده:
-<Card 
-    title="User Profile"
-    footer={<Button>Save Changes</Button>}
->
-    <p>Name: Ali</p>
-    <p>Email: ali@example.com</p>
-</Card>`,
+}`,
             language: "jsx",
             tips: [
               "همیشه Function Components استفاده کنید",
               "Props را destructure کنید",
-              "children برای محتوای dynamic عالی است",
               "key در list‌ها باید unique باشد"
-            ],
-            warnings: [
-              "هرگز props را مستقیماً تغییر ندهید",
-              "key در list‌ها باید unique باشد - از index استفاده نکنید",
-              "JSX در نهایت JavaScript است"
+            ]
+          },
+          {
+            id: "react-l1-2",
+            title: "State و Hooks",
+            subtitle: "useState و useEffect",
+            estimatedTime: 40,
+            difficulty: "متوسط",
+            content: `## State در React
+
+State داده‌ای است که داخل کامپوننت مدیریت می‌شود و با تغییر آن، کامپوننت دوباره render می‌شود.
+
+### useState:
+\`\`\`jsx
+const [count, setCount] = useState(0);
+\`\`\`
+
+### useEffect:
+\`\`\`jsx
+useEffect(() => {
+    // side effect
+    return () => {
+        // cleanup
+    };
+}, [dependency]);
+\`\`\`
+
+### Rules of Hooks:
+1. فقط در سطح بالای کامپوننت
+2. فقط در React functions`,
+            code: `import { useState, useEffect } from 'react';
+
+function Counter() {
+    const [count, setCount] = useState(0);
+    
+    return (
+        <div>
+            <p>Count: {count}</p>
+            <button onClick={() => setCount(count + 1)}>
+                Increment
+            </button>
+        </div>
+    );
+}
+
+function DataFetcher({ url }) {
+    const [data, setData] = useState(null);
+    const [loading, setLoading] = useState(true);
+    
+    useEffect(() => {
+        async function fetchData() {
+            const response = await fetch(url);
+            const result = await response.json();
+            setData(result);
+            setLoading(false);
+        }
+        
+        fetchData();
+    }, [url]);
+    
+    if (loading) return <p>Loading...</p>;
+    return <div>{JSON.stringify(data)}</div>;
+}`,
+            language: "jsx",
+            tips: [
+              "useState برای state محلی",
+              "useEffect برای side effects",
+              "dependency array را درست تنظیم کنید"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "nodejs",
+    title: "Node.js و Backend",
+    subtitle: "ساخت سرور و API حرفه‌ای",
+    description: "آموزش Node.js، Express، MongoDB و ساخت REST API",
+    color: "from-green-500 to-emerald-600",
+    totalHours: 50,
+    prerequisites: ["JavaScript ES6+"],
+    outcomes: [
+      "ساخت REST API",
+      "کار با Express",
+      "MongoDB و Mongoose",
+      "Authentication",
+      "استقرار روی سرور"
+    ],
+    chapters: [
+      {
+        id: "node-ch1",
+        title: "فصل ۱: مقدمه‌ای بر Node.js",
+        description: "Node.js چیست و چگونه کار می‌کند؟",
+        lessons: [
+          {
+            id: "node-l1-1",
+            title: "Node.js چیست؟",
+            subtitle: "آشنایی با Node.js",
+            estimatedTime: 30,
+            difficulty: "متوسط",
+            content: `## Node.js چیست؟
+
+Node.js یک runtime برای اجرای JavaScript خارج از مرورگر است.
+
+### ویژگی‌ها:
+- مبتنی بر V8 Engine
+- Event-driven
+- Non-blocking I/O
+- Single-threaded
+
+### Module System:
+
+**CommonJS:**
+\`\`\`js
+module.exports = { func };
+const { func } = require('./module');
+\`\`\`
+
+**ES Modules:**
+\`\`\`js
+export const func = () => {};
+import { func } from './module.js';
+\`\`\``,
+            code: `// ===== اولین سرور =====
+const http = require('http');
+
+const server = http.createServer((req, res) => {
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
+    res.end('Hello World!');
+});
+
+server.listen(3000, () => {
+    console.log('Server running on port 3000');
+});
+
+// ===== ES Modules =====
+export const formatDate = (date) => {
+    return new Intl.DateTimeFormat('fa-IR').format(date);
+};
+
+// ===== File System =====
+import { readFile, writeFile } from 'fs/promises';
+
+async function readConfig() {
+    const data = await readFile('./config.json', 'utf-8');
+    return JSON.parse(data);
+}`,
+            language: "javascript",
+            tips: [
+              "از ES Modules استفاده کنید",
+              "Environment variables را در .env نگه دارید"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "mongodb",
+    title: "MongoDB و Mongoose",
+    subtitle: "طراحی و مدیریت دیتابیس",
+    description: "آموزش MongoDB، Mongoose، Schema Design و بهینه‌سازی",
+    color: "from-emerald-500 to-teal-600",
+    totalHours: 30,
+    prerequisites: ["Node.js و Express"],
+    outcomes: [
+      "طراحی Schema",
+      "کوئری‌های پیچیده",
+      "Aggregation Pipeline",
+      "بهینه‌سازی Performance"
+    ],
+    chapters: [
+      {
+        id: "mongo-ch1",
+        title: "فصل ۱: مقدمه‌ای بر MongoDB",
+        description: "MongoDB چیست؟",
+        lessons: [
+          {
+            id: "mongo-l1-1",
+            title: "MongoDB و Mongoose",
+            subtitle: "کار با دیتابیس NoSQL",
+            estimatedTime: 35,
+            difficulty: "متوسط",
+            content: `## MongoDB چیست؟
+
+MongoDB یک دیتابیس NoSQL مبتنی بر سند است.
+
+### مفاهیم:
+- **Database**: ظرف اصلی
+- **Collection**: گروهی از Documents
+- **Document**: یک رکورد JSON-like
+- **Field**: یک خاصیت در Document
+
+## Mongoose
+
+Mongoose یک ODM برای MongoDB است:
+- Schema-based modeling
+- Validation
+- Middleware`,
+            code: `import mongoose from 'mongoose';
+
+await mongoose.connect(process.env.MONGODB_URI);
+
+const userSchema = new mongoose.Schema({
+    name: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+}, { timestamps: true });
+
+const User = mongoose.model('User', userSchema);
+
+const user = await User.create({ name: 'Ali', email: 'ali@mail.com' });
+const users = await User.find({});
+const updated = await User.findByIdAndUpdate(id, { name: 'New' });
+await User.findByIdAndDelete(id);`,
+            language: "javascript",
+            tips: [
+              "از lean() برای query‌های فقط خواندنی استفاده کنید",
+              "Index‌ها برای فیلدهای پرکاربرد بسازید"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "wordpress",
+    title: "وردپرس حرفه‌ای",
+    subtitle: "قالب‌نویسی و افزونه‌نویسی",
+    description: "آموزش وردپرس، قالب‌نویسی، افزونه‌نویسی و WooCommerce",
+    color: "from-indigo-500 to-purple-600",
+    totalHours: 40,
+    prerequisites: ["HTML, CSS و PHP پایه"],
+    outcomes: [
+      "نصب و پیکربندی وردپرس",
+      "قالب‌نویسی از صفر",
+      "افزونه‌نویسی",
+      "WooCommerce"
+    ],
+    chapters: [
+      {
+        id: "wp-ch1",
+        title: "فصل ۱: مقدمه‌ای بر وردپرس",
+        description: "وردپرس چیست؟",
+        lessons: [
+          {
+            id: "wp-l1-1",
+            title: "وردپرس چیست؟",
+            subtitle: "آشنایی با وردپرس",
+            estimatedTime: 25,
+            difficulty: "مبتدی",
+            content: `## وردپرس چیست؟
+
+وردپرس یک CMS متن‌باز و رایگان است.
+
+### انواع وردپرس:
+
+**WordPress.org (Self-hosted):**
+- نرم‌افزار رایگان
+- نصب روی هاست شخصی
+- کنترل کامل
+
+**WordPress.com (Hosted):**
+- سرویس میزبانی
+- محدودیت‌هایی دارد`,
+            code: `<?php
+/**
+ * Template Name: صفحه اصلی
+ */
+get_header(); ?>
+
+<main>
+    <?php if (have_posts()) : ?>
+        <?php while (have_posts()) : the_post(); ?>
+            <article>
+                <h2><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h2>
+                <?php the_excerpt(); ?>
+            </article>
+        <?php endwhile; ?>
+    <?php endif; ?>
+</main>
+
+<?php get_footer(); ?>`,
+            language: "php",
+            tips: [
+              "از توابع WordPress استفاده کنید",
+              "escaping را فراموش نکنید"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "devops",
+    title: "استقرار و DevOps",
+    subtitle: "Deploy و مدیریت سرور",
+    description: "آموزش Docker، CI/CD، مدیریت سرور",
+    color: "from-violet-500 to-purple-600",
+    totalHours: 25,
+    prerequisites: ["آشنایی با Linux"],
+    outcomes: [
+      "کار با Docker",
+      "CI/CD Pipeline",
+      "مدیریت سرور",
+      "Nginx و SSL"
+    ],
+    chapters: [
+      {
+        id: "devops-ch1",
+        title: "فصل ۱: Docker",
+        description: "کانتینرسازی اپلیکیشن",
+        lessons: [
+          {
+            id: "devops-l1-1",
+            title: "Docker چیست؟",
+            subtitle: "مفاهیم پایه Docker",
+            estimatedTime: 30,
+            difficulty: "پیشرفته",
+            content: `## Docker چیست؟
+
+Docker ابزاری برای ساخت و مدیریت container‌ها است.
+
+### مزایا:
+- Consistency
+- Isolation
+- Portability
+- Scalability`,
+            code: `# Dockerfile
+FROM node:20-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+EXPOSE 3000
+CMD ["npm", "start"]`,
+            language: "dockerfile",
+            tips: [
+              "از multi-stage builds استفاده کنید",
+              "از alpine base images استفاده کنید"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "career",
+    title: "آمادگی بازار کار",
+    subtitle: "ورود حرفه‌ای به صنعت وب",
+    description: "راهنمای جامع ورود به بازار کار",
+    color: "from-amber-500 to-orange-600",
+    totalHours: 15,
+    prerequisites: ["تسلط بر حداقل یک مسیر"],
+    outcomes: [
+      "ساخت پورتفولیو",
+      "نوشتن رزومه",
+      "آمادگی مصاحبه",
+      "توسعه برند شخصی"
+    ],
+    chapters: [
+      {
+        id: "career-ch1",
+        title: "فصل ۱: مسیرهای شغلی",
+        description: "کدام مسیر مناسب شماست؟",
+        lessons: [
+          {
+            id: "career-l1-1",
+            title: "مسیرهای شغلی در وب",
+            subtitle: "Frontend, Backend, Full Stack",
+            estimatedTime: 30,
+            difficulty: "مبتدی",
+            content: `## مسیرهای شغلی
+
+### ۱. Frontend Developer
+**تمرکز:** UI/UX
+
+### ۲. Backend Developer
+**تمرکز:** سرور، API
+
+### ۳. Full Stack Developer
+**تمرکز:** ترکیب Frontend و Backend
+
+### ۴. WordPress Developer
+**تمرکز:** قالب‌نویسی و افزونه‌نویسی
+
+### ۵. DevOps Engineer
+**تمرکز:** زیرساخت و اتوماسیون`,
+            tips: [
+              "پورتفولیو قوی‌تر از مدرک است",
+              "پروژه‌های واقعی بسازید"
             ]
           }
         ]
